@@ -1,0 +1,11 @@
+<div class="raml-console-vbs-sign-container">
+  <a class="raml-console-meta-button" ng-if="!signed" ng-click="signIn()">
+    <span ng-show="!isLoaded">Sign In</span>
+    <span ng-show="isLoaded">Signing In...</span>
+  </a>
+  <a class="raml-console-meta-button" ng-if="signed" ng-click="signOut()">
+    Sign Out
+  </a>
+
+  <voicebase-auth-form></voicebase-auth-form>
+</div>

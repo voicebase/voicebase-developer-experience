@@ -1,0 +1,18 @@
+<div class="raml-console-vbs-tokens-container" ng-if="currentSchemeType === 'x-OAuth 2 Bearer'">
+  <button type="button" ng-click="showForm()" class="raml-console-vbs-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get" ng-show="!tokens.length">
+    <span ng-show="!isLoaded">Sign in to select token</span>
+    <span ng-show="isLoaded">Getting tokens...</span>
+  </button>
+
+  <div ng-if="tokens.length > 0" class="raml-console-vbs-tokens-dropdown-container">
+    <span class="raml-console-sidebar-label">Tokens</span>
+    <select class="raml-console-sidebar-input raml-console-dropdown"
+            ng-model="selectedToken"
+            ng-options="tokenObj as tokenObj.token for tokenObj in tokens"
+            ng-change="tokenChange(selectedToken)">
+      <option></option>
+    </select>
+  </div>
+
+  <voicebase-auth-form></voicebase-auth-form>
+</div>

@@ -1,0 +1,30 @@
+<div class="raml-console-auth-form-container">
+  <div class="raml-console-vbs-token-auth-form" ng-show="showAuthForm">
+    <ng-form name="authForm" novalidate null-form>
+      <div class="raml-console-sidebar-row">
+        <p class="raml-console-sidebar-input-container">
+          <label for="username" class="raml-console-sidebar-label">API Key <span class="raml-console-side-bar-required-field">*</span></label>
+          <input required="true" type="text" name="username" class="raml-console-sidebar-input raml-console-sidebar-security-field" ng-model="credentials.username" ng-change="onChange()"/>
+          <span class="raml-console-field-validation-error"></span>
+        </p>
+
+        <p class="raml-console-sidebar-input-container">
+          <label for="password" class="raml-console-sidebar-label">Password <span class="raml-console-side-bar-required-field">*</span></label>
+          <input required="true" type="password" name="password" class="raml-console-sidebar-input raml-console-sidebar-security-field" ng-model="credentials.password" ng-change="onChange()"/>
+          <span class="raml-console-field-validation-error"></span>
+        </p>
+      </div>
+
+      <div class="raml-console-vbs-auth-form-btns">
+        <button type="button" ng-click="startAuth($event)" class="raml-console-sidebar-action raml-console-sidebar-action-get">Sign In</button>
+        <button type="button" ng-click="hideForm()" class="raml-console-sidebar-action raml-console-sidebar-action-reset">Cancel</button>
+      </div>
+    </ng-form>
+  </div>
+
+  <div class="raml-console-vbs-tokens-error" ng-show="formError">
+    <span class="raml-console-vbs-close" ng-click="hideError()"><span>x</span></span>
+    {{ formError }}
+  </div>
+
+</div>
