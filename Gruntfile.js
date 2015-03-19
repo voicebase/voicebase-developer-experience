@@ -13,7 +13,7 @@ module.exports = function (grunt) {
                 'bower_components/api-console-voicebase/dist/scripts/api-console-vendor.js',
                 'bower_components/api-console-voicebase/dist/scripts/api-console.js'
             ],
-            html: ['index.html'],
+            html: ['src/index.html'],
             scss: [
                 'bower_components/api-console-voicebase/dist/styles/api-console-dark-theme.css',
                 'bower_components/api-console-voicebase/dist/styles/api-console-light-theme.css'
@@ -47,7 +47,7 @@ module.exports = function (grunt) {
                     middleware: function (connect) {
                         return [
                             connect.static('dist'),
-                            connect.static('test/regression/assets'),
+                            connect.static('test/regression/assets')
                         ];
                     }
                 }
@@ -63,6 +63,17 @@ module.exports = function (grunt) {
         },
 
         copy: {
+            assets: {
+                files: [{
+                    dest:   '<%= distdir %>',
+                    cwd:    'bower_components/api-console-voicebase/src/assets/',
+                    expand: true,
+                    src:    [
+                        '**',
+                        '!styles/**/*'
+                    ]
+                }]
+            }
         },
 
         ngtemplates: {
@@ -95,6 +106,40 @@ module.exports = function (grunt) {
                 src:  'src/index.html'
             },
 
+            darkTheme: {
+                options: {
+                    process: function process(value) {
+                        return value.replace(/\.raml-console-CodeMirror/g, '.CodeMirror');
+                    }
+                },
+
+                dest: '<%= distdir %>/styles/<%= pkg.name %>-dark-theme.css',
+                src:  [
+                    'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
+                    'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
+                    'bower_components/api-console-voicebase/src/assets/styles/error.css',
+                    '<%= distdir %>/styles/<%= pkg.name %>-dark-theme.css',
+                    'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-dark.css'
+                ]
+            },
+
+            lightTheme: {
+                options: {
+                    process: function process(value) {
+                        return value.replace(/\.raml-console-CodeMirror/g, '.CodeMirror');
+                    }
+                },
+
+                dest: '<%= distdir %>/styles/<%= pkg.name %>-light-theme.css',
+                src:  [
+                    'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
+                    'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
+                    'bower_components/api-console-voicebase/src/assets/styles/error.css',
+                    '<%= distdir %>/styles/<%= pkg.name %>-light-theme.css',
+                    'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-light.css'
+                ]
+            },
+
             vendor: {
                 src:  '<%= src.jsVendor %>',
                 dest: '<%= distdir %>/scripts/<%= pkg.name %>-vendor.js'
@@ -107,12 +152,13 @@ module.exports = function (grunt) {
                 'build:scripts',
                 'concat:vendor',
                 'concat:index',
+                'copy:assets',
                 'build:styles'
             ],
 
             themes: [
-                //'concat:darkTheme',
-                //'concat:lightTheme'
+                'concat:darkTheme',
+                'concat:lightTheme'
             ]
         },
 
