@@ -1,0 +1,23 @@
+{
+  "name": "voicebase-developer-experience",
+  "version": "0.0.0",
+  "homepage": "https://github.com/voicebase/voicebase-developer-experience",
+  "authors": [
+    "pronin <denis.pronin@sibers.com>"
+  ],
+  "keywords": [
+    "raml",
+    "api-console"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "api-console-voicebase": "*"
+  }
+}
