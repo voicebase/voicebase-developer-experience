@@ -34,7 +34,7 @@ module.exports = function (grunt) {
                     open:       true,
                     middleware: function (connect) {
                         return [
-                            connect.static('.')
+                            connect.static('dist')
                         ];
                     }
                 }
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
                     open:       false,
                     middleware: function (connect) {
                         return [
-                            connect.static('.'),
+                            connect.static('dist'),
                             connect.static('test/regression/assets')
                         ];
                     }
@@ -102,7 +102,7 @@ module.exports = function (grunt) {
                     process: true
                 },
 
-                dest: 'index.html',
+                dest: '<%= distdir %>/index.html',
                 src:  'src/index.html'
             },
 
