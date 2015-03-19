@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>API Console</title>
-  <link href="styles/<%= grunt.config.get('pkg.name') %>-light-theme.css" rel="stylesheet" class="theme">
+  <link href="dist/styles/api-console-light-theme.css" rel="stylesheet" class="theme">
 </head>
 <body ng-app="ramlVoicebaseConsoleApp" ng-cloak class="raml-console-body">
   <raml-initializer></raml-initializer>
-  <script src="scripts/<%= grunt.config.get('pkg.name') %>-vendor.js"></script>
-  <script src="scripts/<%= grunt.config.get('pkg.name') %>.js"></script>
+  <script src="dist/scripts/<%= grunt.config.get('pkg.name') %>-vendor.js"></script>
+  <script src="dist/scripts/<%= grunt.config.get('pkg.name') %>.js"></script>
   <script>
     $.noConflict();
   </script>

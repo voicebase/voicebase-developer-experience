@@ -34,7 +34,7 @@ module.exports = function (grunt) {
                     open:       true,
                     middleware: function (connect) {
                         return [
-                            connect.static('dist')
+                            connect.static('.')
                         ];
                     }
                 }
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
                     open:       false,
                     middleware: function (connect) {
                         return [
-                            connect.static('dist'),
+                            connect.static('.'),
                             connect.static('test/regression/assets')
                         ];
                     }
@@ -102,7 +102,7 @@ module.exports = function (grunt) {
                     process: true
                 },
 
-                dest: '<%= distdir %>/index.html',
+                dest: 'index.html',
                 src:  'src/index.html'
             },
 
@@ -113,12 +113,12 @@ module.exports = function (grunt) {
                     }
                 },
 
-                dest: '<%= distdir %>/styles/<%= pkg.name %>-dark-theme.css',
+                dest: '<%= distdir %>/styles/api-console-dark-theme.css',
                 src:  [
                     'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
                     'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
                     'bower_components/api-console-voicebase/src/assets/styles/error.css',
-                    '<%= distdir %>/styles/<%= pkg.name %>-dark-theme.css',
+                    '<%= distdir %>/styles/api-console-dark-theme.css',
                     'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-dark.css'
                 ]
             },
@@ -130,12 +130,12 @@ module.exports = function (grunt) {
                     }
                 },
 
-                dest: '<%= distdir %>/styles/<%= pkg.name %>-light-theme.css',
+                dest: '<%= distdir %>/styles/api-console-light-theme.css',
                 src:  [
                     'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
                     'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
                     'bower_components/api-console-voicebase/src/assets/styles/error.css',
-                    '<%= distdir %>/styles/<%= pkg.name %>-light-theme.css',
+                    '<%= distdir %>/styles/api-console-light-theme.css',
                     'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-light.css'
                 ]
             },
@@ -170,8 +170,8 @@ module.exports = function (grunt) {
                 },
 
                 files: {
-                    '<%= distdir %>/styles/<%= pkg.name %>-light-theme.css': 'src/scss/light-theme.scss',
-                    '<%= distdir %>/styles/<%= pkg.name %>-dark-theme.css':  'src/scss/dark-theme.scss'
+                    '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',
+                    '<%= distdir %>/styles/api-console-dark-theme.css':  'src/scss/dark-theme.scss'
                 }
             },
 
@@ -182,8 +182,8 @@ module.exports = function (grunt) {
                 },
 
                 files: {
-                    '<%= distdir %>/styles/<%= pkg.name %>-light-theme.css': 'src/scss/light-theme.scss',
-                    '<%= distdir %>/styles/<%= pkg.name %>-dark-theme.css':  'src/scss/dark-theme.scss'
+                    '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',
+                    '<%= distdir %>/styles/api-console-dark-theme.css':  'src/scss/dark-theme.scss'
                 }
             }
         },
@@ -240,8 +240,8 @@ module.exports = function (grunt) {
                 },
 
                 files: {
-                    '<%= distdir %>/styles/<%= pkg.name %>-light-theme.css': '<%= distdir %>/styles/<%= pkg.name %>-light-theme.css',
-                    '<%= distdir %>/styles/<%= pkg.name %>-dark-theme.css':  '<%= distdir %>/styles/<%= pkg.name %>-dark-theme.css'
+                    '<%= distdir %>/styles/api-console-light-theme.css': '<%= distdir %>/styles/api-console-light-theme.css',
+                    '<%= distdir %>/styles/api-console-dark-theme.css':  '<%= distdir %>/styles/api-console-dark-theme.css'
                 }
             }
         },
