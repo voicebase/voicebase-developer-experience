@@ -11,7 +11,7 @@
     "url": "https://github.com/voicebase/voicebase-developer-experience.git"
   },
   "author": "Voicebase, Inc.",
-  "license": "Apache 2.0",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/voicebase/voicebase-developer-experience/issues"
   },
