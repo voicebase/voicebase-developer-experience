@@ -17,7 +17,7 @@
     "test",
     "tests"
   ],
-  "devDependencies": {
+  "dependencies": {
     "api-console-voicebase": "*"
   }
 }
