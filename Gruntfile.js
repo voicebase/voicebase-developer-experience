@@ -47,7 +47,7 @@ module.exports = function (grunt) {
                     middleware: function (connect) {
                         return [
                             connect.static('dist'),
-                            connect.static('test/regression/assets')
+                            connect.static('bower_components/api-console-voicebase/test/regression/assets')
                         ];
                     }
                 }
@@ -90,7 +90,7 @@ module.exports = function (grunt) {
 
         concat: {
             app: {
-                dest: '<%= distdir %>/scripts/<%= pkg.name %>.js',
+                dest: '<%= distdir %>/scripts/api-console.js',
                 src:  [
                     '<%= src.js %>',
                     '<%= ngtemplates.ramlConsole.dest %>'
@@ -142,7 +142,7 @@ module.exports = function (grunt) {
 
             vendor: {
                 src:  '<%= src.jsVendor %>',
-                dest: '<%= distdir %>/scripts/<%= pkg.name %>-vendor.js'
+                dest: '<%= distdir %>/scripts/api-console-vendor.js'
             }
 
         },
@@ -266,7 +266,7 @@ module.exports = function (grunt) {
 
             local: {
                 options: {
-                    configFile: 'test/regression/local.protractor.conf.js'
+                    configFile: 'bower_components/api-console-voicebase/test/regression/local.protractor.conf.js'
                 }
             }
         }
