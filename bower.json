@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "homepage": "https://github.com/voicebase/voicebase-developer-experience",
   "authors": [
-    "pronin <denis.pronin@sibers.com>"
+    "voicebase <support@voicebase.com >"
   ],
   "keywords": [
     "raml",
     "api-console"
   ],
-  "license": "MIT",
+  "license": "Apache 2.0",
   "ignore": [
     "**/.*",
     "node_modules",

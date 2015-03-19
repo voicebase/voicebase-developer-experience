@@ -1,0 +1,79 @@
+.vbs-tokens-container {
+  position: relative;
+
+  .vbs-get-tokens {
+    width: auto;
+    padding: 5px;
+  }
+
+}
+
+.vbs-token-auth-form, .vbs-tokens-error {
+  float: right;
+  background: $color-sidebar-bg;
+  z-index: 10;
+  position: absolute;
+  left: 0;
+  top: 50px;
+  width: 400px;
+  border: 1px solid $color-sidebar-header-border;
+  box-shadow: 0 0 5px $color-sidebar-header-border;
+
+  .vbs-auth-form-btns {
+    margin-top: -15px;
+    padding: 0 16px 16px;
+    display: table;
+    width: 100%;
+
+    .sidebar-action-get {
+      width: 49%;
+      float: left;
+    }
+
+    .sidebar-action-reset {
+      width: 49%;
+      float: right;
+    }
+  }
+}
+
+.vbs-tokens-error {
+  padding: 15px;
+  color: $color-console-tab-delete;
+  background-color: #f2dede;
+  border-color: $color-sidebar-header-border;
+
+  .vbs-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.5;
+    font-weight: bold;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.vbs-sign-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  .vbs-token-auth-form, .vbs-tokens-error {
+    left: 5px;
+  }
+}
+
+.vbs-sidebar-input-file {
+  margin-top: 5px;
+  margin-bottom: 18px;
+  width: 100%;
+}
+
+.vbs-param-type {
+  font-weight: normal;
+}

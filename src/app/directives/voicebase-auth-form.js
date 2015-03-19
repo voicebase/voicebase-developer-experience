@@ -4,7 +4,7 @@
   RAML.Directives.voicebaseAuthForm = function() {
     return {
       restrict: 'E',
-      templateUrl: 'voicebase/directives/voicebase-auth-form.tpl.html',
+      templateUrl: 'directives/voicebase-auth-form.tpl.html',
       controller: function($scope, formValidate) {
         $scope.credentials = {};
         $scope.showAuthForm = false;

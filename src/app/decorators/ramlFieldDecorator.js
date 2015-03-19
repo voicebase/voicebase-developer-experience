@@ -6,7 +6,7 @@ RAML.Decorators = (function (Decorators) {
     $provide.decorator('ramlFieldDirective', function ($delegate, $controller) {
       var directive = $delegate[0];
 
-      directive.templateUrl = 'voicebase/directives/voicebase-raml-field.tpl.html'; // replce template
+      directive.templateUrl = 'directives/voicebase-raml-field.tpl.html'; // replce template
 
       var controllerOrigin = directive.controller; // save original controller
       directive.controller = function ($scope) {

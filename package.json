@@ -1,0 +1,38 @@
+{
+  "name": "voicebase-developer-experience",
+  "version": "0.0.0",
+  "description": "Voicebase Api-Console for RAML",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "grunt regression"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/voicebase/voicebase-developer-experience.git"
+  },
+  "author": "Voicebase, Inc.",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/voicebase/voicebase-developer-experience/issues"
+  },
+  "homepage": "https://github.com/voicebase/voicebase-developer-experience",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "grunt-angular-templates": "~0.5.7",
+    "grunt-concurrent": "~1.0.0",
+    "grunt-contrib-clean": "~0.6.0",
+    "grunt-contrib-concat": "~0.5.0",
+    "grunt-contrib-connect": "~0.9.0",
+    "grunt-contrib-copy": "~0.7.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-sass": "~0.8.1",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-css-prefix": "~0.2.3",
+    "grunt-karma": "~0.10.1",
+    "grunt-protractor-runner": "~1.1.4",
+    "jasmine-spec-reporter": "~1.1.0",
+    "load-grunt-tasks": "~2.0.0",
+    "serve-static": "~1.8.0"
+  }
+}
