@@ -47,7 +47,7 @@ module.exports = function (grunt) {
                     middleware: function (connect) {
                         return [
                             connect.static('dist'),
-                            connect.static('bower_components/api-console-voicebase/test/regression/assets')
+                            connect.static('test/regression/assets')
                         ];
                     }
                 }
@@ -264,9 +264,15 @@ module.exports = function (grunt) {
                 keepAlive:  false
             },
 
-            local: {
+            apiConsole: {
                 options: {
                     configFile: 'bower_components/api-console-voicebase/test/regression/local.protractor.conf.js'
+                }
+            },
+
+            voicebase: {
+                options: {
+                  configFile: 'test/regression/local.protractor.conf.js'
                 }
             }
         }
@@ -298,7 +304,8 @@ module.exports = function (grunt) {
 
     grunt.registerTask('regression', [
         'connect:regression',
-        'protractor:local'
+        'protractor:apiConsole',
+        'protractor:voicebase'
     ]);
 
 };
