@@ -4407,6 +4407,14 @@ span.raml-console-side-bar-required-field {
   font-weight: normal;
 }
 
+.raml-console-pull-right {
+  float: right !important;
+}
+
+.raml-console-pull-left {
+  float: left !important;
+}
+
 /*
 
 Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmail.com>

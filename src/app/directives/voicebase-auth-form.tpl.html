@@ -1,6 +1,6 @@
 <div class="raml-console-auth-form-container">
   <div class="raml-console-vbs-token-auth-form" ng-show="showAuthForm">
-    <ng-form name="authForm" novalidate null-form>
+    <form name="authForm" novalidate null-form ng-submit="startAuth($event)">
       <div class="raml-console-sidebar-row">
         <p class="raml-console-sidebar-input-container">
           <label for="username" class="raml-console-sidebar-label">API Key <span class="raml-console-side-bar-required-field">*</span></label>
@@ -13,13 +13,20 @@
           <input required="true" type="password" name="password" class="raml-console-sidebar-input raml-console-sidebar-security-field" ng-model="credentials.password" ng-change="onChange()"/>
           <span class="raml-console-field-validation-error"></span>
         </p>
+
+        <p>
+          <label class="raml-console-sidebar-label raml-console-pull-right">
+            <input type="checkbox" class="raml-console-rememberVoicebaseToken" ng-checked="isRemember" ng-click="changeRemember()"/>
+            Remember me
+          </label>
+        </p>
       </div>
 
       <div class="raml-console-vbs-auth-form-btns">
-        <button type="button" ng-click="startAuth($event)" class="raml-console-sidebar-action raml-console-sidebar-action-get">Sign In</button>
+        <button type="submit" class="raml-console-sidebar-action raml-console-sidebar-action-get">Sign In</button>
         <button type="button" ng-click="hideForm()" class="raml-console-sidebar-action raml-console-sidebar-action-reset">Cancel</button>
       </div>
-    </ng-form>
+    </form>
   </div>
 
   <div class="raml-console-vbs-tokens-error" ng-show="formError">

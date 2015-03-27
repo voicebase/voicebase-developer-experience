@@ -291,10 +291,17 @@ RAML.Decorators = (function (Decorators) {
     return {
       restrict: 'E',
       templateUrl: 'directives/voicebase-auth-form.tpl.html',
-      controller: function($scope, formValidate) {
+      controller: function($scope, formValidate, voicebaseTokensApi) {
         $scope.credentials = {};
         $scope.showAuthForm = false;
         $scope.formError = '';
+
+        $scope.isRemember = voicebaseTokensApi.getNeedRemember();
+
+        $scope.changeRemember = function() {
+          $scope.isRemember = !$scope.isRemember;
+          voicebaseTokensApi.setNeedRemember($scope.isRemember);
+        };
 
         $scope.showForm = function() {
           $scope.formError = '';
@@ -320,7 +327,7 @@ RAML.Decorators = (function (Decorators) {
                 $scope.formError = _formError;
             });
           }
-
+          return false;
         };
 
       }
@@ -379,7 +386,10 @@ RAML.Decorators = (function (Decorators) {
           $scope.signed = !!tokensObj;
         });
 
-        voicebaseTokensApi.getTokenFromLocation();
+        var tokenFromLocation = voicebaseTokensApi.getTokenFromLocation();
+        if(!tokenFromLocation) {
+          voicebaseTokensApi.getTokenFromStorage();
+        }
       }
     };
   };
@@ -520,6 +530,7 @@ RAML.Decorators = (function (Decorators) {
   RAML.Services.VoicebaseTokensApi = function($http, $q) {
     var tokens = null;
     var currentToken = null;
+    var needRemember = localStorage.getItem('needRemember') || false;
 
     var setCurrentToken = function(_currentToken){
         currentToken = _currentToken;
@@ -561,11 +572,14 @@ RAML.Decorators = (function (Decorators) {
     };
 
     var setTokensObj = function(tokensObj) {
-      if(!tokensObj) {
-        setCurrentToken(null);
+      var _tokensObj = (!tokensObj) ? null : tokensObj.tokens[0];
+      setCurrentToken(_tokensObj);
+
+      if(needRemember && _tokensObj && _tokensObj.token) {
+        localStorage.setItem('voicebaseToken', _tokensObj.token);
       }
-      else if(tokensObj.tokens.length > 0) {
-        setCurrentToken(tokensObj.tokens[0]);
+      else {
+        localStorage.removeItem('voicebaseToken');
       }
 
       tokens = tokensObj;
@@ -585,6 +599,8 @@ RAML.Decorators = (function (Decorators) {
           }]
         });
       }
+
+      return getCurrentToken();
     };
 
     var getParametersFromLocation = function() {
@@ -601,13 +617,42 @@ RAML.Decorators = (function (Decorators) {
       return values;
     };
 
+    var getTokenFromStorage = function() {
+      var tokenFromStorage = localStorage.getItem('voicebaseToken');
+      if(tokenFromStorage) {
+        setTokensObj({
+          tokens: [{
+            token: tokenFromStorage,
+            type: 'Bearer'
+          }]
+        });
+      }
+    };
+
+    var getNeedRemember = function() {
+      return needRemember;
+    };
+
+    var setNeedRemember = function(value) {
+      needRemember = value;
+      if(needRemember) {
+        localStorage.setItem('needRemember', needRemember);
+      }
+      else {
+        localStorage.removeItem('needRemember');
+      }
+    };
+
     return {
       getTokens: getTokens,
       setTokensObj: setTokensObj,
       getTokensObj: getTokensObj,
       getCurrentToken: getCurrentToken,
       setCurrentToken: setCurrentToken,
-      getTokenFromLocation: getTokenFromLocation
+      getTokenFromLocation: getTokenFromLocation,
+      getNeedRemember: getNeedRemember,
+      setNeedRemember: setNeedRemember,
+      getTokenFromStorage: getTokenFromStorage
     };
 
   };
@@ -651,7 +696,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
   $templateCache.put('directives/voicebase-auth-form.tpl.html',
     "<div class=\"raml-console-auth-form-container\">\n" +
     "  <div class=\"raml-console-vbs-token-auth-form\" ng-show=\"showAuthForm\">\n" +
-    "    <ng-form name=\"authForm\" novalidate null-form>\n" +
+    "    <form name=\"authForm\" novalidate null-form ng-submit=\"startAuth($event)\">\n" +
     "      <div class=\"raml-console-sidebar-row\">\n" +
     "        <p class=\"raml-console-sidebar-input-container\">\n" +
     "          <label for=\"username\" class=\"raml-console-sidebar-label\">API Key <span class=\"raml-console-side-bar-required-field\">*</span></label>\n" +
@@ -664,13 +709,20 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "          <input required=\"true\" type=\"password\" name=\"password\" class=\"raml-console-sidebar-input raml-console-sidebar-security-field\" ng-model=\"credentials.password\" ng-change=\"onChange()\"/>\n" +
     "          <span class=\"raml-console-field-validation-error\"></span>\n" +
     "        </p>\n" +
+    "\n" +
+    "        <p>\n" +
+    "          <label class=\"raml-console-sidebar-label raml-console-pull-right\">\n" +
+    "            <input type=\"checkbox\" class=\"raml-console-rememberVoicebaseToken\" ng-checked=\"isRemember\" ng-click=\"changeRemember()\"/>\n" +
+    "            Remember me\n" +
+    "          </label>\n" +
+    "        </p>\n" +
     "      </div>\n" +
     "\n" +
     "      <div class=\"raml-console-vbs-auth-form-btns\">\n" +
-    "        <button type=\"button\" ng-click=\"startAuth($event)\" class=\"raml-console-sidebar-action raml-console-sidebar-action-get\">Sign In</button>\n" +
+    "        <button type=\"submit\" class=\"raml-console-sidebar-action raml-console-sidebar-action-get\">Sign In</button>\n" +
     "        <button type=\"button\" ng-click=\"hideForm()\" class=\"raml-console-sidebar-action raml-console-sidebar-action-reset\">Cancel</button>\n" +
     "      </div>\n" +
-    "    </ng-form>\n" +
+    "    </form>\n" +
     "  </div>\n" +
     "\n" +
     "  <div class=\"raml-console-vbs-tokens-error\" ng-show=\"formError\">\n" +

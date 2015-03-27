@@ -45,7 +45,10 @@
           $scope.signed = !!tokensObj;
         });
 
-        voicebaseTokensApi.getTokenFromLocation();
+        var tokenFromLocation = voicebaseTokensApi.getTokenFromLocation();
+        if(!tokenFromLocation) {
+          voicebaseTokensApi.getTokenFromStorage();
+        }
       }
     };
   };

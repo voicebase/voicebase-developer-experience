@@ -5,10 +5,17 @@
     return {
       restrict: 'E',
       templateUrl: 'directives/voicebase-auth-form.tpl.html',
-      controller: function($scope, formValidate) {
+      controller: function($scope, formValidate, voicebaseTokensApi) {
         $scope.credentials = {};
         $scope.showAuthForm = false;
         $scope.formError = '';
+
+        $scope.isRemember = voicebaseTokensApi.getNeedRemember();
+
+        $scope.changeRemember = function() {
+          $scope.isRemember = !$scope.isRemember;
+          voicebaseTokensApi.setNeedRemember($scope.isRemember);
+        };
 
         $scope.showForm = function() {
           $scope.formError = '';
@@ -34,7 +41,7 @@
                 $scope.formError = _formError;
             });
           }
-
+          return false;
         };
 
       }
