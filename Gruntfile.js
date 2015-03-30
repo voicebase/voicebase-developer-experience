@@ -103,6 +103,15 @@ module.exports = function (grunt) {
                 },
 
                 dest: '<%= distdir %>/index.html',
+                src:  'src/voicebase.html'
+            },
+
+            indexMulesoft: {
+                options: {
+                    process: true
+                },
+
+                dest: '<%= distdir %>/index.html',
                 src:  'src/index.html'
             },
 
@@ -152,6 +161,14 @@ module.exports = function (grunt) {
                 'build:scripts',
                 'concat:vendor',
                 'concat:index',
+                'copy:assets',
+                'build:styles'
+            ],
+
+            buildMulesoft: [
+                'build:scripts',
+                'concat:vendor',
+                'concat:indexMulesoft',
                 'copy:assets',
                 'build:styles'
             ],
@@ -285,6 +302,14 @@ module.exports = function (grunt) {
         'watch'
     ]);
 
+    // build app with default mulesoft settings
+    grunt.registerTask('buildMulesoft', [
+        'jshint',
+        'clean',
+        'concurrent:buildMulesoft'
+    ]);
+
+    // build app with voicebase settings
     grunt.registerTask('build', [
         'jshint',
         'clean',
@@ -302,10 +327,12 @@ module.exports = function (grunt) {
         'concurrent:themes'
     ]);
 
-    grunt.registerTask('regression', [
-        'connect:regression',
-        'protractor:apiConsole',
-        'protractor:voicebase'
-    ]);
+  grunt.registerTask('regression', [
+    'connect:regression',
+    'buildMulesoft',
+    'protractor:apiConsole',
+    'build',
+    'protractor:voicebase'
+  ]);
 
 };
