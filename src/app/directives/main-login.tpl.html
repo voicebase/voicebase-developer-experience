@@ -1,0 +1,50 @@
+<div class="raml-console-main-login-form">
+  <div class="raml-console-spinner" ng-show="isInit">
+    <div class="raml-console-rect1"></div>
+    <div class="raml-console-rect2"></div>
+    <div class="raml-console-rect3"></div>
+    <div class="raml-console-rect4"></div>
+    <div class="raml-console-rect5"></div>
+  </div>
+
+  <div ng-hide="isInit">
+    <form name="authForm" action="" class="raml-console-login-form" novalidate ng-submit="startAuth($event)">
+      <div class="raml-console-main-login-error" ng-show="formError">
+        {{ formError }}
+      </div>
+      <div class="raml-console-main-login-validation-error">
+        API Key and Password are required.
+      </div>
+      <div>
+        <input type="text"
+               required="true"
+               name="username"
+               placeholder="API Key"
+               class="raml-console-sidebar-input raml-console-sidebar-security-field raml-console-login-input"
+               ng-model="credentials.username"/>
+      </div>
+      <div>
+        <input type="password"
+               required="true"
+               name="password"
+               placeholder="Password"
+               class="raml-console-sidebar-input raml-console-sidebar-security-field raml-console-login-input"
+               ng-model="credentials.password"/>
+      </div>
+      <div>
+        <label class="raml-console-login-label">
+          <input type="checkbox" class="" ng-checked="isRemember" ng-click="changeRemember()"/>
+          Remember me
+        </label>
+      </div>
+      <div>
+        <button type="submit" class="raml-console-login-submit">
+          <span ng-show="!isLoaded">Sign In</span>
+          <span ng-show="isLoaded">Signing In...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+
+</div>

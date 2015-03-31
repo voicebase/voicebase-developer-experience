@@ -1,0 +1,140 @@
+.login-page-container {
+  background: #242f3e;
+  color: #6e7e95;
+
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  box-sizing: border-box;
+
+  .login-header {
+    display: table;
+    width: 100%;
+    padding: 18px;
+    font-size: 14px;
+
+    .login-header-right {
+      float: right;
+      margin-top: 18px;
+    }
+
+    .login-header-btn {
+      color: #FFF;
+      text-decoration: none;
+      border: 1px solid #FFF;
+      padding: 16px;
+      border-radius: 5px;
+      margin-left: 16px;
+      text-align: center;
+
+      &:hover {
+        background: #fff;
+        color: #242f3e;
+        transition: all 250ms ease-out;
+      }
+    }
+
+    .skip-console-btn {
+      display: table;
+      float: right;
+      margin-top: -15px;
+      width: 135px;
+
+      .spinner {
+        margin: 0 20px;
+        width: auto;
+        height: 19px;
+
+        > div {
+          background-color: #fff;
+        }
+
+        &::after {
+          content: ''
+        }
+      }
+
+      &:hover {
+        .spinner {
+          > div {
+            background-color: #242f3e!important;
+          }
+        }
+      }
+    }
+
+  }
+
+
+  .login-content {
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    margin-top: -169px;
+    left: 50%;
+    margin-left: -140px;
+
+    .brand-label {
+      letter-spacing: 0.3em;
+      margin-bottom: 25px;
+    }
+
+    .login-form {
+      width: 280px;
+      margin: auto;
+    }
+
+    .login-submit {
+      background: #79C15C;
+      color: #FFF;
+      width: 100%;
+      height: 44px;
+      border: none;
+      border-radius: 3px;
+      font-weight: bold;
+      margin-top: 18px;
+
+      &:hover {
+        transition: background-color 250ms ease-out;
+        background: #4CA329;
+      }
+    }
+
+    .login-input {
+      height: 44px;
+    }
+
+    .login-label {
+      color: #fff;
+    }
+
+    .main-login-validation-error {
+      display: none;
+    }
+
+    .spinner {
+      margin: 0 auto;
+
+      > div {
+        background-color: #fff;
+      }
+
+      &::after {
+        content: ''
+      }
+    }
+
+  }
+
+}
+
+.main-login-error {
+  color: #B35555;
+  border: solid #B35555;
+  border-width: 1px 0;
+  padding: 15px 0;
+  margin-bottom: 18px;
+}

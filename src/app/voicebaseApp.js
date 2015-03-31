@@ -2,6 +2,7 @@
   'use strict';
 
   angular.module('ramlVoicebaseConsoleApp', [
+    'ngRoute',
     'RAML.Directives',
     'RAML.Services',
     'RAML.Security',
@@ -9,7 +10,7 @@
     'ui.codemirror',
     'hljs',
     'ramlConsoleApp'
-  ]).config(function ($provide) {
+  ]).config(function ($provide, $routeProvider) {
     RAML.Decorators.ramlConsole($provide);
     RAML.Decorators.ramlField($provide);
     RAML.Decorators.ramlSidebar($provide);
@@ -18,9 +19,15 @@
     // for support custom scheme x-OAuth 2 Bearer
     RAML.Decorators.AuthStrategies();
 
-    // debug
-    //RAML.Decorators.ramlInitializer($provide);
-
+    $routeProvider
+      .when('/', {
+        templateUrl: 'pages/loginPage.html',
+        reloadOnSearch: false
+      })
+      .when('/console', {
+        templateUrl: 'pages/consolePage.html',
+        reloadOnSearch: false
+      });
   });
 
 

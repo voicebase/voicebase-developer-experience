@@ -8,9 +8,10 @@ module.exports = function (grunt) {
         distdir: 'dist',
         pkg: grunt.file.readJSON('package.json'),
         src: {
-            js: ['src/**/*.js'],
+            js: ['src/app/voicebaseApp.js', 'src/**/*.js'],
             jsVendor: [
                 'bower_components/api-console-voicebase/dist/scripts/api-console-vendor.js',
+                'bower_components/angular-route/angular-route.js',
                 'bower_components/api-console-voicebase/dist/scripts/api-console.js'
             ],
             html: ['src/index.html'],
@@ -73,6 +74,28 @@ module.exports = function (grunt) {
                         '!styles/**/*'
                     ]
                 }]
+            },
+
+            pages: {
+                files: [{
+                    dest:   '<%= distdir %>/pages',
+                    cwd:    'src/assets/pages/',
+                    expand: true,
+                    src:    [
+                        '**'
+                    ]
+                }]
+            },
+
+            images: {
+              files: [{
+                dest:   '<%= distdir %>/img',
+                cwd:    'src/assets/img/',
+                expand: true,
+                src:    [
+                  '**'
+                ]
+              }]
             }
         },
 
@@ -127,6 +150,7 @@ module.exports = function (grunt) {
                     'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
                     'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
                     'bower_components/api-console-voicebase/src/assets/styles/error.css',
+                    'src/scss/voicebase-error.scss',
                     '<%= distdir %>/styles/api-console-dark-theme.css',
                     'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-dark.css'
                 ]
@@ -144,6 +168,7 @@ module.exports = function (grunt) {
                     'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
                     'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
                     'bower_components/api-console-voicebase/src/assets/styles/error.css',
+                    'src/scss/voicebase-error.scss',
                     '<%= distdir %>/styles/api-console-light-theme.css',
                     'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-light.css'
                 ]
@@ -162,6 +187,8 @@ module.exports = function (grunt) {
                 'concat:vendor',
                 'concat:index',
                 'copy:assets',
+                'copy:pages',
+                'copy:images',
                 'build:styles'
             ],
 
@@ -244,6 +271,20 @@ module.exports = function (grunt) {
                 files: [
                     'src/scss/**/*.scss'
                 ]
+            },
+
+            pages: {
+              tasks: ['copy:pages'],
+              files: [
+                'src/assets/pages/**/*.html'
+              ]
+            },
+
+            images: {
+              tasks: ['copy:images'],
+              files: [
+                'src/assets/img/**/*.*'
+              ]
             }
 
         },

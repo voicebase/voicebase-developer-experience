@@ -6,7 +6,7 @@
       restrict: 'E',
       templateUrl: 'directives/voicebase-sign.tpl.html',
       replace: true,
-      controller: function($scope, resourceHelper, voicebaseTokensApi) {
+      controller: function($scope, $location, resourceHelper, voicebaseTokensApi) {
         $scope.resource = resourceHelper.findResourceByUrl($scope.raml, '/access/users/{userId}/tokens');
         if($scope.resource) {
           $scope.methodInfo = $scope.resource.methods[0];
@@ -23,7 +23,8 @@
         };
 
         $scope.signOut = function() {
-            voicebaseTokensApi.setTokensObj(null);
+          voicebaseTokensApi.setTokensObj(null);
+          $location.path('/');
         };
 
         $scope.auth = function(credentials, errorCallback) {

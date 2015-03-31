@@ -101,6 +101,7 @@
           }]
         });
       }
+      return tokenFromStorage;
     };
 
     var getNeedRemember = function() {
