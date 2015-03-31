@@ -12,7 +12,7 @@
       <div class="raml-console-main-login-error" ng-show="formError">
         {{ formError }}
       </div>
-      <div class="raml-console-main-login-validation-error">
+      <div class="raml-console-vbs-validation-error raml-console-vbs-validation-required-error">
         API Key and Password are required.
       </div>
       <div>
@@ -38,7 +38,7 @@
         </label>
       </div>
       <div>
-        <button type="submit" class="raml-console-login-submit">
+        <button type="submit" class="raml-console-login-submit raml-console-margin-top-input">
           <span ng-show="!isLoaded">Sign In</span>
           <span ng-show="isLoaded">Signing In...</span>
         </button>

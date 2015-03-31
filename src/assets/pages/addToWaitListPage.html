@@ -1,5 +1,9 @@
 <section class="raml-console-login-page-container" ng-cloak ng-controller="loginPageCtrl">
   <header class="raml-console-login-header">
+    <div class="raml-console-login-header-left">
+      <a href="/" class="raml-console-login-header-btn">Back to Sign In</a>
+    </div>
+
     <div class="raml-console-login-header-right">
       <span class="raml-console-margin-content">Some content is available without signing in</span>
       <a href="#" class="raml-console-login-header-btn raml-console-skip-console-btn" ng-click="skip($event);">
@@ -15,19 +19,13 @@
     </div>
   </header>
 
-  <article class="raml-console-login-content">
+  <article class="raml-console-login-content raml-console-wait-list-page-content">
     <div class="raml-console-voicebase-brand">
       <img src="img/logo.png"/>
     </div>
     <div class="raml-console-brand-label">
       DEVELOPER CONSOLE
     </div>
-
-    <main-login></main-login>
-    <div class="raml-console-login-label">
-      <a href="#wait" >
-        Apply for API Key
-      </a>
-    </div>
+    <wait-list-form></wait-list-form>
   </article>
 </section>

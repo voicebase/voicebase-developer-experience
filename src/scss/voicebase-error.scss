@@ -1,8 +1,33 @@
-form.checkDirty.ng-dirty.ng-invalid-required .raml-console-main-login-validation-error {
-  display: block!important;
+@mixin validError() {
   color: #B35555;
   border: solid #B35555;
   border-width: 1px 0;
   padding: 15px 0;
   margin-bottom: 18px;
 }
+
+.raml-console-vbs-validation-error {
+  display: none;
+}
+
+.raml-console-main-login-error {
+  @include validError();
+}
+
+form.checkDirty.ng-dirty {
+  &.ng-invalid-required {
+    .raml-console-vbs-validation-required-error {
+      @include validError();
+      display: block!important;
+    }
+  }
+
+  &.ng-invalid-email {
+    .raml-console-vbs-validation-wrong-email-error {
+      @include validError();
+      display: block!important;
+    }
+  }
+
+}
+

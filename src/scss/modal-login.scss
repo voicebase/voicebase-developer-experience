@@ -1,3 +1,12 @@
+a {
+  text-decoration: none;
+  color: #fff;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .login-page-container {
   background: #242f3e;
   color: #6e7e95;
@@ -21,13 +30,17 @@
       margin-top: 18px;
     }
 
+    .login-header-left {
+      float: left;
+      margin-top: 18px;
+    }
+
     .login-header-btn {
       color: #FFF;
       text-decoration: none;
       border: 1px solid #FFF;
       padding: 16px;
       border-radius: 5px;
-      margin-left: 16px;
       text-align: center;
 
       &:hover {
@@ -73,7 +86,7 @@
     text-align: center;
     position: absolute;
     top: 50%;
-    margin-top: -169px;
+    margin-top: -190px;
     left: 50%;
     margin-left: -140px;
 
@@ -95,7 +108,6 @@
       border: none;
       border-radius: 3px;
       font-weight: bold;
-      margin-top: 18px;
 
       &:hover {
         transition: background-color 250ms ease-out;
@@ -109,10 +121,7 @@
 
     .login-label {
       color: #fff;
-    }
-
-    .main-login-validation-error {
-      display: none;
+      margin-top: 18px;
     }
 
     .spinner {
@@ -129,11 +138,23 @@
 
   }
 
+  .wait-list-page-content {
+    margin-top: -116px;
+
+  }
 }
 
-.main-login-error {
-  color: #B35555;
-  border: solid #B35555;
+.margin-content {
+  margin: 0 16px;
+}
+
+.margin-top-input {
+  margin-top: 18px;
+}
+
+.vbs-success-message {
+  color: #4CA329;
+  border: solid #4CA329;
   border-width: 1px 0;
   padding: 15px 0;
   margin-bottom: 18px;

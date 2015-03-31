@@ -1,0 +1,33 @@
+<div>
+  <form name="waitListForm" action="" class="raml-console-login-form" novalidate ng-submit="addEmail($event)">
+    <div class="raml-console-main-login-error" ng-show="formError">
+      {{ formError }}
+    </div>
+    <div class="raml-console-vbs-validation-error raml-console-vbs-validation-required-error">
+      Email Address is required.
+    </div>
+    <div class="raml-console-vbs-validation-error raml-console-vbs-validation-wrong-email-error">
+      Invalid Email Address.
+    </div>
+    <div class="raml-console-vbs-success-message" ng-show="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <div>
+      <input type="email"
+             required="true"
+             name="email"
+             placeholder="Email Address"
+             class="raml-console-sidebar-input raml-console-sidebar-security-field raml-console-login-input"
+             ng-model="credentials.email"/>
+    </div>
+    <div>
+      <button type="submit" class="raml-console-login-submit">
+        <span ng-show="!isLoaded">Add me to the wait list</span>
+        <span ng-show="isLoaded">Adding...</span>
+      </button>
+    </div>
+
+  </form>
+
+</div>
