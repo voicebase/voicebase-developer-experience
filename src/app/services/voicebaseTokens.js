@@ -45,6 +45,43 @@
       return deferred.promise;
     };
 
+    var getToken = function(url, credentials) {
+      var deferred = $q.defer();
+
+      var username = credentials.username;
+      var password = credentials.password;
+
+      jQuery.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        data: {
+          apikey: username,
+          password: password
+        },
+        success: function(_tokenData) {
+          if(!_tokenData.success) {
+            deferred.reject('Something goes wrong!');
+          }
+          else {
+            var _tokens = {
+              tokens: [{
+                token: _tokenData.token
+              }]
+            };
+            setTokensObj(_tokens);
+            deferred.resolve(_tokens);
+          }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
     var setTokensObj = function(tokensObj) {
       var _tokensObj = (!tokensObj) ? null : tokensObj.tokens[0];
       setCurrentToken(_tokensObj);
@@ -120,6 +157,7 @@
 
     return {
       getTokens: getTokens,
+      getToken: getToken,
       setTokensObj: setTokensObj,
       getTokensObj: getTokensObj,
       getCurrentToken: getCurrentToken,

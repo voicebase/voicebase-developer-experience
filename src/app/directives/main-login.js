@@ -30,7 +30,7 @@
           }
           else {
             $scope.isLoaded = true;
-            voicebaseTokensApi.getTokens(url, $scope.credentials).then(function() {
+            voicebaseTokensApi.getToken(url, $scope.credentials).then(function() {
               $scope.loadConsole();
             }, function(error){
               $scope.isLoaded = false;
