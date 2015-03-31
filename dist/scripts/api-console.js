@@ -1,3 +1,55 @@
+(function () {
+  'use strict';
+
+  angular.module('ramlVoicebaseConsoleApp', [
+    'ngRoute',
+    'RAML.Directives',
+    'RAML.Services',
+    'RAML.Security',
+    'hc.marked',
+    'ui.codemirror',
+    'hljs',
+    'ramlConsoleApp'
+  ]).config(function ($provide, $routeProvider) {
+    RAML.Decorators.ramlConsole($provide);
+    RAML.Decorators.ramlField($provide);
+    RAML.Decorators.ramlSidebar($provide);
+    RAML.Decorators.namedParameters($provide); // custom headers can't be empty
+
+    // for support custom scheme x-OAuth 2 Bearer
+    RAML.Decorators.AuthStrategies();
+
+    $routeProvider
+      .when('/', {
+        templateUrl: 'pages/loginPage.html',
+        reloadOnSearch: false
+      })
+      .when('/console', {
+        templateUrl: 'pages/consolePage.html',
+        reloadOnSearch: false
+      });
+  });
+
+
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ramlVoicebaseConsoleApp')
+    .controller('loginPageCtrl', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {
+      $scope.isSkipping = false;
+
+      $scope.skip = function(event) {
+        event.preventDefault();
+        $scope.isSkipping = true;
+        $timeout(function() {
+          $location.path('/console');
+        }, 100);
+      };
+    }]);
+})();
+
 RAML.Decorators = (function (Decorators) {
   'use strict';
 
@@ -223,6 +275,73 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  RAML.Directives.mainLogin = function($location, $timeout, voicebaseTokensApi) {
+    return {
+      restrict: 'E',
+      templateUrl: 'directives/main-login.tpl.html',
+      replace: false,
+      controller: function($scope, formValidate) {
+        $scope.credentials = {};
+        $scope.isRemember = voicebaseTokensApi.getNeedRemember();
+        $scope.formError = '';
+        $scope.isInit = true;
+        $scope.isLoaded = false;
+        var url = 'https://apis.voicebase.com/v2-beta';
+
+        $scope.changeRemember = function() {
+          $scope.isRemember = !$scope.isRemember;
+          voicebaseTokensApi.setNeedRemember($scope.isRemember);
+        };
+
+        $scope.hideError = function(){
+          $scope.formError = '';
+        };
+
+        $scope.startAuth = function($event) {
+          var isValid = formValidate.validateForm($scope.authForm);
+          if(!isValid) {
+            jQuery($event.currentTarget).closest('form').addClass('checkDirty').find('.ng-invalid').first().focus();
+          }
+          else {
+            $scope.isLoaded = true;
+            voicebaseTokensApi.getTokens(url, $scope.credentials).then(function() {
+              $scope.loadConsole();
+            }, function(error){
+              $scope.isLoaded = false;
+              $scope.formError = error;
+            });
+          }
+          return false;
+        };
+
+        $scope.loadConsole = function() {
+          $location.path('/console');
+        };
+
+
+      },
+      link:  function ($scope) {
+        $timeout(function() {
+          var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
+          if(tokenFromStorage) {
+            $scope.loadConsole();
+          }
+          else {
+            $scope.isInit = false;
+          }
+        }, 100);
+      }
+    };
+  };
+
+  angular.module('RAML.Directives')
+    .directive('mainLogin', RAML.Directives.mainLogin);
+
+})();
+
+(function () {
+  'use strict';
+
   RAML.Directives.nullForm = function() {
     return {
       restrict: 'A',
@@ -347,7 +466,7 @@ RAML.Decorators = (function (Decorators) {
       restrict: 'E',
       templateUrl: 'directives/voicebase-sign.tpl.html',
       replace: true,
-      controller: function($scope, resourceHelper, voicebaseTokensApi) {
+      controller: function($scope, $location, resourceHelper, voicebaseTokensApi) {
         $scope.resource = resourceHelper.findResourceByUrl($scope.raml, '/access/users/{userId}/tokens');
         if($scope.resource) {
           $scope.methodInfo = $scope.resource.methods[0];
@@ -364,7 +483,8 @@ RAML.Decorators = (function (Decorators) {
         };
 
         $scope.signOut = function() {
-            voicebaseTokensApi.setTokensObj(null);
+          voicebaseTokensApi.setTokensObj(null);
+          $location.path('/');
         };
 
         $scope.auth = function(credentials, errorCallback) {
@@ -627,6 +747,7 @@ RAML.Decorators = (function (Decorators) {
           }]
         });
       }
+      return tokenFromStorage;
     };
 
     var getNeedRemember = function() {
@@ -662,36 +783,62 @@ RAML.Decorators = (function (Decorators) {
 
 })();
 
-(function () {
-  'use strict';
-
-  angular.module('ramlVoicebaseConsoleApp', [
-    'RAML.Directives',
-    'RAML.Services',
-    'RAML.Security',
-    'hc.marked',
-    'ui.codemirror',
-    'hljs',
-    'ramlConsoleApp'
-  ]).config(function ($provide) {
-    RAML.Decorators.ramlConsole($provide);
-    RAML.Decorators.ramlField($provide);
-    RAML.Decorators.ramlSidebar($provide);
-    RAML.Decorators.namedParameters($provide); // custom headers can't be empty
-
-    // for support custom scheme x-OAuth 2 Bearer
-    RAML.Decorators.AuthStrategies();
-
-    // debug
-    //RAML.Decorators.ramlInitializer($provide);
-
-  });
-
-
-})();
-
 angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache) {
   'use strict';
+
+  $templateCache.put('directives/main-login.tpl.html',
+    "<div class=\"raml-console-main-login-form\">\n" +
+    "  <div class=\"raml-console-spinner\" ng-show=\"isInit\">\n" +
+    "    <div class=\"raml-console-rect1\"></div>\n" +
+    "    <div class=\"raml-console-rect2\"></div>\n" +
+    "    <div class=\"raml-console-rect3\"></div>\n" +
+    "    <div class=\"raml-console-rect4\"></div>\n" +
+    "    <div class=\"raml-console-rect5\"></div>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div ng-hide=\"isInit\">\n" +
+    "    <form name=\"authForm\" action=\"\" class=\"raml-console-login-form\" novalidate ng-submit=\"startAuth($event)\">\n" +
+    "      <div class=\"raml-console-main-login-error\" ng-show=\"formError\">\n" +
+    "        {{ formError }}\n" +
+    "      </div>\n" +
+    "      <div class=\"raml-console-main-login-validation-error\">\n" +
+    "        API Key and Password are required.\n" +
+    "      </div>\n" +
+    "      <div>\n" +
+    "        <input type=\"text\"\n" +
+    "               required=\"true\"\n" +
+    "               name=\"username\"\n" +
+    "               placeholder=\"API Key\"\n" +
+    "               class=\"raml-console-sidebar-input raml-console-sidebar-security-field raml-console-login-input\"\n" +
+    "               ng-model=\"credentials.username\"/>\n" +
+    "      </div>\n" +
+    "      <div>\n" +
+    "        <input type=\"password\"\n" +
+    "               required=\"true\"\n" +
+    "               name=\"password\"\n" +
+    "               placeholder=\"Password\"\n" +
+    "               class=\"raml-console-sidebar-input raml-console-sidebar-security-field raml-console-login-input\"\n" +
+    "               ng-model=\"credentials.password\"/>\n" +
+    "      </div>\n" +
+    "      <div>\n" +
+    "        <label class=\"raml-console-login-label\">\n" +
+    "          <input type=\"checkbox\" class=\"\" ng-checked=\"isRemember\" ng-click=\"changeRemember()\"/>\n" +
+    "          Remember me\n" +
+    "        </label>\n" +
+    "      </div>\n" +
+    "      <div>\n" +
+    "        <button type=\"submit\" class=\"raml-console-login-submit\">\n" +
+    "          <span ng-show=\"!isLoaded\">Sign In</span>\n" +
+    "          <span ng-show=\"isLoaded\">Signing In...</span>\n" +
+    "        </button>\n" +
+    "      </div>\n" +
+    "    </form>\n" +
+    "  </div>\n" +
+    "\n" +
+    "\n" +
+    "</div>\n"
+  );
+
 
   $templateCache.put('directives/voicebase-auth-form.tpl.html',
     "<div class=\"raml-console-auth-form-container\">\n" +

@@ -696,6 +696,15 @@ input.ng-dirty.ng-invalid-repeat + span.raml-console-field-validation-error::aft
   text-align: center;
 }
 
+form.checkDirty.ng-dirty.ng-invalid-required .raml-console-main-login-validation-error {
+  display: block!important;
+  color: #B35555;
+  border: solid #B35555;
+  border-width: 1px 0;
+  padding: 15px 0;
+  margin-bottom: 18px;
+}
+
 @charset "UTF-8";
 
 
@@ -4321,6 +4330,138 @@ span.raml-console-side-bar-required-field {
 
 .raml-console-md-line-5 {
   margin-left: 72px;
+}
+
+.raml-console-login-page-container {
+  background: #242f3e;
+  color: #6e7e95;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  box-sizing: border-box;
+}
+
+.raml-console-login-page-container .raml-console-login-header {
+  display: table;
+  width: 100%;
+  padding: 18px;
+  font-size: 14px;
+}
+
+.raml-console-login-page-container .raml-console-login-header .raml-console-login-header-right {
+  float: right;
+  margin-top: 18px;
+}
+
+.raml-console-login-page-container .raml-console-login-header .raml-console-login-header-btn {
+  color: #FFF;
+  text-decoration: none;
+  border: 1px solid #FFF;
+  padding: 16px;
+  border-radius: 5px;
+  margin-left: 16px;
+  text-align: center;
+}
+
+.raml-console-login-page-container .raml-console-login-header .raml-console-login-header-btn:hover {
+  background: #fff;
+  color: #242f3e;
+  transition: all 250ms ease-out;
+}
+
+.raml-console-login-page-container .raml-console-login-header .raml-console-skip-console-btn {
+  display: table;
+  float: right;
+  margin-top: -15px;
+  width: 135px;
+}
+
+.raml-console-login-page-container .raml-console-login-header .raml-console-skip-console-btn .raml-console-spinner {
+  margin: 0 20px;
+  width: auto;
+  height: 19px;
+}
+
+.raml-console-login-page-container .raml-console-login-header .raml-console-skip-console-btn .raml-console-spinner > div {
+  background-color: #fff;
+}
+
+.raml-console-login-page-container .raml-console-login-header .raml-console-skip-console-btn .raml-console-spinner::after {
+  content: "";
+}
+
+.raml-console-login-page-container .raml-console-login-header .raml-console-skip-console-btn:hover .raml-console-spinner > div {
+  background-color: #242f3e !important;
+}
+
+.raml-console-login-page-container .raml-console-login-content {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  margin-top: -169px;
+  left: 50%;
+  margin-left: -140px;
+}
+
+.raml-console-login-page-container .raml-console-login-content .raml-console-brand-label {
+  letter-spacing: 0.3em;
+  margin-bottom: 25px;
+}
+
+.raml-console-login-page-container .raml-console-login-content .raml-console-login-form {
+  width: 280px;
+  margin: auto;
+}
+
+.raml-console-login-page-container .raml-console-login-content .raml-console-login-submit {
+  background: #79C15C;
+  color: #FFF;
+  width: 100%;
+  height: 44px;
+  border: none;
+  border-radius: 3px;
+  font-weight: bold;
+  margin-top: 18px;
+}
+
+.raml-console-login-page-container .raml-console-login-content .raml-console-login-submit:hover {
+  transition: background-color 250ms ease-out;
+  background: #4CA329;
+}
+
+.raml-console-login-page-container .raml-console-login-content .raml-console-login-input {
+  height: 44px;
+}
+
+.raml-console-login-page-container .raml-console-login-content .raml-console-login-label {
+  color: #fff;
+}
+
+.raml-console-login-page-container .raml-console-login-content .raml-console-main-login-validation-error {
+  display: none;
+}
+
+.raml-console-login-page-container .raml-console-login-content .raml-console-spinner {
+  margin: 0 auto;
+}
+
+.raml-console-login-page-container .raml-console-login-content .raml-console-spinner > div {
+  background-color: #fff;
+}
+
+.raml-console-login-page-container .raml-console-login-content .raml-console-spinner::after {
+  content: "";
+}
+
+.raml-console-main-login-error {
+  color: #B35555;
+  border: solid #B35555;
+  border-width: 1px 0;
+  padding: 15px 0;
+  margin-bottom: 18px;
 }
 
 .raml-console-vbs-tokens-container {
