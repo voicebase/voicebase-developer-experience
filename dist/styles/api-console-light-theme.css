@@ -696,13 +696,33 @@ input.ng-dirty.ng-invalid-repeat + span.raml-console-field-validation-error::aft
   text-align: center;
 }
 
-form.checkDirty.ng-dirty.ng-invalid-required .raml-console-main-login-validation-error {
-  display: block!important;
+.raml-console-vbs-validation-error {
+  display: none;
+}
+
+.raml-console-main-login-error {
   color: #B35555;
   border: solid #B35555;
   border-width: 1px 0;
   padding: 15px 0;
   margin-bottom: 18px;
+}
+
+form.checkDirty.ng-dirty.ng-invalid-required .raml-console-vbs-validation-required-error {
+  color: #B35555;
+  border: solid #B35555;
+  border-width: 1px 0;
+  padding: 15px 0;
+  margin-bottom: 18px;
+  display: block !important;
+}
+form.checkDirty.ng-dirty.ng-invalid-email .raml-console-vbs-validation-wrong-email-error {
+  color: #B35555;
+  border: solid #B35555;
+  border-width: 1px 0;
+  padding: 15px 0;
+  margin-bottom: 18px;
+  display: block !important;
 }
 
 @charset "UTF-8";
@@ -4332,6 +4352,15 @@ span.raml-console-side-bar-required-field {
   margin-left: 72px;
 }
 
+a {
+  text-decoration: none;
+  color: #fff;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 .raml-console-login-page-container {
   background: #242f3e;
   color: #6e7e95;
@@ -4356,13 +4385,17 @@ span.raml-console-side-bar-required-field {
   margin-top: 18px;
 }
 
+.raml-console-login-page-container .raml-console-login-header .raml-console-login-header-left {
+  float: left;
+  margin-top: 18px;
+}
+
 .raml-console-login-page-container .raml-console-login-header .raml-console-login-header-btn {
   color: #FFF;
   text-decoration: none;
   border: 1px solid #FFF;
   padding: 16px;
   border-radius: 5px;
-  margin-left: 16px;
   text-align: center;
 }
 
@@ -4401,7 +4434,7 @@ span.raml-console-side-bar-required-field {
   text-align: center;
   position: absolute;
   top: 50%;
-  margin-top: -169px;
+  margin-top: -190px;
   left: 50%;
   margin-left: -140px;
 }
@@ -4424,7 +4457,6 @@ span.raml-console-side-bar-required-field {
   border: none;
   border-radius: 3px;
   font-weight: bold;
-  margin-top: 18px;
 }
 
 .raml-console-login-page-container .raml-console-login-content .raml-console-login-submit:hover {
@@ -4438,10 +4470,7 @@ span.raml-console-side-bar-required-field {
 
 .raml-console-login-page-container .raml-console-login-content .raml-console-login-label {
   color: #fff;
-}
-
-.raml-console-login-page-container .raml-console-login-content .raml-console-main-login-validation-error {
-  display: none;
+  margin-top: 18px;
 }
 
 .raml-console-login-page-container .raml-console-login-content .raml-console-spinner {
@@ -4456,9 +4485,21 @@ span.raml-console-side-bar-required-field {
   content: "";
 }
 
-.raml-console-main-login-error {
-  color: #B35555;
-  border: solid #B35555;
+.raml-console-login-page-container .raml-console-wait-list-page-content {
+  margin-top: -116px;
+}
+
+.raml-console-margin-content {
+  margin: 0 16px;
+}
+
+.raml-console-margin-top-input {
+  margin-top: 18px;
+}
+
+.raml-console-vbs-success-message {
+  color: #4CA329;
+  border: solid #4CA329;
   border-width: 1px 0;
   padding: 15px 0;
   margin-bottom: 18px;

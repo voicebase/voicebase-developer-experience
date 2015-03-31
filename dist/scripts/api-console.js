@@ -27,6 +27,10 @@
       .when('/console', {
         templateUrl: 'pages/consolePage.html',
         reloadOnSearch: false
+      })
+      .when('/wait', {
+        templateUrl: 'pages/addToWaitListPage.html',
+        reloadOnSearch: false
       });
   });
 
@@ -582,6 +586,53 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  RAML.Directives.waitListForm = function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'directives/wait-list-form.tpl.html',
+      replace: false,
+      controller: function($scope, formValidate, waitList) {
+        $scope.credentials = {};
+        $scope.formError = '';
+        $scope.successMessage = '';
+
+        $scope.isLoaded = false;
+        var url = 'https://apis.voicebase.com/v2-beta';
+
+        $scope.hideError = function(){
+          $scope.formError = '';
+        };
+
+        $scope.addEmail = function($event) {
+          var isValid = formValidate.validateForm($scope.waitListForm);
+          if(!isValid) {
+            jQuery($event.currentTarget).closest('form').addClass('checkDirty').find('.ng-invalid').first().focus();
+          }
+          else {
+            $scope.isLoaded = true;
+            waitList.addEmailToWaitList(url, $scope.credentials).then(function() {
+              $scope.isLoaded = false;
+              $scope.successMessage = 'Your email has been added to wait list.';
+            }, function(error){
+              $scope.isLoaded = false;
+              $scope.formError = error;
+            });
+          }
+          return false;
+        };
+
+      }
+    };
+  };
+
+  angular.module('RAML.Directives')
+    .directive('waitListForm', RAML.Directives.waitListForm);
+
+})();
+
+(function () {
+  'use strict';
+
   RAML.Services.FormValidate = function() {
     var validateForm = function(form) {
       var errors = form.$error;
@@ -821,6 +872,36 @@ RAML.Decorators = (function (Decorators) {
 
 })();
 
+(function () {
+  'use strict';
+
+  RAML.Services.waitList = function($http, $q) {
+
+    var addEmailToWaitList = function(url, credentials) {
+      var deferred = $q.defer();
+
+      var email = credentials.email;
+
+      setTimeout(function() {
+        console.log(url + email);
+        deferred.resolve();
+      }, 1000);
+
+      return deferred.promise;
+    };
+
+    return {
+      addEmailToWaitList: addEmailToWaitList
+    };
+
+  };
+
+  angular.module('RAML.Services')
+    .service('waitList', RAML.Services.waitList);
+
+})();
+
+
 angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache) {
   'use strict';
 
@@ -839,7 +920,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <div class=\"raml-console-main-login-error\" ng-show=\"formError\">\n" +
     "        {{ formError }}\n" +
     "      </div>\n" +
-    "      <div class=\"raml-console-main-login-validation-error\">\n" +
+    "      <div class=\"raml-console-vbs-validation-error raml-console-vbs-validation-required-error\">\n" +
     "        API Key and Password are required.\n" +
     "      </div>\n" +
     "      <div>\n" +
@@ -865,7 +946,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        </label>\n" +
     "      </div>\n" +
     "      <div>\n" +
-    "        <button type=\"submit\" class=\"raml-console-login-submit\">\n" +
+    "        <button type=\"submit\" class=\"raml-console-login-submit raml-console-margin-top-input\">\n" +
     "          <span ng-show=\"!isLoaded\">Sign In</span>\n" +
     "          <span ng-show=\"isLoaded\">Signing In...</span>\n" +
     "        </button>\n" +
@@ -1036,6 +1117,43 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  </div>\n" +
     "\n" +
     "  <voicebase-auth-form></voicebase-auth-form>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('directives/wait-list-form.tpl.html',
+    "<div>\n" +
+    "  <form name=\"waitListForm\" action=\"\" class=\"raml-console-login-form\" novalidate ng-submit=\"addEmail($event)\">\n" +
+    "    <div class=\"raml-console-main-login-error\" ng-show=\"formError\">\n" +
+    "      {{ formError }}\n" +
+    "    </div>\n" +
+    "    <div class=\"raml-console-vbs-validation-error raml-console-vbs-validation-required-error\">\n" +
+    "      Email Address is required.\n" +
+    "    </div>\n" +
+    "    <div class=\"raml-console-vbs-validation-error raml-console-vbs-validation-wrong-email-error\">\n" +
+    "      Invalid Email Address.\n" +
+    "    </div>\n" +
+    "    <div class=\"raml-console-vbs-success-message\" ng-show=\"successMessage\">\n" +
+    "      {{ successMessage }}\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div>\n" +
+    "      <input type=\"email\"\n" +
+    "             required=\"true\"\n" +
+    "             name=\"email\"\n" +
+    "             placeholder=\"Email Address\"\n" +
+    "             class=\"raml-console-sidebar-input raml-console-sidebar-security-field raml-console-login-input\"\n" +
+    "             ng-model=\"credentials.email\"/>\n" +
+    "    </div>\n" +
+    "    <div>\n" +
+    "      <button type=\"submit\" class=\"raml-console-login-submit\">\n" +
+    "        <span ng-show=\"!isLoaded\">Add me to the wait list</span>\n" +
+    "        <span ng-show=\"isLoaded\">Adding...</span>\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "\n" +
+    "  </form>\n" +
+    "\n" +
     "</div>\n"
   );
 
