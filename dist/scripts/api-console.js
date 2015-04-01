@@ -1177,4 +1177,23 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "</div>\n"
   );
 
+
+  $templateCache.put('templates/landing-brand.tpl.html',
+    "<div class=\"raml-console-voicebase-brand\">\n" +
+    "  <img src=\"img/logo.png\"/>\n" +
+    "</div>\n" +
+    "<div class=\"raml-console-brand-label\">\n" +
+    "  DEVELOPER CONSOLE\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('templates/skip-toolbar.tpl.html',
+    "<span class=\"raml-console-margin-content\">Some content is available without signing in</span>\n" +
+    "<a href=\"#\" class=\"raml-console-login-header-btn raml-console-skip-console-btn\" ng-click=\"skip($event);\">\n" +
+    "  <span ng-hide=\"isSkipping\">Skip to Console</span>\n" +
+    "  <css-spinner ng-show=\"isSkipping\"></css-spinner>\n" +
+    "</a>\n"
+  );
+
 }]);
