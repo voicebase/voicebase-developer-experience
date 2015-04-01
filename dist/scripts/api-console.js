@@ -279,6 +279,22 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  RAML.Directives.cssSpinner = function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'directives/css-spinner.tpl.html',
+      replace: false
+    };
+  };
+
+  angular.module('RAML.Directives')
+    .directive('cssSpinner', RAML.Directives.cssSpinner);
+
+})();
+
+(function () {
+  'use strict';
+
   RAML.Directives.mainLogin = function($location, $timeout, voicebaseTokensApi) {
     return {
       restrict: 'E',
@@ -905,16 +921,20 @@ RAML.Decorators = (function (Decorators) {
 angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache) {
   'use strict';
 
+  $templateCache.put('directives/css-spinner.tpl.html',
+    "<div class=\"raml-console-spinner\">\n" +
+    "  <div class=\"raml-console-rect1\"></div>\n" +
+    "  <div class=\"raml-console-rect2\"></div>\n" +
+    "  <div class=\"raml-console-rect3\"></div>\n" +
+    "  <div class=\"raml-console-rect4\"></div>\n" +
+    "  <div class=\"raml-console-rect5\"></div>\n" +
+    "</div>\n"
+  );
+
+
   $templateCache.put('directives/main-login.tpl.html',
     "<div class=\"raml-console-main-login-form\">\n" +
-    "  <div class=\"raml-console-spinner\" ng-show=\"isInit\">\n" +
-    "    <div class=\"raml-console-rect1\"></div>\n" +
-    "    <div class=\"raml-console-rect2\"></div>\n" +
-    "    <div class=\"raml-console-rect3\"></div>\n" +
-    "    <div class=\"raml-console-rect4\"></div>\n" +
-    "    <div class=\"raml-console-rect5\"></div>\n" +
-    "  </div>\n" +
-    "\n" +
+    "  <css-spinner ng-show=\"isInit\"></css-spinner>\n" +
     "  <div ng-hide=\"isInit\">\n" +
     "    <form name=\"authForm\" action=\"\" class=\"raml-console-login-form\" novalidate ng-submit=\"startAuth($event)\">\n" +
     "      <div class=\"raml-console-main-login-error\" ng-show=\"formError\">\n" +

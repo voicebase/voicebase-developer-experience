@@ -8,13 +8,7 @@
       <span class="raml-console-margin-content">Some content is available without signing in</span>
       <a href="#" class="raml-console-login-header-btn raml-console-skip-console-btn" ng-click="skip($event);">
         <span ng-hide="isSkipping">Skip to Console</span>
-        <div class="raml-console-spinner" ng-show="isSkipping">
-          <div class="raml-console-rect1"></div>
-          <div class="raml-console-rect2"></div>
-          <div class="raml-console-rect3"></div>
-          <div class="raml-console-rect4"></div>
-          <div class="raml-console-rect5"></div>
-        </div>
+        <css-spinner ng-show="isSkipping"></css-spinner>
       </a>
     </div>
   </header>
