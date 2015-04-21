@@ -1,13 +1,14 @@
-a {
-  text-decoration: none;
-  color: #fff;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
 .login-page-container {
+  a {
+    text-decoration: none;
+    color: #fff;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+
   background: #242f3e;
   color: #6e7e95;
 

@@ -4352,15 +4352,6 @@ span.raml-console-side-bar-required-field {
   margin-left: 72px;
 }
 
-a {
-  text-decoration: none;
-  color: #fff;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
 .raml-console-login-page-container {
   background: #242f3e;
   color: #6e7e95;
@@ -4371,6 +4362,15 @@ a:hover {
   top: 0;
   z-index: 9999;
   box-sizing: border-box;
+}
+
+.raml-console-login-page-container a {
+  text-decoration: none;
+  color: #fff;
+}
+
+.raml-console-login-page-container a:hover {
+  text-decoration: underline;
 }
 
 .raml-console-login-page-container .raml-console-login-header {
