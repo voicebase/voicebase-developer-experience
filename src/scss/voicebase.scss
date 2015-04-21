@@ -58,10 +58,14 @@
   }
 }
 
-.vbs-sign-container {
+.left-toolbar {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.vbs-sign-container {
+  float: left;
 
   .vbs-token-auth-form, .vbs-tokens-error {
     left: 5px;

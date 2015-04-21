@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  angular.module('vbsKeywordGroupWidget', []);
+
   angular.module('ramlVoicebaseConsoleApp', [
     'ngRoute',
     'RAML.Directives',
@@ -9,7 +11,8 @@
     'hc.marked',
     'ui.codemirror',
     'hljs',
-    'ramlConsoleApp'
+    'ramlConsoleApp',
+    'vbsKeywordGroupWidget'
   ]).config(function ($provide, $routeProvider) {
     RAML.Decorators.ramlConsole($provide);
     RAML.Decorators.ramlField($provide);
