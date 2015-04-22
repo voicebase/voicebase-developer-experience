@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  angular.module('vbsKeywordGroupWidget', []);
+
   angular.module('ramlVoicebaseConsoleApp', [
     'ngRoute',
     'RAML.Directives',
@@ -9,7 +11,8 @@
     'hc.marked',
     'ui.codemirror',
     'hljs',
-    'ramlConsoleApp'
+    'ramlConsoleApp',
+    'vbsKeywordGroupWidget'
   ]).config(function ($provide, $routeProvider) {
     RAML.Decorators.ramlConsole($provide);
     RAML.Decorators.ramlField($provide);
@@ -115,8 +118,13 @@ RAML.Decorators = (function (Decorators) {
         $scope.$watch('loaded', function () {
           if ($scope.loaded) {
             $timeout(function () {
+              var $container = jQuery('<div class="raml-console-left-toolbar"></div>');
+              jQuery('.raml-console-title').before($container);
               var el = $compile('<voicebase-sign></voicebase-sign>')($scope);
-              jQuery('.raml-console-title').before(el);
+              $container.append(el);
+
+              el = $compile('<keyword-group-widget></keyword-group-widget>')($scope);
+              $container.append(el);
             }, 0);
           }
         });
@@ -649,6 +657,141 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  var keywordGroupWidget = function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'keyword-group-widget/directives/keyword-group-widget.tpl.html',
+      replace: true,
+      controllerAs: 'keywordWidgetCtrl',
+      controller: function(voicebaseTokensApi, keywordGroupApi) {
+        var me = this;
+        me.isShowWidget = false;
+        me.isLoaded = true;
+        me.errorMessage = '';
+        me.keywordGroups = null;
+
+        var tokenData = voicebaseTokensApi.getCurrentToken();
+        me.isLogin = (tokenData) ? true : false;
+
+        me.removeGroup = function(groupName) {
+          keywordGroupApi.removeKeywordGroup(tokenData.token, groupName).then(function(data) {
+            console.log(data);
+          }, function() {
+            me.errorMessage = 'Something going wrong!';
+          });
+        };
+
+        me.toggleWidget = function() {
+          if(!me.isShowWidget) {
+            me.showWidget();
+          }
+          else {
+            me.hideWidget();
+          }
+        };
+
+        me.showWidget = function() {
+          me.isShowWidget = true;
+          me.isLoaded = true;
+          me.errorMessage = '';
+          me.keywordGroups = null;
+
+          var tokenData = voicebaseTokensApi.getCurrentToken();
+          if(tokenData) {
+            me.isLogin = true;
+            keywordGroupApi.getKeywordGroups(tokenData.token).then(function(data) {
+              me.isLoaded = false;
+              me.keywordGroups = data;
+              console.log(data);
+            }, function() {
+              me.isLoaded = false;
+              me.errorMessage = 'Something going wrong!';
+            });
+          }
+          else {
+            me.isLoaded = false;
+          }
+        };
+
+        me.hideWidget = function() {
+          me.isShowWidget = false;
+        };
+      }
+    };
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .directive('keywordGroupWidget', keywordGroupWidget);
+
+})();
+
+(function () {
+  'use strict';
+
+  var keywordGroupApi = function($http, $q) {
+
+    var url = 'https://apis.voicebase.com/v2-beta';
+
+    var getKeywordGroups = function(token) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        url: url + '/definitions/keywords/groups',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function(keywordGroups) {
+          deferred.resolve(keywordGroups);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
+    var removeKeywordGroup = function(token, groupName) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        url: url + '/definitions/keywords/groups/' + groupName,
+        type: 'DELETE',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function(keywordGroups) {
+          deferred.resolve(keywordGroups);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+
+    };
+
+    return {
+      getKeywordGroups: getKeywordGroups,
+      removeKeywordGroup: removeKeywordGroup
+    };
+
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .service('keywordGroupApi', keywordGroupApi);
+
+})();
+
+(function () {
+  'use strict';
+
   RAML.Services.FormValidate = function() {
     var validateForm = function(form) {
       var errors = form.$error;
@@ -1174,6 +1317,37 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "  </form>\n" +
     "\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('keyword-group-widget/directives/keyword-group-widget.tpl.html',
+    "<div class=\"raml-console-vbs-keyword-group-widget-container\">\n" +
+    "  <a class=\"raml-console-meta-button\" ng-click=\"keywordWidgetCtrl.toggleWidget()\">\n" +
+    "    <span>Keywords spotting widget</span>\n" +
+    "  </a>\n" +
+    "\n" +
+    "  <div class=\"raml-console-vbs-popup\" ng-show=\"keywordWidgetCtrl.isShowWidget\">\n" +
+    "    <div class=\"raml-console-vbs-popup-close\" ng-click=\"keywordWidgetCtrl.hideWidget()\">x</div>\n" +
+    "    <div class=\"raml-console-vbs-popup-body\">\n" +
+    "      <css-spinner ng-if=\"keywordWidgetCtrl.isLoaded\"></css-spinner>\n" +
+    "      <div ng-if=\"!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded\" class=\"raml-console-error-message\">Please sign in</div>\n" +
+    "      <div ng-if=\"keywordWidgetCtrl.errorMessage && !keywordWidgetCtrl.isLoaded\" class=\"raml-console-error-message\">{{ keywordWidgetCtrl.errorMessage }}</div>\n" +
+    "\n" +
+    "      <div class=\"raml-console-keywords-group-list\">\n" +
+    "        <div class=\"raml-console-keywords-group-list-item\" ng-repeat=\"keywordGroup in keywordWidgetCtrl.keywordGroups.groups\">\n" +
+    "          <div class=\"raml-console-keywords-group-list-item-cell\">\n" +
+    "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-name\">{{ keywordGroup.name }}</a>\n" +
+    "          </div>\n" +
+    "          <div class=\"raml-console-keywords-group-list-item-cell raml-console-keywords-group-list-item-toolbar\">\n" +
+    "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-delete\" ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup.name)\">\n" +
+    "              <span>x</span>\n" +
+    "            </a>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
     "</div>\n"
   );
 

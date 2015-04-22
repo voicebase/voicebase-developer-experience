@@ -4505,6 +4505,43 @@ a:hover {
   margin-bottom: 18px;
 }
 
+.raml-console-vbs-popup,
+.raml-console-vbs-token-auth-form,
+.raml-console-vbs-tokens-error {
+  background: #1a202b;
+  z-index: 10;
+  position: absolute;
+  left: 0;
+  top: 50px;
+  border: 1px solid #12171f;
+  box-shadow: 0 0 5px #12171f;
+}
+
+.raml-console-vbs-popup .raml-console-vbs-popup-close,
+.raml-console-vbs-token-auth-form .raml-console-vbs-popup-close,
+.raml-console-vbs-tokens-error .raml-console-vbs-popup-close {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  font-size: 12px;
+  line-height: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.raml-console-vbs-popup .raml-console-vbs-popup-close:hover,
+.raml-console-vbs-token-auth-form .raml-console-vbs-popup-close:hover,
+.raml-console-vbs-tokens-error .raml-console-vbs-popup-close:hover {
+  color: #fff;
+}
+
+.raml-console-vbs-popup .raml-console-vbs-popup-body,
+.raml-console-vbs-token-auth-form .raml-console-vbs-popup-body,
+.raml-console-vbs-tokens-error .raml-console-vbs-popup-body {
+  padding: 15px;
+}
+
 .raml-console-vbs-tokens-container {
   position: relative;
 }
@@ -4516,15 +4553,7 @@ a:hover {
 
 .raml-console-vbs-token-auth-form,
 .raml-console-vbs-tokens-error {
-  float: right;
-  background: #1a202b;
-  z-index: 10;
-  position: absolute;
-  left: 0;
-  top: 50px;
   width: 400px;
-  border: 1px solid #12171f;
-  box-shadow: 0 0 5px #12171f;
 }
 
 .raml-console-vbs-token-auth-form .raml-console-vbs-auth-form-btns,
@@ -4568,10 +4597,14 @@ a:hover {
   opacity: 1;
 }
 
-.raml-console-vbs-sign-container {
+.raml-console-left-toolbar {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.raml-console-vbs-sign-container {
+  float: left;
 }
 
 .raml-console-vbs-sign-container .raml-console-vbs-token-auth-form,
@@ -4595,6 +4628,67 @@ a:hover {
 
 .raml-console-pull-left {
   float: left !important;
+}
+
+.raml-console-vbs-keyword-group-widget-container {
+  float: left;
+  position: relative;
+  color: #333;
+}
+
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error {
+  width: 400px;
+  height: auto;
+}
+
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup .raml-console-vbs-popup-body,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form .raml-console-vbs-popup-body,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error .raml-console-vbs-popup-body {
+  margin-top: 15px;
+}
+
+.raml-console-vbs-keyword-group-widget-container .raml-console-spinner {
+  margin: 15px auto;
+}
+
+.raml-console-vbs-keyword-group-widget-container .raml-console-spinner::after {
+  content: "";
+}
+
+.raml-console-vbs-keyword-group-widget-container .raml-console-error-message {
+  color: #d14956;
+}
+
+.raml-console-keywords-group-list {
+  width: 100%;
+}
+
+.raml-console-keywords-group-list .raml-console-keywords-group-list-item {
+  border-bottom: 1px solid #CCC;
+  padding: 15px 0;
+  display: table;
+  width: 100%;
+}
+
+.raml-console-keywords-group-list .raml-console-keywords-group-list-item-cell {
+  float: left;
+}
+
+.raml-console-keywords-group-list .raml-console-keywords-group-list-item-toolbar {
+  margin-left: 15px;
+}
+
+.raml-console-keywords-group-list .raml-console-keywords-group-name {
+  color: #fff;
+  font-weight: bold;
+}
+
+.raml-console-keywords-group-list .raml-console-keywords-group-delete {
+  text-decoration: none;
+  color: #ccc;
+  font-weight: bold;
 }
 
 /*

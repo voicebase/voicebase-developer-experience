@@ -1,3 +1,56 @@
 .vbs-keyword-group-widget-container {
   float: left;
+  position: relative;
+  color: #333;
+
+  .vbs-popup {
+    width: 400px;
+    height: auto;
+
+    .vbs-popup-body {
+      margin-top: 15px;
+    }
+  }
+
+  .spinner {
+    margin: 15px auto;
+
+    &::after {
+      content: ''
+    }
+  }
+
+  .error-message {
+    color: $color-console-tab-delete;
+  }
+}
+
+.keywords-group-list {
+  width: 100%;
+
+  .keywords-group-list-item {
+    border-bottom: 1px solid #CCC;
+    padding: 15px 0;
+    display: table;
+    width: 100%;
+  }
+
+  .keywords-group-list-item-cell {
+    float: left;
+  }
+
+  .keywords-group-list-item-toolbar {
+    margin-left: 15px;
+  }
+
+  .keywords-group-name {
+    color: $color-console-text-bold;
+    font-weight: bold;
+  }
+
+  .keywords-group-delete {
+    text-decoration: none;
+    color: #ccc;
+    font-weight: bold;
+  }
 }
