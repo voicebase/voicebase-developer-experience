@@ -13,6 +13,8 @@
         me.isLoaded = true;
         me.errorMessage = '';
         me.keywordGroups = null;
+        me.newGroup = {};
+        me.showCreateForm = false;
 
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
@@ -23,6 +25,19 @@
           }, function() {
             me.errorMessage = 'Something going wrong!';
           });
+        };
+
+        me.createGroup = function() {
+          me.newGroup = {
+            name: '',
+            description: '',
+            keywords: []
+          };
+          me.showCreateForm = true;
+        };
+
+        me.toggleGroupForm = function(group) {
+          group.expanded = !group.expanded;
         };
 
         me.toggleWidget = function() {
@@ -46,6 +61,9 @@
             keywordGroupApi.getKeywordGroups(tokenData.token).then(function(data) {
               me.isLoaded = false;
               me.keywordGroups = data;
+              me.keywordGroups.groups.forEach(function(group) {
+                group.expanded = false;
+              });
               console.log(data);
             }, function() {
               me.isLoaded = false;

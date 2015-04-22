@@ -1,0 +1,18 @@
+<div class="raml-console-keywords-group-list-item-form">
+  <div>
+    <label>Detection Group Name</label>
+    <input type="text" ng-model="keywordGroup.name"/>
+  </div>
+  <div>
+    <label>Detection Description</label>
+    <textarea ng-model="keywordGroup.description"></textarea>
+  </div>
+  <div>
+    <label>Words/Phrases to detect</label>
+    <div>
+      <div ng-repeat="keyword in keywordGroup.keywords">
+        <input type="text" ng-model="keyword"/>
+      </div>
+    </div>
+  </div>
+</div>

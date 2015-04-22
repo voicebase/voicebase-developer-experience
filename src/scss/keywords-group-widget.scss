@@ -1,7 +1,6 @@
 .vbs-keyword-group-widget-container {
   float: left;
   position: relative;
-  color: #333;
 
   .vbs-popup {
     width: 400px;
@@ -52,5 +51,9 @@
     text-decoration: none;
     color: #ccc;
     font-weight: bold;
+  }
+
+  .keywords-group-list-item-form {
+    clear: both;
   }
 }
