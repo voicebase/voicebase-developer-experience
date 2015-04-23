@@ -5,7 +5,7 @@
 
   <div class="raml-console-vbs-popup" ng-show="keywordWidgetCtrl.isShowWidget">
     <input type="button" value="Create Group" ng-click="keywordWidgetCtrl.startCreateGroup()"/>
-    <div class="raml-console-vbs-popup-close" ng-click="keywordWidgetCtrl.hideWidget()">x</div>
+    <div class="raml-console-vbs-popup-close" ng-click="keywordWidgetCtrl.hideWidget()"></div>
     <div class="raml-console-vbs-popup-body">
       <css-spinner ng-if="keywordWidgetCtrl.isLoaded"></css-spinner>
       <div ng-if="!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">Please sign in</div>
@@ -25,9 +25,10 @@
             <a href="javascript:void(0)" class="raml-console-keywords-group-name" ng-click="keywordWidgetCtrl.toggleGroupForm(keywordGroup)">{{ keywordGroup.name }}</a>
           </div>
           <div class="raml-console-keywords-group-list-item-cell raml-console-keywords-group-list-item-toolbar">
-            <a href="javascript:void(0)" class="raml-console-keywords-group-delete" ng-click="keywordWidgetCtrl.removeGroup(keywordGroup.name)">
-              <span>x</span>
+            <a href="javascript:void(0)" class="raml-console-keywords-group-delete" ng-click="keywordWidgetCtrl.removeGroup(keywordGroup)" ng-show="!keywordGroup.startDelete" title="Delete group">
+              <span>&#10006;</span>
             </a>
+            <css-spinner ng-if="keywordGroup.startDelete"></css-spinner>
           </div>
 
           <div class="raml-console-keywords-group-list-item-form" ng-show="keywordGroup.expanded">

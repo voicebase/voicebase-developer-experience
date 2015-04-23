@@ -19,10 +19,14 @@
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
 
-        me.removeGroup = function(groupName) {
-          keywordGroupApi.removeKeywordGroup(tokenData.token, groupName).then(function(data) {
-            console.log(data);
+        me.removeGroup = function(group) {
+          group.startDelete = true;
+          keywordGroupApi.removeKeywordGroup(tokenData.token, group.name).then(function() {
+            me.keywordGroups.groups = me.keywordGroups.groups.filter(function(_group) {
+                return _group.name !== group.name;
+            });
           }, function() {
+            group.startDelete = false;
             me.errorMessage = 'Something going wrong!';
           });
         };
@@ -80,6 +84,7 @@
               me.keywordGroups = data;
               me.keywordGroups.groups.forEach(function(group) {
                 group.expanded = false;
+                group.startDelete = false;
               });
               console.log(data);
             }, function() {
