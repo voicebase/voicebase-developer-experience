@@ -10,8 +10,9 @@
         keywordGroup: '='
       },
       controller: function($scope) {
-        console.log(this.keywordGroup);
-
+        $scope.addKeyword = function() {
+          $scope.keywordGroup.keywords.push('');
+        };
       }
     };
   };

@@ -47,12 +47,36 @@
       });
 
       return deferred.promise;
+    };
 
+    var createKeywordGroup = function(token, newGroup) {
+      var deferred = $q.defer();
+      delete newGroup.description;
+      jQuery.ajax({
+        url: url + '/definitions/keywords/groups/' + newGroup.name,
+        type: 'PUT',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(newGroup),
+        success: function(keywordGroups) {
+          deferred.resolve(keywordGroups);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
     };
 
     return {
       getKeywordGroups: getKeywordGroups,
-      removeKeywordGroup: removeKeywordGroup
+      removeKeywordGroup: removeKeywordGroup,
+      createKeywordGroup: createKeywordGroup
     };
 
   };

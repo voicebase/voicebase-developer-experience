@@ -4,17 +4,21 @@
   </a>
 
   <div class="raml-console-vbs-popup" ng-show="keywordWidgetCtrl.isShowWidget">
-    <input type="button" value="Create Group" ng-click="keywordWidgetCtrl.createGroup()"/>
+    <input type="button" value="Create Group" ng-click="keywordWidgetCtrl.startCreateGroup()"/>
     <div class="raml-console-vbs-popup-close" ng-click="keywordWidgetCtrl.hideWidget()">x</div>
     <div class="raml-console-vbs-popup-body">
       <css-spinner ng-if="keywordWidgetCtrl.isLoaded"></css-spinner>
       <div ng-if="!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">Please sign in</div>
       <div ng-if="keywordWidgetCtrl.errorMessage && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">{{ keywordWidgetCtrl.errorMessage }}</div>
 
+      <!--Create group form-->
       <div class="raml-console-create-group-form" ng-show="keywordWidgetCtrl.showCreateForm">
-        <keyword-group-form keyword-group="keywordWidgetCtrl.newKeywordGroup"></keyword-group-form>
+        <keyword-group-form keyword-group="keywordWidgetCtrl.newGroup"></keyword-group-form>
+        <input type="button" value="Create" ng-click="keywordWidgetCtrl.createGroup();"/>
+        <input type="button" value="Cancel" ng-click="keywordWidgetCtrl.showCreateForm = false;"/>
       </div>
 
+      <!--groups list-->
       <div class="raml-console-keywords-group-list">
         <div class="raml-console-keywords-group-list-item" ng-repeat="keywordGroup in keywordWidgetCtrl.keywordGroups.groups">
           <div class="raml-console-keywords-group-list-item-cell">
@@ -28,6 +32,8 @@
 
           <div class="raml-console-keywords-group-list-item-form" ng-show="keywordGroup.expanded">
             <keyword-group-form keyword-group="keywordGroup"></keyword-group-form>
+            <input type="button" value="Edit" ng-click="keywordWidgetCtrl.editGroup(keywordGroup);"/>
+            <input type="button" value="Cancel" ng-click="keywordGroup.expanded = false;"/>
           </div>
 
         </div>

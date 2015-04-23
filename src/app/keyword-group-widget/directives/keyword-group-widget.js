@@ -27,13 +27,29 @@
           });
         };
 
-        me.createGroup = function() {
+        me.startCreateGroup = function() {
           me.newGroup = {
             name: '',
             description: '',
             keywords: []
           };
           me.showCreateForm = true;
+        };
+
+        me.createGroup = function() {
+          keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function(data) {
+            console.log(data);
+          }, function() {
+            me.errorMessage = 'Something going wrong!';
+          });
+        };
+
+        me.editGroup = function(group) {
+          keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function(data) {
+            console.log(data);
+          }, function() {
+            me.errorMessage = 'Something going wrong!';
+          });
         };
 
         me.toggleGroupForm = function(group) {
@@ -54,6 +70,7 @@
           me.isLoaded = true;
           me.errorMessage = '';
           me.keywordGroups = null;
+          me.showCreateForm = false;
 
           var tokenData = voicebaseTokensApi.getCurrentToken();
           if(tokenData) {

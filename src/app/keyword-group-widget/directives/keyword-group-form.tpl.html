@@ -10,9 +10,10 @@
   <div>
     <label>Words/Phrases to detect</label>
     <div>
-      <div ng-repeat="keyword in keywordGroup.keywords">
-        <input type="text" ng-model="keyword"/>
+      <div ng-repeat="keyword in keywordGroup.keywords track by $index">
+        <input type="text" ng-model="keywordGroup.keywords[$index]"/>
       </div>
     </div>
+    <input type="button" value="Add a Word/Phrase" ng-click="addKeyword()"/>
   </div>
 </div>
