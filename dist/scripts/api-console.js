@@ -672,7 +672,7 @@ RAML.Decorators = (function (Decorators) {
 
         $scope.removeKeyword = function(index) {
           $scope.keywordGroup.keywords.splice(index, 1);
-        }
+        };
       }
     };
   };
