@@ -3290,7 +3290,8 @@ a.raml-console-resource-path-active {
   margin-top: 9px;
 }
 
-.raml-console-sidebar-input {
+.raml-console-sidebar-input,
+.raml-console-sidebar-textarea {
   display: block;
   width: 100%;
   margin-top: 5px;
@@ -4520,6 +4521,7 @@ a:hover {
 .raml-console-vbs-popup .raml-console-vbs-popup-close,
 .raml-console-vbs-token-auth-form .raml-console-vbs-popup-close,
 .raml-console-vbs-tokens-error .raml-console-vbs-popup-close {
+  color: #878787;
   position: absolute;
   right: 15px;
   top: 15px;
@@ -4647,6 +4649,11 @@ a:hover {
   float: left !important;
 }
 
+.raml-console-sidebar-textarea {
+  height: 80px;
+  padding-left: 10px;
+}
+
 .raml-console-vbs-keyword-group-widget-container {
   float: left;
   position: relative;
@@ -4663,12 +4670,6 @@ a:hover {
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form .raml-console-vbs-popup-header,
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error .raml-console-vbs-popup-header {
   background: #e0e0e0;
-}
-
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup .raml-console-vbs-popup-body,
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form .raml-console-vbs-popup-body,
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error .raml-console-vbs-popup-body {
-  margin-top: 15px;
 }
 
 .raml-console-vbs-keyword-group-widget-container .raml-console-spinner {
@@ -4713,16 +4714,6 @@ a:hover {
   font-weight: bold;
 }
 
-.raml-console-keywords-group-list .raml-console-keywords-group-delete {
-  text-decoration: none;
-  color: #ccc;
-  font-weight: bold;
-}
-
-.raml-console-keywords-group-list .raml-console-keywords-group-delete:hover {
-  color: #333;
-}
-
 .raml-console-keywords-group-list .raml-console-keywords-group-list-item-form {
   clear: both;
 }
@@ -4732,8 +4723,45 @@ a:hover {
   height: 32px;
 }
 
-.raml-console-plus-icon:before {
-  content: "\f067";
+.raml-console-popup-body-toolbar {
+  text-align: right;
+}
+
+.raml-console-icon-delete {
+  text-decoration: none;
+  color: #ccc;
+  font-weight: bold;
+}
+
+.raml-console-icon-delete:hover {
+  text-decoration: none;
+  color: #333;
+}
+
+.raml-console-icon-plus {
+  color: #61ca03;
+  font-weight: bold;
+}
+
+.raml-console-icon-plus:before {
+  content: "\002B";
+}
+
+.raml-console-keyword-container {
+  display: table;
+  width: 100%;
+  position: relative;
+}
+
+.raml-console-keyword-container .raml-console-keyword-input {
+  width: 80%;
+  float: left;
+}
+
+.raml-console-keyword-container .raml-console-icon-delete {
+  margin: 5px;
+  position: relative;
+  top: 10px;
 }
 
 /*

@@ -669,6 +669,10 @@ RAML.Decorators = (function (Decorators) {
         $scope.addKeyword = function() {
           $scope.keywordGroup.keywords.push('');
         };
+
+        $scope.removeKeyword = function(index) {
+          $scope.keywordGroup.keywords.splice(index, 1);
+        }
       }
     };
   };
@@ -715,13 +719,13 @@ RAML.Decorators = (function (Decorators) {
           me.newGroup = {
             name: '',
             description: '',
-            keywords: []
+            keywords: ['']
           };
           me.showCreateForm = true;
         };
 
         me.createGroup = function() {
-          keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function(data) {
+          keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
             me.keywordGroups.groups.push(me.newGroup);
             me.showCreateForm = false;
           }, function() {
@@ -854,8 +858,8 @@ RAML.Decorators = (function (Decorators) {
           'Content-Type': 'application/json'
         },
         data: JSON.stringify(newGroup),
-        success: function(keywordGroups) {
-          deferred.resolve(keywordGroups);
+        success: function() {
+          deferred.resolve();
         },
         error: function(jqXHR, textStatus, errorThrown){
           console.log(errorThrown + ': Error ' + jqXHR.status);
@@ -1415,20 +1419,25 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "<div class=\"raml-console-keywords-group-list-item-form\">\n" +
     "  <div>\n" +
     "    <label>Detection Group Name</label>\n" +
-    "    <input type=\"text\" ng-model=\"keywordGroup.name\"/>\n" +
+    "    <input type=\"text\" class=\"raml-console-sidebar-input raml-console-sidebar-input-custom\" ng-model=\"keywordGroup.name\"/>\n" +
     "  </div>\n" +
     "  <div>\n" +
     "    <label>Detection Description</label>\n" +
-    "    <textarea ng-model=\"keywordGroup.description\"></textarea>\n" +
+    "    <textarea ng-model=\"keywordGroup.description\" class=\"raml-console-sidebar-textarea\"></textarea>\n" +
     "  </div>\n" +
     "  <div>\n" +
     "    <label>Words/Phrases to detect</label>\n" +
     "    <div>\n" +
-    "      <div ng-repeat=\"keyword in keywordGroup.keywords track by $index\">\n" +
-    "        <input type=\"text\" ng-model=\"keywordGroup.keywords[$index]\"/>\n" +
+    "      <div ng-repeat=\"keyword in keywordGroup.keywords track by $index\" class=\"raml-console-keyword-container\">\n" +
+    "        <input type=\"text\" ng-model=\"keywordGroup.keywords[$index]\" class=\"raml-console-sidebar-input raml-console-sidebar-input-custom raml-console-keyword-input\"/>\n" +
+    "        <a href=\"javascript:void(0)\" class=\"raml-console-icon-delete\" ng-click=\"removeKeyword($index)\" title=\"Remove word/phrase\">\n" +
+    "          <span>&#10006;</span>\n" +
+    "        </a>\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <input type=\"button\" value=\"Add a Word/Phrase\" ng-click=\"addKeyword()\"/>\n" +
+    "    <a href=\"javascript:void(0)\" class=\"raml-console-icon raml-console-icon-plus\" ng-click=\"addKeyword()\">\n" +
+    "      Add a Word/Phrase\n" +
+    "    </a>\n" +
     "  </div>\n" +
     "</div>\n"
   );
@@ -1445,13 +1454,15 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <h2 class=\"raml-console-vbs-popup-title\">Keyword Spotting Groups</h2>\n" +
     "      <div class=\"raml-console-vbs-popup-close\" ng-click=\"keywordWidgetCtrl.hideWidget()\"></div>\n" +
     "    </div>\n" +
-    "    <div class=\"raml-console-icon raml-console-plus-icon\"></div>\n" +
     "\n" +
     "    <div class=\"raml-console-vbs-popup-body\">\n" +
-    "      <a href=\"javascript:void(0)\"  ng-click=\"keywordWidgetCtrl.startCreateGroup()\">\n" +
-    "        <i class=\"fa fa-plus\"></i>\n" +
-    "        Create Group\n" +
-    "      </a>\n" +
+    "\n" +
+    "      <!--Toolbar-->\n" +
+    "      <div class=\"raml-console-popup-body-toolbar\">\n" +
+    "        <a href=\"javascript:void(0)\" class=\"raml-console-icon raml-console-icon-plus\" ng-click=\"keywordWidgetCtrl.startCreateGroup()\">\n" +
+    "          Create Group\n" +
+    "        </a>\n" +
+    "      </div>\n" +
     "\n" +
     "      <css-spinner ng-if=\"keywordWidgetCtrl.isLoaded\"></css-spinner>\n" +
     "      <div ng-if=\"!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded\" class=\"raml-console-error-message\">Please sign in</div>\n" +
@@ -1460,8 +1471,8 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <!--Create group form-->\n" +
     "      <div class=\"raml-console-create-group-form\" ng-show=\"keywordWidgetCtrl.showCreateForm\">\n" +
     "        <keyword-group-form keyword-group=\"keywordWidgetCtrl.newGroup\"></keyword-group-form>\n" +
-    "        <input type=\"button\" value=\"Create\" ng-click=\"keywordWidgetCtrl.createGroup();\"/>\n" +
-    "        <input type=\"button\" value=\"Cancel\" ng-click=\"keywordWidgetCtrl.showCreateForm = false;\"/>\n" +
+    "        <input type=\"button\" value=\"Create\" class=\"raml-console-sidebar-action raml-console-sidebar-action-put\" ng-click=\"keywordWidgetCtrl.createGroup();\"/>\n" +
+    "        <input type=\"button\" value=\"Cancel\" class=\"raml-console-sidebar-action raml-console-sidebar-action-reset\" ng-click=\"keywordWidgetCtrl.showCreateForm = false;\"/>\n" +
     "      </div>\n" +
     "\n" +
     "      <!--groups list-->\n" +
@@ -1471,7 +1482,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-name\" ng-click=\"keywordWidgetCtrl.toggleGroupForm(keywordGroup)\">{{ keywordGroup.name }}</a>\n" +
     "          </div>\n" +
     "          <div class=\"raml-console-keywords-group-list-item-cell raml-console-keywords-group-list-item-toolbar\">\n" +
-    "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-delete\" ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup)\" ng-show=\"!keywordGroup.startDelete\" title=\"Delete group\">\n" +
+    "            <a href=\"javascript:void(0)\" class=\"raml-console-icon-delete\" ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup)\" ng-show=\"!keywordGroup.startDelete\" title=\"Delete group\">\n" +
     "              <span>&#10006;</span>\n" +
     "            </a>\n" +
     "            <css-spinner ng-if=\"keywordGroup.startDelete\"></css-spinner>\n" +
@@ -1479,8 +1490,8 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "          <div class=\"raml-console-keywords-group-list-item-form\" ng-show=\"keywordGroup.expanded\">\n" +
     "            <keyword-group-form keyword-group=\"keywordGroup\"></keyword-group-form>\n" +
-    "            <input type=\"button\" value=\"Edit\" ng-click=\"keywordWidgetCtrl.editGroup(keywordGroup);\"/>\n" +
-    "            <input type=\"button\" value=\"Cancel\" ng-click=\"keywordGroup.expanded = false;\"/>\n" +
+    "            <input type=\"button\" value=\"Edit\" class=\"raml-console-sidebar-action raml-console-sidebar-action-put\" ng-click=\"keywordWidgetCtrl.editGroup(keywordGroup);\"/>\n" +
+    "            <input type=\"button\" value=\"Cancel\" class=\"raml-console-sidebar-action raml-console-sidebar-action-reset\" ng-click=\"keywordGroup.expanded = false;\"/>\n" +
     "          </div>\n" +
     "\n" +
     "        </div>\n" +
