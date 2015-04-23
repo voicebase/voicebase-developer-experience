@@ -1,19 +1,24 @@
 <div class="raml-console-keywords-group-list-item-form">
   <div>
     <label>Detection Group Name</label>
-    <input type="text" ng-model="keywordGroup.name"/>
+    <input type="text" class="raml-console-sidebar-input raml-console-sidebar-input-custom" ng-model="keywordGroup.name"/>
   </div>
   <div>
     <label>Detection Description</label>
-    <textarea ng-model="keywordGroup.description"></textarea>
+    <textarea ng-model="keywordGroup.description" class="raml-console-sidebar-textarea"></textarea>
   </div>
   <div>
     <label>Words/Phrases to detect</label>
     <div>
-      <div ng-repeat="keyword in keywordGroup.keywords track by $index">
-        <input type="text" ng-model="keywordGroup.keywords[$index]"/>
+      <div ng-repeat="keyword in keywordGroup.keywords track by $index" class="raml-console-keyword-container">
+        <input type="text" ng-model="keywordGroup.keywords[$index]" class="raml-console-sidebar-input raml-console-sidebar-input-custom raml-console-keyword-input"/>
+        <a href="javascript:void(0)" class="raml-console-icon-delete" ng-click="removeKeyword($index)" title="Remove word/phrase">
+          <span>&#10006;</span>
+        </a>
       </div>
     </div>
-    <input type="button" value="Add a Word/Phrase" ng-click="addKeyword()"/>
+    <a href="javascript:void(0)" class="raml-console-icon raml-console-icon-plus" ng-click="addKeyword()">
+      Add a Word/Phrase
+    </a>
   </div>
 </div>

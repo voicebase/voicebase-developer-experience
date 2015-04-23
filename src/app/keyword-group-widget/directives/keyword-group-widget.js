@@ -35,13 +35,13 @@
           me.newGroup = {
             name: '',
             description: '',
-            keywords: []
+            keywords: ['']
           };
           me.showCreateForm = true;
         };
 
         me.createGroup = function() {
-          keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function(data) {
+          keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
             me.keywordGroups.groups.push(me.newGroup);
             me.showCreateForm = false;
           }, function() {

@@ -8,13 +8,15 @@
       <h2 class="raml-console-vbs-popup-title">Keyword Spotting Groups</h2>
       <div class="raml-console-vbs-popup-close" ng-click="keywordWidgetCtrl.hideWidget()"></div>
     </div>
-    <div class="raml-console-icon raml-console-plus-icon"></div>
 
     <div class="raml-console-vbs-popup-body">
-      <a href="javascript:void(0)"  ng-click="keywordWidgetCtrl.startCreateGroup()">
-        <i class="fa fa-plus"></i>
-        Create Group
-      </a>
+
+      <!--Toolbar-->
+      <div class="raml-console-popup-body-toolbar">
+        <a href="javascript:void(0)" class="raml-console-icon raml-console-icon-plus" ng-click="keywordWidgetCtrl.startCreateGroup()">
+          Create Group
+        </a>
+      </div>
 
       <css-spinner ng-if="keywordWidgetCtrl.isLoaded"></css-spinner>
       <div ng-if="!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">Please sign in</div>
@@ -23,8 +25,8 @@
       <!--Create group form-->
       <div class="raml-console-create-group-form" ng-show="keywordWidgetCtrl.showCreateForm">
         <keyword-group-form keyword-group="keywordWidgetCtrl.newGroup"></keyword-group-form>
-        <input type="button" value="Create" ng-click="keywordWidgetCtrl.createGroup();"/>
-        <input type="button" value="Cancel" ng-click="keywordWidgetCtrl.showCreateForm = false;"/>
+        <input type="button" value="Create" class="raml-console-sidebar-action raml-console-sidebar-action-put" ng-click="keywordWidgetCtrl.createGroup();"/>
+        <input type="button" value="Cancel" class="raml-console-sidebar-action raml-console-sidebar-action-reset" ng-click="keywordWidgetCtrl.showCreateForm = false;"/>
       </div>
 
       <!--groups list-->
@@ -34,7 +36,7 @@
             <a href="javascript:void(0)" class="raml-console-keywords-group-name" ng-click="keywordWidgetCtrl.toggleGroupForm(keywordGroup)">{{ keywordGroup.name }}</a>
           </div>
           <div class="raml-console-keywords-group-list-item-cell raml-console-keywords-group-list-item-toolbar">
-            <a href="javascript:void(0)" class="raml-console-keywords-group-delete" ng-click="keywordWidgetCtrl.removeGroup(keywordGroup)" ng-show="!keywordGroup.startDelete" title="Delete group">
+            <a href="javascript:void(0)" class="raml-console-icon-delete" ng-click="keywordWidgetCtrl.removeGroup(keywordGroup)" ng-show="!keywordGroup.startDelete" title="Delete group">
               <span>&#10006;</span>
             </a>
             <css-spinner ng-if="keywordGroup.startDelete"></css-spinner>
@@ -42,8 +44,8 @@
 
           <div class="raml-console-keywords-group-list-item-form" ng-show="keywordGroup.expanded">
             <keyword-group-form keyword-group="keywordGroup"></keyword-group-form>
-            <input type="button" value="Edit" ng-click="keywordWidgetCtrl.editGroup(keywordGroup);"/>
-            <input type="button" value="Cancel" ng-click="keywordGroup.expanded = false;"/>
+            <input type="button" value="Edit" class="raml-console-sidebar-action raml-console-sidebar-action-put" ng-click="keywordWidgetCtrl.editGroup(keywordGroup);"/>
+            <input type="button" value="Cancel" class="raml-console-sidebar-action raml-console-sidebar-action-reset" ng-click="keywordGroup.expanded = false;"/>
           </div>
 
         </div>

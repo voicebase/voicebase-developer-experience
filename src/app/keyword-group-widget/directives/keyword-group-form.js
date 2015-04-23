@@ -13,6 +13,10 @@
         $scope.addKeyword = function() {
           $scope.keywordGroup.keywords.push('');
         };
+
+        $scope.removeKeyword = function(index) {
+          $scope.keywordGroup.keywords.splice(index, 1);
+        }
       }
     };
   };

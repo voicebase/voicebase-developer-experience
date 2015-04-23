@@ -61,8 +61,8 @@
           'Content-Type': 'application/json'
         },
         data: JSON.stringify(newGroup),
-        success: function(keywordGroups) {
-          deferred.resolve(keywordGroups);
+        success: function() {
+          deferred.resolve();
         },
         error: function(jqXHR, textStatus, errorThrown){
           console.log(errorThrown + ': Error ' + jqXHR.status);

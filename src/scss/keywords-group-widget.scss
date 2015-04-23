@@ -11,7 +11,6 @@
     }
 
     .vbs-popup-body {
-      margin-top: 15px;
     }
   }
 
@@ -57,16 +56,6 @@
     font-weight: bold;
   }
 
-  .keywords-group-delete {
-    text-decoration: none;
-    color: #ccc;
-    font-weight: bold;
-
-    &:hover {
-      color: #333;
-    }
-  }
-
   .keywords-group-list-item-form {
     clear: both;
   }
@@ -77,9 +66,44 @@
   height: 32px;
 }
 
-.plus-icon {
+.popup-body-toolbar {
+  text-align: right;
+}
+
+.icon-delete {
+  text-decoration: none;
+  color: #ccc;
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: none;
+    color: #333;
+  }
+}
+
+.icon-plus {
+  color: #61ca03;
+  font-weight: bold;
 
   &:before {
-    content: "\f067";
+    content: "\002B";
   }
+}
+
+.keyword-container {
+  display: table;
+  width: 100%;
+  position: relative;
+
+  .keyword-input {
+    width: 80%;
+    float: left;
+  }
+
+  .icon-delete {
+    margin: 5px;
+    position: relative;
+    top: 10px;
+  }
+
 }

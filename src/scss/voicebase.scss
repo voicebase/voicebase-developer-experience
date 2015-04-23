@@ -124,3 +124,10 @@
   float: left !important;
 }
 
+.sidebar-textarea {
+  @extend .sidebar-input;
+
+  height: 80px;
+  padding-left: 10px;
+}
+
