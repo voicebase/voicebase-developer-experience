@@ -24,6 +24,16 @@
     }
   }
 
+  .vbs-popup-header {
+    padding: 15px;
+    color: $color-console-heading-text;
+
+    .vbs-popup-title {
+      margin: 0;
+    }
+
+  }
+
   .vbs-popup-body {
     padding: 15px;
   }

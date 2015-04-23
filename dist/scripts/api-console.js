@@ -657,6 +657,30 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  var keywordGroupForm = function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'keyword-group-widget/directives/keyword-group-form.tpl.html',
+      replace: true,
+      scope: {
+        keywordGroup: '='
+      },
+      controller: function($scope) {
+        $scope.addKeyword = function() {
+          $scope.keywordGroup.keywords.push('');
+        };
+      }
+    };
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .directive('keywordGroupForm', keywordGroupForm);
+
+})();
+
+(function () {
+  'use strict';
+
   var keywordGroupWidget = function() {
     return {
       restrict: 'E',
@@ -669,16 +693,53 @@ RAML.Decorators = (function (Decorators) {
         me.isLoaded = true;
         me.errorMessage = '';
         me.keywordGroups = null;
+        me.newGroup = {};
+        me.showCreateForm = false;
 
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
 
-        me.removeGroup = function(groupName) {
-          keywordGroupApi.removeKeywordGroup(tokenData.token, groupName).then(function(data) {
+        me.removeGroup = function(group) {
+          group.startDelete = true;
+          keywordGroupApi.removeKeywordGroup(tokenData.token, group.name).then(function() {
+            me.keywordGroups.groups = me.keywordGroups.groups.filter(function(_group) {
+                return _group.name !== group.name;
+            });
+          }, function() {
+            group.startDelete = false;
+            me.errorMessage = 'Something going wrong!';
+          });
+        };
+
+        me.startCreateGroup = function() {
+          me.newGroup = {
+            name: '',
+            description: '',
+            keywords: []
+          };
+          me.showCreateForm = true;
+        };
+
+        me.createGroup = function() {
+          keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function(data) {
+            me.keywordGroups.groups.push(me.newGroup);
+            me.showCreateForm = false;
+          }, function() {
+            me.showCreateForm = false;
+            me.errorMessage = 'Something going wrong!';
+          });
+        };
+
+        me.editGroup = function(group) {
+          keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function(data) {
             console.log(data);
           }, function() {
             me.errorMessage = 'Something going wrong!';
           });
+        };
+
+        me.toggleGroupForm = function(group) {
+          group.expanded = !group.expanded;
         };
 
         me.toggleWidget = function() {
@@ -695,6 +756,7 @@ RAML.Decorators = (function (Decorators) {
           me.isLoaded = true;
           me.errorMessage = '';
           me.keywordGroups = null;
+          me.showCreateForm = false;
 
           var tokenData = voicebaseTokensApi.getCurrentToken();
           if(tokenData) {
@@ -702,6 +764,10 @@ RAML.Decorators = (function (Decorators) {
             keywordGroupApi.getKeywordGroups(tokenData.token).then(function(data) {
               me.isLoaded = false;
               me.keywordGroups = data;
+              me.keywordGroups.groups.forEach(function(group) {
+                group.expanded = false;
+                group.startDelete = false;
+              });
               console.log(data);
             }, function() {
               me.isLoaded = false;
@@ -764,6 +830,30 @@ RAML.Decorators = (function (Decorators) {
         headers: {
           'Authorization': 'Bearer ' + token
         },
+        success: function() {
+          deferred.resolve();
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
+    var createKeywordGroup = function(token, newGroup) {
+      var deferred = $q.defer();
+      delete newGroup.description;
+      jQuery.ajax({
+        url: url + '/definitions/keywords/groups/' + newGroup.name,
+        type: 'PUT',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(newGroup),
         success: function(keywordGroups) {
           deferred.resolve(keywordGroups);
         },
@@ -774,12 +864,12 @@ RAML.Decorators = (function (Decorators) {
       });
 
       return deferred.promise;
-
     };
 
     return {
       getKeywordGroups: getKeywordGroups,
-      removeKeywordGroup: removeKeywordGroup
+      removeKeywordGroup: removeKeywordGroup,
+      createKeywordGroup: createKeywordGroup
     };
 
   };
@@ -1321,6 +1411,29 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
   );
 
 
+  $templateCache.put('keyword-group-widget/directives/keyword-group-form.tpl.html',
+    "<div class=\"raml-console-keywords-group-list-item-form\">\n" +
+    "  <div>\n" +
+    "    <label>Detection Group Name</label>\n" +
+    "    <input type=\"text\" ng-model=\"keywordGroup.name\"/>\n" +
+    "  </div>\n" +
+    "  <div>\n" +
+    "    <label>Detection Description</label>\n" +
+    "    <textarea ng-model=\"keywordGroup.description\"></textarea>\n" +
+    "  </div>\n" +
+    "  <div>\n" +
+    "    <label>Words/Phrases to detect</label>\n" +
+    "    <div>\n" +
+    "      <div ng-repeat=\"keyword in keywordGroup.keywords track by $index\">\n" +
+    "        <input type=\"text\" ng-model=\"keywordGroup.keywords[$index]\"/>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <input type=\"button\" value=\"Add a Word/Phrase\" ng-click=\"addKeyword()\"/>\n" +
+    "  </div>\n" +
+    "</div>\n"
+  );
+
+
   $templateCache.put('keyword-group-widget/directives/keyword-group-widget.tpl.html',
     "<div class=\"raml-console-vbs-keyword-group-widget-container\">\n" +
     "  <a class=\"raml-console-meta-button\" ng-click=\"keywordWidgetCtrl.toggleWidget()\">\n" +
@@ -1328,22 +1441,48 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  </a>\n" +
     "\n" +
     "  <div class=\"raml-console-vbs-popup\" ng-show=\"keywordWidgetCtrl.isShowWidget\">\n" +
-    "    <div class=\"raml-console-vbs-popup-close\" ng-click=\"keywordWidgetCtrl.hideWidget()\">x</div>\n" +
+    "    <div class=\"raml-console-vbs-popup-header\">\n" +
+    "      <h2 class=\"raml-console-vbs-popup-title\">Keyword Spotting Groups</h2>\n" +
+    "      <div class=\"raml-console-vbs-popup-close\" ng-click=\"keywordWidgetCtrl.hideWidget()\"></div>\n" +
+    "    </div>\n" +
+    "    <div class=\"raml-console-icon raml-console-plus-icon\"></div>\n" +
+    "\n" +
     "    <div class=\"raml-console-vbs-popup-body\">\n" +
+    "      <a href=\"javascript:void(0)\"  ng-click=\"keywordWidgetCtrl.startCreateGroup()\">\n" +
+    "        <i class=\"fa fa-plus\"></i>\n" +
+    "        Create Group\n" +
+    "      </a>\n" +
+    "\n" +
     "      <css-spinner ng-if=\"keywordWidgetCtrl.isLoaded\"></css-spinner>\n" +
     "      <div ng-if=\"!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded\" class=\"raml-console-error-message\">Please sign in</div>\n" +
     "      <div ng-if=\"keywordWidgetCtrl.errorMessage && !keywordWidgetCtrl.isLoaded\" class=\"raml-console-error-message\">{{ keywordWidgetCtrl.errorMessage }}</div>\n" +
     "\n" +
+    "      <!--Create group form-->\n" +
+    "      <div class=\"raml-console-create-group-form\" ng-show=\"keywordWidgetCtrl.showCreateForm\">\n" +
+    "        <keyword-group-form keyword-group=\"keywordWidgetCtrl.newGroup\"></keyword-group-form>\n" +
+    "        <input type=\"button\" value=\"Create\" ng-click=\"keywordWidgetCtrl.createGroup();\"/>\n" +
+    "        <input type=\"button\" value=\"Cancel\" ng-click=\"keywordWidgetCtrl.showCreateForm = false;\"/>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <!--groups list-->\n" +
     "      <div class=\"raml-console-keywords-group-list\">\n" +
     "        <div class=\"raml-console-keywords-group-list-item\" ng-repeat=\"keywordGroup in keywordWidgetCtrl.keywordGroups.groups\">\n" +
     "          <div class=\"raml-console-keywords-group-list-item-cell\">\n" +
-    "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-name\">{{ keywordGroup.name }}</a>\n" +
+    "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-name\" ng-click=\"keywordWidgetCtrl.toggleGroupForm(keywordGroup)\">{{ keywordGroup.name }}</a>\n" +
     "          </div>\n" +
     "          <div class=\"raml-console-keywords-group-list-item-cell raml-console-keywords-group-list-item-toolbar\">\n" +
-    "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-delete\" ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup.name)\">\n" +
-    "              <span>x</span>\n" +
+    "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-delete\" ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup)\" ng-show=\"!keywordGroup.startDelete\" title=\"Delete group\">\n" +
+    "              <span>&#10006;</span>\n" +
     "            </a>\n" +
+    "            <css-spinner ng-if=\"keywordGroup.startDelete\"></css-spinner>\n" +
     "          </div>\n" +
+    "\n" +
+    "          <div class=\"raml-console-keywords-group-list-item-form\" ng-show=\"keywordGroup.expanded\">\n" +
+    "            <keyword-group-form keyword-group=\"keywordGroup\"></keyword-group-form>\n" +
+    "            <input type=\"button\" value=\"Edit\" ng-click=\"keywordWidgetCtrl.editGroup(keywordGroup);\"/>\n" +
+    "            <input type=\"button\" value=\"Cancel\" ng-click=\"keywordGroup.expanded = false;\"/>\n" +
+    "          </div>\n" +
+    "\n" +
     "        </div>\n" +
     "      </div>\n" +
     "    </div>\n" +

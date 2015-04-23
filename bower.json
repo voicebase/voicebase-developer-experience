@@ -19,6 +19,7 @@
   ],
   "dependencies": {
     "api-console-voicebase": "*",
-    "angular-route": "1.2.20"
+    "angular-route": "1.2.20",
+    "fontawesome": "~4.3.0"
   }
 }

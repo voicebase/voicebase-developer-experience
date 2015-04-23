@@ -42,8 +42,10 @@
 
         me.createGroup = function() {
           keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function(data) {
-            console.log(data);
+            me.keywordGroups.groups.push(me.newGroup);
+            me.showCreateForm = false;
           }, function() {
+            me.showCreateForm = false;
             me.errorMessage = 'Something going wrong!';
           });
         };

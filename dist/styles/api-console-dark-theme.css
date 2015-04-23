@@ -4523,17 +4523,34 @@ a:hover {
   position: absolute;
   right: 15px;
   top: 15px;
-  font-size: 12px;
   line-height: 12px;
   cursor: pointer;
   font-weight: bold;
-  text-transform: uppercase;
+}
+
+.raml-console-vbs-popup .raml-console-vbs-popup-close::before,
+.raml-console-vbs-token-auth-form .raml-console-vbs-popup-close::before,
+.raml-console-vbs-tokens-error .raml-console-vbs-popup-close::before {
+  content: "\00d7";
 }
 
 .raml-console-vbs-popup .raml-console-vbs-popup-close:hover,
 .raml-console-vbs-token-auth-form .raml-console-vbs-popup-close:hover,
 .raml-console-vbs-tokens-error .raml-console-vbs-popup-close:hover {
   color: #fff;
+}
+
+.raml-console-vbs-popup .raml-console-vbs-popup-header,
+.raml-console-vbs-token-auth-form .raml-console-vbs-popup-header,
+.raml-console-vbs-tokens-error .raml-console-vbs-popup-header {
+  padding: 15px;
+  color: #fff;
+}
+
+.raml-console-vbs-popup .raml-console-vbs-popup-header .raml-console-vbs-popup-title,
+.raml-console-vbs-token-auth-form .raml-console-vbs-popup-header .raml-console-vbs-popup-title,
+.raml-console-vbs-tokens-error .raml-console-vbs-popup-header .raml-console-vbs-popup-title {
+  margin: 0;
 }
 
 .raml-console-vbs-popup .raml-console-vbs-popup-body,
@@ -4633,7 +4650,6 @@ a:hover {
 .raml-console-vbs-keyword-group-widget-container {
   float: left;
   position: relative;
-  color: #333;
 }
 
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup,
@@ -4641,6 +4657,12 @@ a:hover {
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error {
   width: 400px;
   height: auto;
+}
+
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup .raml-console-vbs-popup-header,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form .raml-console-vbs-popup-header,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error .raml-console-vbs-popup-header {
+  background: #252f3f;
 }
 
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup .raml-console-vbs-popup-body,
@@ -4680,6 +4702,12 @@ a:hover {
   margin-left: 15px;
 }
 
+.raml-console-keywords-group-list .raml-console-keywords-group-list-item-toolbar .raml-console-spinner {
+  width: auto;
+  height: 19px;
+  margin: 5px;
+}
+
 .raml-console-keywords-group-list .raml-console-keywords-group-name {
   color: #fff;
   font-weight: bold;
@@ -4689,6 +4717,23 @@ a:hover {
   text-decoration: none;
   color: #ccc;
   font-weight: bold;
+}
+
+.raml-console-keywords-group-list .raml-console-keywords-group-delete:hover {
+  color: #333;
+}
+
+.raml-console-keywords-group-list .raml-console-keywords-group-list-item-form {
+  clear: both;
+}
+
+.raml-console-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.raml-console-plus-icon:before {
+  content: "\f067";
 }
 
 /*

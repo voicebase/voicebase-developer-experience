@@ -4,9 +4,18 @@
   </a>
 
   <div class="raml-console-vbs-popup" ng-show="keywordWidgetCtrl.isShowWidget">
-    <input type="button" value="Create Group" ng-click="keywordWidgetCtrl.startCreateGroup()"/>
-    <div class="raml-console-vbs-popup-close" ng-click="keywordWidgetCtrl.hideWidget()"></div>
+    <div class="raml-console-vbs-popup-header">
+      <h2 class="raml-console-vbs-popup-title">Keyword Spotting Groups</h2>
+      <div class="raml-console-vbs-popup-close" ng-click="keywordWidgetCtrl.hideWidget()"></div>
+    </div>
+    <div class="raml-console-icon raml-console-plus-icon"></div>
+
     <div class="raml-console-vbs-popup-body">
+      <a href="javascript:void(0)"  ng-click="keywordWidgetCtrl.startCreateGroup()">
+        <i class="fa fa-plus"></i>
+        Create Group
+      </a>
+
       <css-spinner ng-if="keywordWidgetCtrl.isLoaded"></css-spinner>
       <div ng-if="!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">Please sign in</div>
       <div ng-if="keywordWidgetCtrl.errorMessage && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">{{ keywordWidgetCtrl.errorMessage }}</div>

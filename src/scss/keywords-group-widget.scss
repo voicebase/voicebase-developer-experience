@@ -6,6 +6,10 @@
     width: 400px;
     height: auto;
 
+    .vbs-popup-header {
+      background: $color-console-documentation-header;
+    }
+
     .vbs-popup-body {
       margin-top: 15px;
     }
@@ -65,5 +69,17 @@
 
   .keywords-group-list-item-form {
     clear: both;
+  }
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+}
+
+.plus-icon {
+
+  &:before {
+    content: "\f067";
   }
 }
