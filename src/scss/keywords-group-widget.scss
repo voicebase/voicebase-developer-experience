@@ -67,7 +67,7 @@
 }
 
 .popup-body-toolbar {
-  text-align: right;
+  float: right;
 }
 
 .icon-delete {
@@ -91,7 +91,7 @@
 }
 
 .keywords-list-container {
-  height: 180px;
+  max-height: 180px;
   overflow-y: auto;
 }
 
@@ -111,4 +111,18 @@
     top: 10px;
   }
 
+}
+
+.clearfix {
+  clear: both;
+}
+
+.keywords-group-list-item-toolbar,
+.popup-body-toolbar {
+
+  .spinner {
+    width: auto;
+    height: 19px;
+    margin: 5px;
+  }
 }

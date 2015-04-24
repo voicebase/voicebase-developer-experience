@@ -13,9 +13,10 @@
 
       <!--Toolbar-->
       <div class="raml-console-popup-body-toolbar">
-        <a href="javascript:void(0)" class="raml-console-icon raml-console-icon-plus" ng-click="keywordWidgetCtrl.startCreateGroup()">
+        <a href="javascript:void(0)" class="raml-console-icon raml-console-icon-plus" ng-click="keywordWidgetCtrl.startCreateGroup()" ng-show="!keywordWidgetCtrl.createLoading">
           Create Group
         </a>
+        <css-spinner ng-show="keywordWidgetCtrl.createLoading"></css-spinner>
       </div>
 
       <css-spinner ng-if="keywordWidgetCtrl.isLoaded"></css-spinner>
@@ -23,7 +24,7 @@
       <div ng-if="keywordWidgetCtrl.errorMessage && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">{{ keywordWidgetCtrl.errorMessage }}</div>
 
       <!--Create group form-->
-      <div class="raml-console-create-group-form" ng-show="keywordWidgetCtrl.showCreateForm">
+      <div class="raml-console-create-group-form raml-console-clearfix" ng-show="keywordWidgetCtrl.showCreateForm">
         <keyword-group-form keyword-group="keywordWidgetCtrl.newGroup"></keyword-group-form>
         <input type="button" value="Create" class="raml-console-sidebar-action raml-console-sidebar-action-get" ng-click="keywordWidgetCtrl.createGroup();"/>
         <input type="button" value="Cancel" class="raml-console-sidebar-action raml-console-sidebar-action-reset" ng-click="keywordWidgetCtrl.showCreateForm = false;"/>

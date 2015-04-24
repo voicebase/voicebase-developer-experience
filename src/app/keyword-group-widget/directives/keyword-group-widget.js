@@ -40,12 +40,16 @@
           me.showCreateForm = true;
         };
 
+        me.createLoading = false;
         me.createGroup = function() {
+          me.createLoading = true;
+          me.showCreateForm = false;
           keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
             me.keywordGroups.groups.push(me.newGroup);
-            me.showCreateForm = false;
+            me.createLoading = false;
           }, function() {
             me.showCreateForm = false;
+            me.createLoading = false;
             me.errorMessage = 'Something going wrong!';
           });
         };
@@ -72,12 +76,7 @@
         };
 
         me.showWidget = function() {
-          me.isShowWidget = true;
-          me.isLoaded = true;
-          me.errorMessage = '';
-          me.keywordGroups = null;
-          me.showCreateForm = false;
-
+          me.firstInitVars();
           var tokenData = voicebaseTokensApi.getCurrentToken();
           if(tokenData) {
             me.isLogin = true;
@@ -101,6 +100,15 @@
 
         me.hideWidget = function() {
           me.isShowWidget = false;
+        };
+
+        me.firstInitVars = function() {
+          me.isShowWidget = true;
+          me.isLoaded = true;
+          me.errorMessage = '';
+          me.keywordGroups = null;
+          me.showCreateForm = false;
+          me.createLoading = false;
         };
       }
     };
