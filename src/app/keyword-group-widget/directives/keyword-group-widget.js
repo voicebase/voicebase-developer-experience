@@ -7,7 +7,7 @@
       templateUrl: 'keyword-group-widget/directives/keyword-group-widget.tpl.html',
       replace: true,
       controllerAs: 'keywordWidgetCtrl',
-      controller: function(voicebaseTokensApi, keywordGroupApi) {
+      controller: function(voicebaseTokensApi, formValidate, keywordGroupApi) {
         var me = this;
         me.isShowWidget = false;
         me.isLoaded = true;
@@ -38,20 +38,28 @@
             keywords: ['']
           };
           me.showCreateForm = true;
+          me.createKeywordGroupForm.$setPristine();
         };
 
         me.createLoading = false;
-        me.createGroup = function() {
-          me.createLoading = true;
-          me.showCreateForm = false;
-          keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
-            me.keywordGroups.groups.push(me.newGroup);
-            me.createLoading = false;
-          }, function() {
+        me.createGroup = function($event) {
+          var isValid = formValidate.validateForm(me.createKeywordGroupForm);
+          if(!isValid) {
+            jQuery($event.currentTarget).closest('form').find('.ng-invalid').first().focus();
+          }
+          else {
+            me.createLoading = true;
             me.showCreateForm = false;
-            me.createLoading = false;
-            me.errorMessage = 'Something going wrong!';
-          });
+            keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
+              me.keywordGroups.groups.push(me.newGroup);
+              me.createLoading = false;
+            }, function() {
+              me.showCreateForm = false;
+              me.createLoading = false;
+              me.errorMessage = 'Something going wrong!';
+            });
+          }
+          return false;
         };
 
         me.editGroup = function(group) {
