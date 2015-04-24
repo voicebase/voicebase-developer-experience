@@ -90,6 +90,11 @@
   }
 }
 
+.keywords-list-container {
+  height: 180px;
+  overflow-y: auto;
+}
+
 .keyword-container {
   display: table;
   width: 100%;

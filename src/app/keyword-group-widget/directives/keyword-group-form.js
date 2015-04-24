@@ -11,7 +11,7 @@
       },
       controller: function($scope) {
         $scope.addKeyword = function() {
-          $scope.keywordGroup.keywords.push('');
+          $scope.keywordGroup.keywords.unshift('');
         };
 
         $scope.removeKeyword = function(index) {

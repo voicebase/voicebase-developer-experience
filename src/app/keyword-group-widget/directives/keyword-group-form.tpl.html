@@ -9,7 +9,7 @@
   </div>
   <div>
     <label>Words/Phrases to detect</label>
-    <div>
+    <div class="raml-console-keywords-list-container" data-scroll-to-top='keywordGroup.keywords.length'>
       <div ng-repeat="keyword in keywordGroup.keywords track by $index" class="raml-console-keyword-container">
         <input type="text" ng-model="keywordGroup.keywords[$index]" class="raml-console-sidebar-input raml-console-sidebar-input-custom raml-console-keyword-input"/>
         <a href="javascript:void(0)" class="raml-console-icon-delete" ng-click="removeKeyword($index)" title="Remove word/phrase">

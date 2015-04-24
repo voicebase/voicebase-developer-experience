@@ -25,7 +25,7 @@
       <!--Create group form-->
       <div class="raml-console-create-group-form" ng-show="keywordWidgetCtrl.showCreateForm">
         <keyword-group-form keyword-group="keywordWidgetCtrl.newGroup"></keyword-group-form>
-        <input type="button" value="Create" class="raml-console-sidebar-action raml-console-sidebar-action-put" ng-click="keywordWidgetCtrl.createGroup();"/>
+        <input type="button" value="Create" class="raml-console-sidebar-action raml-console-sidebar-action-get" ng-click="keywordWidgetCtrl.createGroup();"/>
         <input type="button" value="Cancel" class="raml-console-sidebar-action raml-console-sidebar-action-reset" ng-click="keywordWidgetCtrl.showCreateForm = false;"/>
       </div>
 
@@ -44,7 +44,7 @@
 
           <div class="raml-console-keywords-group-list-item-form" ng-show="keywordGroup.expanded">
             <keyword-group-form keyword-group="keywordGroup"></keyword-group-form>
-            <input type="button" value="Edit" class="raml-console-sidebar-action raml-console-sidebar-action-put" ng-click="keywordWidgetCtrl.editGroup(keywordGroup);"/>
+            <input type="button" value="Edit" class="raml-console-sidebar-action raml-console-sidebar-action-get" ng-click="keywordWidgetCtrl.editGroup(keywordGroup);"/>
             <input type="button" value="Cancel" class="raml-console-sidebar-action raml-console-sidebar-action-reset" ng-click="keywordGroup.expanded = false;"/>
           </div>
 
