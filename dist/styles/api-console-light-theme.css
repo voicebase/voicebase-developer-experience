@@ -725,6 +725,28 @@ form.checkDirty.ng-dirty.ng-invalid-email .raml-console-vbs-validation-wrong-ema
   display: block !important;
 }
 
+input.ng-dirty.ng-invalid-many-words + .raml-console-multi-errors .raml-console-vbs-validation-many-words-error {
+  color: #FFF;
+  position: absolute;
+  margin-top: -20px;
+  font-size: 13px;
+  background-color: #F00;
+  width: 100%;
+  text-align: center;
+  display: block !important;
+}
+
+input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vbs-validation-required {
+  color: #FFF;
+  position: absolute;
+  margin-top: -20px;
+  font-size: 13px;
+  background-color: #F00;
+  width: 100%;
+  text-align: center;
+  display: block !important;
+}
+
 @charset "UTF-8";
 
 
@@ -4724,7 +4746,7 @@ a:hover {
 }
 
 .raml-console-popup-body-toolbar {
-  text-align: right;
+  float: right;
 }
 
 .raml-console-icon-delete {
@@ -4747,13 +4769,18 @@ a:hover {
   content: "\002B";
 }
 
+.raml-console-keywords-list-container {
+  max-height: 180px;
+  overflow-y: auto;
+}
+
 .raml-console-keyword-container {
   display: table;
   width: 100%;
   position: relative;
 }
 
-.raml-console-keyword-container .raml-console-keyword-input {
+.raml-console-keyword-container .raml-console-sidebar-input-container {
   width: 80%;
   float: left;
 }
@@ -4762,6 +4789,17 @@ a:hover {
   margin: 5px;
   position: relative;
   top: 10px;
+}
+
+.raml-console-clearfix {
+  clear: both;
+}
+
+.raml-console-keywords-group-list-item-toolbar .raml-console-spinner,
+.raml-console-popup-body-toolbar .raml-console-spinner {
+  width: auto;
+  height: 19px;
+  margin: 5px;
 }
 
 /*
