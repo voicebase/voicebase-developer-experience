@@ -1,21 +1,21 @@
 (function () {
   'use strict';
 
-  var scrollToTop = function () {
+  var scrollToBottom = function () {
     return {
       restrict: 'A',
       scope: {
-        trigger: '=scrollToTop'
+        trigger: '=scrollToBottom'
       },
       link: function (scope, elem) {
         scope.$watch('trigger', function () {
-          elem[0].scrollTop = 0;
+          elem.scrollTop(elem[0].scrollHeight);
         });
       }
     };
   };
 
   angular.module('vbsKeywordGroupWidget')
-    .directive('scrollToTop', scrollToTop);
+    .directive('scrollToBottom', scrollToBottom);
 
 })();

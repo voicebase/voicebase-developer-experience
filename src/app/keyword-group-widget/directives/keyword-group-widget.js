@@ -43,11 +43,9 @@
 
         me.createLoading = false;
         me.createGroup = function($event) {
-          var isValid = formValidate.validateForm(me.createKeywordGroupForm);
-          if(!isValid) {
-            jQuery($event.currentTarget).closest('form').find('.ng-invalid').first().focus();
-          }
-          else {
+          var form = me.createKeywordGroupForm;
+          formValidate.validateAndDirtyForm(form);
+          if(!form.$invalid) {
             me.createLoading = true;
             me.showCreateForm = false;
             keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {

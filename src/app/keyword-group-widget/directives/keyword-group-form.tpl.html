@@ -1,6 +1,6 @@
 <div class="raml-console-keywords-group-list-item-form">
   <div class="raml-console-sidebar-input-container">
-    <label for="groupName" class="raml-console-sidebar-label">
+    <label class="raml-console-sidebar-label">
       Detection Group Name
       <span class="raml-console-side-bar-required-field">*</span>
     </label>
@@ -8,18 +8,17 @@
     <span class="raml-console-field-validation-error"></span>
   </div>
   <div class="raml-console-sidebar-input-container">
-    <label for="description" class="raml-console-sidebar-label">Detection Description</label>
+    <label class="raml-console-sidebar-label">Detection Description</label>
     <textarea name="description" maxlength="1000" ng-model="keywordGroup.description" class="raml-console-sidebar-textarea"></textarea>
   </div>
   <div class="raml-console-sidebar-input-container">
     <label class="raml-console-sidebar-label">Words/Phrases to detect</label>
-    <div class="raml-console-keywords-list-container" data-scroll-to-top='keywordGroup.keywords.length'>
+    <div class="raml-console-keywords-list-container" data-scroll-to-bottom='keywordGroup.keywords.length'>
       <div class="raml-console-keyword-container"
-           ng-repeat="keyword in keywordGroup.keywords track by $index"
-           ng-init="formName = 'keyword' + $index">
-          <ng-form name="tempForm">
+           ng-repeat="keyword in keywordGroup.keywords track by $index">
+          <ng-form name="keywordForm">
             <div class="raml-console-sidebar-input-container">
-              <input type="text" maxlength="64" name="{{ formName }}" required="true" class="raml-console-sidebar-input raml-console-sidebar-input-custom raml-console-keyword-input"
+              <input type="text" name="keyword" maxlength="64" required="true" class="raml-console-sidebar-input raml-console-sidebar-input-custom raml-console-keyword-input"
                      ng-model="keywordGroup.keywords[$index]"
                      input-max-word-validate />
               <span class="raml-console-multi-errors">
@@ -28,12 +27,12 @@
               </span>
             </div>
           </ng-form>
-        <a href="javascript:void(0)" class="raml-console-icon-delete" ng-click="removeKeyword($index)" title="Remove word/phrase">
+        <a href="javascript:void(0)" class="raml-console-icon-delete" title="Remove word/phrase" ng-click="removeKeyword($index)">
           <span>&#10006;</span>
         </a>
       </div>
     </div>
-    <a href="javascript:void(0)" class="raml-console-icon raml-console-icon-plus" ng-click="addKeyword()">
+    <a href="javascript:void(0)" class="raml-console-icon raml-console-icon-plus" ng-click="addKeyword()" ng-show="keywordGroup.keywords.length < 32">
       Add a Word/Phrase
     </a>
   </div>

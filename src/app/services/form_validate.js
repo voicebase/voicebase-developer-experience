@@ -2,6 +2,7 @@
   'use strict';
 
   RAML.Services.FormValidate = function() {
+
     var validateForm = function(form) {
       var errors = form.$error;
       var isValid = true;
@@ -16,8 +17,26 @@
       return isValid;
     };
 
+    var validateAndDirtyForm = function(form) {
+      var errors = form.$error;
+      Object.keys(errors).map(function (key) {
+        for (var i = 0; i < errors[key].length; i++) {
+          var field = errors[key][i];
+          if(field.$error && jQuery.isArray(field.$error[key])) {
+            validateAndDirtyForm(field);
+          }
+          else {
+            field.$setViewValue(field.$viewValue);
+          }
+          form.isValid = false;
+        }
+      });
+      return form.isValid;
+    };
+
     return {
-      validateForm: validateForm
+      validateForm: validateForm,
+      validateAndDirtyForm: validateAndDirtyForm
     };
 
   };

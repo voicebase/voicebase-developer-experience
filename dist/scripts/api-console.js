@@ -657,6 +657,25 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  var focusForm = function () {
+    return {
+      restrict: 'A',
+      link: function (scope, elem, attr, ngModel) {
+        elem.submit(function () {
+          jQuery(elem).find('.ng-invalid:not("ng-form")').first().focus();
+        });
+      }
+    };
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .directive('focusForm', focusForm);
+
+})();
+
+(function () {
+  'use strict';
+
   var inputMaxWordValidate = function () {
     return {
       restrict: 'A',
@@ -689,7 +708,7 @@ RAML.Decorators = (function (Decorators) {
       },
       controller: function($scope) {
         $scope.addKeyword = function() {
-          $scope.keywordGroup.keywords.unshift('');
+          $scope.keywordGroup.keywords.push('');
         };
 
         $scope.removeKeyword = function(index) {
@@ -749,11 +768,9 @@ RAML.Decorators = (function (Decorators) {
 
         me.createLoading = false;
         me.createGroup = function($event) {
-          var isValid = formValidate.validateForm(me.createKeywordGroupForm);
-          if(!isValid) {
-            jQuery($event.currentTarget).closest('form').find('.ng-invalid').first().focus();
-          }
-          else {
+          var form = me.createKeywordGroupForm;
+          formValidate.validateAndDirtyForm(form);
+          if(!form.$invalid) {
             me.createLoading = true;
             me.showCreateForm = false;
             keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
@@ -836,22 +853,22 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var scrollToTop = function () {
+  var scrollToBottom = function () {
     return {
       restrict: 'A',
       scope: {
-        trigger: '=scrollToTop'
+        trigger: '=scrollToBottom'
       },
       link: function (scope, elem) {
         scope.$watch('trigger', function () {
-          elem[0].scrollTop = 0;
+          elem.scrollTop(elem[0].scrollHeight);
         });
       }
     };
   };
 
   angular.module('vbsKeywordGroupWidget')
-    .directive('scrollToTop', scrollToTop);
+    .directive('scrollToBottom', scrollToBottom);
 
 })();
 
@@ -947,6 +964,7 @@ RAML.Decorators = (function (Decorators) {
   'use strict';
 
   RAML.Services.FormValidate = function() {
+
     var validateForm = function(form) {
       var errors = form.$error;
       var isValid = true;
@@ -961,8 +979,26 @@ RAML.Decorators = (function (Decorators) {
       return isValid;
     };
 
+    var validateAndDirtyForm = function(form) {
+      var errors = form.$error;
+      Object.keys(errors).map(function (key) {
+        for (var i = 0; i < errors[key].length; i++) {
+          var field = errors[key][i];
+          if(field.$error && jQuery.isArray(field.$error[key])) {
+            validateAndDirtyForm(field);
+          }
+          else {
+            field.$setViewValue(field.$viewValue);
+          }
+          form.isValid = false;
+        }
+      });
+      return form.isValid;
+    };
+
     return {
-      validateForm: validateForm
+      validateForm: validateForm,
+      validateAndDirtyForm: validateAndDirtyForm
     };
 
   };
@@ -1478,7 +1514,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
   $templateCache.put('keyword-group-widget/directives/keyword-group-form.tpl.html',
     "<div class=\"raml-console-keywords-group-list-item-form\">\n" +
     "  <div class=\"raml-console-sidebar-input-container\">\n" +
-    "    <label for=\"groupName\" class=\"raml-console-sidebar-label\">\n" +
+    "    <label class=\"raml-console-sidebar-label\">\n" +
     "      Detection Group Name\n" +
     "      <span class=\"raml-console-side-bar-required-field\">*</span>\n" +
     "    </label>\n" +
@@ -1486,18 +1522,17 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    <span class=\"raml-console-field-validation-error\"></span>\n" +
     "  </div>\n" +
     "  <div class=\"raml-console-sidebar-input-container\">\n" +
-    "    <label for=\"description\" class=\"raml-console-sidebar-label\">Detection Description</label>\n" +
+    "    <label class=\"raml-console-sidebar-label\">Detection Description</label>\n" +
     "    <textarea name=\"description\" maxlength=\"1000\" ng-model=\"keywordGroup.description\" class=\"raml-console-sidebar-textarea\"></textarea>\n" +
     "  </div>\n" +
     "  <div class=\"raml-console-sidebar-input-container\">\n" +
     "    <label class=\"raml-console-sidebar-label\">Words/Phrases to detect</label>\n" +
-    "    <div class=\"raml-console-keywords-list-container\" data-scroll-to-top='keywordGroup.keywords.length'>\n" +
+    "    <div class=\"raml-console-keywords-list-container\" data-scroll-to-bottom='keywordGroup.keywords.length'>\n" +
     "      <div class=\"raml-console-keyword-container\"\n" +
-    "           ng-repeat=\"keyword in keywordGroup.keywords track by $index\"\n" +
-    "           ng-init=\"formName = 'keyword' + $index\">\n" +
-    "          <ng-form name=\"tempForm\">\n" +
+    "           ng-repeat=\"keyword in keywordGroup.keywords track by $index\">\n" +
+    "          <ng-form name=\"keywordForm\">\n" +
     "            <div class=\"raml-console-sidebar-input-container\">\n" +
-    "              <input type=\"text\" maxlength=\"64\" name=\"{{ formName }}\" required=\"true\" class=\"raml-console-sidebar-input raml-console-sidebar-input-custom raml-console-keyword-input\"\n" +
+    "              <input type=\"text\" name=\"keyword\" maxlength=\"64\" required=\"true\" class=\"raml-console-sidebar-input raml-console-sidebar-input-custom raml-console-keyword-input\"\n" +
     "                     ng-model=\"keywordGroup.keywords[$index]\"\n" +
     "                     input-max-word-validate />\n" +
     "              <span class=\"raml-console-multi-errors\">\n" +
@@ -1506,12 +1541,12 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "              </span>\n" +
     "            </div>\n" +
     "          </ng-form>\n" +
-    "        <a href=\"javascript:void(0)\" class=\"raml-console-icon-delete\" ng-click=\"removeKeyword($index)\" title=\"Remove word/phrase\">\n" +
+    "        <a href=\"javascript:void(0)\" class=\"raml-console-icon-delete\" title=\"Remove word/phrase\" ng-click=\"removeKeyword($index)\">\n" +
     "          <span>&#10006;</span>\n" +
     "        </a>\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <a href=\"javascript:void(0)\" class=\"raml-console-icon raml-console-icon-plus\" ng-click=\"addKeyword()\">\n" +
+    "    <a href=\"javascript:void(0)\" class=\"raml-console-icon raml-console-icon-plus\" ng-click=\"addKeyword()\" ng-show=\"keywordGroup.keywords.length < 32\">\n" +
     "      Add a Word/Phrase\n" +
     "    </a>\n" +
     "  </div>\n" +
@@ -1547,7 +1582,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "      <!--Create group form-->\n" +
     "      <div class=\"raml-console-create-group-form raml-console-clearfix\" ng-show=\"keywordWidgetCtrl.showCreateForm\">\n" +
-    "        <form name=\"keywordWidgetCtrl.createKeywordGroupForm\" novalidate ng-submit=\"keywordWidgetCtrl.createGroup($event)\">\n" +
+    "        <form name=\"keywordWidgetCtrl.createKeywordGroupForm\" novalidate focus-form ng-submit=\"keywordWidgetCtrl.createGroup($event)\">\n" +
     "          <keyword-group-form keyword-group=\"keywordWidgetCtrl.newGroup\"></keyword-group-form>\n" +
     "          <input type=\"submit\" value=\"Create\" class=\"raml-console-sidebar-action raml-console-sidebar-action-get\"/>\n" +
     "          <input type=\"button\" value=\"Cancel\" class=\"raml-console-sidebar-action raml-console-sidebar-action-reset\" ng-click=\"keywordWidgetCtrl.showCreateForm = false;\"/>\n" +

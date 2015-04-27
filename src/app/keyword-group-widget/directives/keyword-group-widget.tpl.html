@@ -25,7 +25,7 @@
 
       <!--Create group form-->
       <div class="raml-console-create-group-form raml-console-clearfix" ng-show="keywordWidgetCtrl.showCreateForm">
-        <form name="keywordWidgetCtrl.createKeywordGroupForm" novalidate ng-submit="keywordWidgetCtrl.createGroup($event)">
+        <form name="keywordWidgetCtrl.createKeywordGroupForm" novalidate focus-form ng-submit="keywordWidgetCtrl.createGroup($event)">
           <keyword-group-form keyword-group="keywordWidgetCtrl.newGroup"></keyword-group-form>
           <input type="submit" value="Create" class="raml-console-sidebar-action raml-console-sidebar-action-get"/>
           <input type="button" value="Cancel" class="raml-console-sidebar-action raml-console-sidebar-action-reset" ng-click="keywordWidgetCtrl.showCreateForm = false;"/>
