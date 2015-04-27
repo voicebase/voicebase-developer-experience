@@ -786,15 +786,27 @@ RAML.Decorators = (function (Decorators) {
         };
 
         me.editGroup = function(group) {
-          keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function(data) {
-            console.log(data);
-          }, function() {
-            me.errorMessage = 'Something going wrong!';
-          });
+          var form = me.editKeywordGroupForm;
+          formValidate.validateAndDirtyForm(form);
+          if(!form.$invalid) {
+            group.startEdit = true;
+            group.expanded = false;
+            keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function(data) {
+              group.startEdit = false;
+            }, function() {
+              group.expanded = false;
+              group.startEdit = false;
+              me.errorMessage = 'Something going wrong!';
+            });
+          }
         };
 
         me.toggleGroupForm = function(group) {
-          group.expanded = !group.expanded;
+          var expandTemp = group.expanded;
+          me.keywordGroups.groups.forEach(function(_group) {
+            _group.expanded = false;
+          });
+          group.expanded = !expandTemp;
         };
 
         me.toggleWidget = function() {
@@ -817,6 +829,7 @@ RAML.Decorators = (function (Decorators) {
               me.keywordGroups.groups.forEach(function(group) {
                 group.expanded = false;
                 group.startDelete = false;
+                group.startEdit = false;
               });
               console.log(data);
             }, function() {
@@ -1596,16 +1609,18 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-name\" ng-click=\"keywordWidgetCtrl.toggleGroupForm(keywordGroup)\">{{ keywordGroup.name }}</a>\n" +
     "          </div>\n" +
     "          <div class=\"raml-console-keywords-group-list-item-cell raml-console-keywords-group-list-item-toolbar\">\n" +
-    "            <a href=\"javascript:void(0)\" class=\"raml-console-icon-delete\" ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup)\" ng-show=\"!keywordGroup.startDelete\" title=\"Delete group\">\n" +
+    "            <a href=\"javascript:void(0)\" class=\"raml-console-icon-delete\" ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup)\" title=\"Delete group\" ng-show=\"!keywordGroup.startDelete && !keywordGroup.startEdit\">\n" +
     "              <span>&#10006;</span>\n" +
     "            </a>\n" +
-    "            <css-spinner ng-if=\"keywordGroup.startDelete\"></css-spinner>\n" +
+    "            <css-spinner ng-if=\"keywordGroup.startDelete || keywordGroup.startEdit\"></css-spinner>\n" +
     "          </div>\n" +
     "\n" +
-    "          <div class=\"raml-console-keywords-group-list-item-form\" ng-show=\"keywordGroup.expanded\">\n" +
-    "            <keyword-group-form keyword-group=\"keywordGroup\"></keyword-group-form>\n" +
-    "            <input type=\"button\" value=\"Edit\" class=\"raml-console-sidebar-action raml-console-sidebar-action-get\" ng-click=\"keywordWidgetCtrl.editGroup(keywordGroup);\"/>\n" +
-    "            <input type=\"button\" value=\"Cancel\" class=\"raml-console-sidebar-action raml-console-sidebar-action-reset\" ng-click=\"keywordGroup.expanded = false;\"/>\n" +
+    "          <div class=\"raml-console-keywords-group-list-item-form\" ng-if=\"keywordGroup.expanded\">\n" +
+    "            <ng-form name=\"keywordWidgetCtrl.editKeywordGroupForm\" novalidate focus-form>\n" +
+    "              <keyword-group-form keyword-group=\"keywordGroup\"></keyword-group-form>\n" +
+    "              <input type=\"button\" value=\"Edit\" class=\"raml-console-sidebar-action raml-console-sidebar-action-get\" ng-click=\"keywordWidgetCtrl.editGroup(keywordGroup)\"/>\n" +
+    "              <input type=\"button\" value=\"Cancel\" class=\"raml-console-sidebar-action raml-console-sidebar-action-reset\" ng-click=\"keywordGroup.expanded = false;\"/>\n" +
+    "            </ng-form>\n" +
     "          </div>\n" +
     "\n" +
     "        </div>\n" +

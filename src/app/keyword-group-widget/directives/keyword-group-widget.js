@@ -61,15 +61,27 @@
         };
 
         me.editGroup = function(group) {
-          keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function(data) {
-            console.log(data);
-          }, function() {
-            me.errorMessage = 'Something going wrong!';
-          });
+          var form = me.editKeywordGroupForm;
+          formValidate.validateAndDirtyForm(form);
+          if(!form.$invalid) {
+            group.startEdit = true;
+            group.expanded = false;
+            keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function(data) {
+              group.startEdit = false;
+            }, function() {
+              group.expanded = false;
+              group.startEdit = false;
+              me.errorMessage = 'Something going wrong!';
+            });
+          }
         };
 
         me.toggleGroupForm = function(group) {
-          group.expanded = !group.expanded;
+          var expandTemp = group.expanded;
+          me.keywordGroups.groups.forEach(function(_group) {
+            _group.expanded = false;
+          });
+          group.expanded = !expandTemp;
         };
 
         me.toggleWidget = function() {
@@ -92,6 +104,7 @@
               me.keywordGroups.groups.forEach(function(group) {
                 group.expanded = false;
                 group.startDelete = false;
+                group.startEdit = false;
               });
               console.log(data);
             }, function() {
