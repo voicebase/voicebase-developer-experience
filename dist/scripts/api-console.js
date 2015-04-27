@@ -739,6 +739,7 @@ RAML.Decorators = (function (Decorators) {
         me.errorMessage = '';
         me.keywordGroups = null;
         me.newGroup = {};
+        me.editedGroup = {};
         me.showCreateForm = false;
 
         var tokenData = voicebaseTokensApi.getCurrentToken();
@@ -785,17 +786,19 @@ RAML.Decorators = (function (Decorators) {
           return false;
         };
 
-        me.editGroup = function(group) {
+        me.editGroup = function(oldGroup) {
           var form = me.editKeywordGroupForm;
           formValidate.validateAndDirtyForm(form);
           if(!form.$invalid) {
-            group.startEdit = true;
-            group.expanded = false;
-            keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function(data) {
-              group.startEdit = false;
+            oldGroup.startEdit = true;
+            oldGroup.expanded = false;
+            me.editedGroup.expanded = false;
+            keywordGroupApi.createKeywordGroup(tokenData.token, me.editedGroup).then(function(data) {
+              oldGroup.startEdit = false;
+              angular.copy(me.editedGroup, oldGroup);
             }, function() {
-              group.expanded = false;
-              group.startEdit = false;
+              oldGroup.expanded = false;
+              oldGroup.startEdit = false;
               me.errorMessage = 'Something going wrong!';
             });
           }
@@ -807,6 +810,9 @@ RAML.Decorators = (function (Decorators) {
             _group.expanded = false;
           });
           group.expanded = !expandTemp;
+          if(group.expanded) {
+            angular.copy(group, me.editedGroup);
+          }
         };
 
         me.toggleWidget = function() {
@@ -1617,7 +1623,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "          <div class=\"raml-console-keywords-group-list-item-form\" ng-if=\"keywordGroup.expanded\">\n" +
     "            <ng-form name=\"keywordWidgetCtrl.editKeywordGroupForm\" novalidate focus-form>\n" +
-    "              <keyword-group-form keyword-group=\"keywordGroup\"></keyword-group-form>\n" +
+    "              <keyword-group-form keyword-group=\"keywordWidgetCtrl.editedGroup\"></keyword-group-form>\n" +
     "              <input type=\"button\" value=\"Edit\" class=\"raml-console-sidebar-action raml-console-sidebar-action-get\" ng-click=\"keywordWidgetCtrl.editGroup(keywordGroup)\"/>\n" +
     "              <input type=\"button\" value=\"Cancel\" class=\"raml-console-sidebar-action raml-console-sidebar-action-reset\" ng-click=\"keywordGroup.expanded = false;\"/>\n" +
     "            </ng-form>\n" +

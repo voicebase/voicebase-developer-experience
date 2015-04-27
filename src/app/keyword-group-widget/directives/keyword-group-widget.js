@@ -14,6 +14,7 @@
         me.errorMessage = '';
         me.keywordGroups = null;
         me.newGroup = {};
+        me.editedGroup = {};
         me.showCreateForm = false;
 
         var tokenData = voicebaseTokensApi.getCurrentToken();
@@ -60,17 +61,19 @@
           return false;
         };
 
-        me.editGroup = function(group) {
+        me.editGroup = function(oldGroup) {
           var form = me.editKeywordGroupForm;
           formValidate.validateAndDirtyForm(form);
           if(!form.$invalid) {
-            group.startEdit = true;
-            group.expanded = false;
-            keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function(data) {
-              group.startEdit = false;
+            oldGroup.startEdit = true;
+            oldGroup.expanded = false;
+            me.editedGroup.expanded = false;
+            keywordGroupApi.createKeywordGroup(tokenData.token, me.editedGroup).then(function(data) {
+              oldGroup.startEdit = false;
+              angular.copy(me.editedGroup, oldGroup);
             }, function() {
-              group.expanded = false;
-              group.startEdit = false;
+              oldGroup.expanded = false;
+              oldGroup.startEdit = false;
               me.errorMessage = 'Something going wrong!';
             });
           }
@@ -82,6 +85,9 @@
             _group.expanded = false;
           });
           group.expanded = !expandTemp;
+          if(group.expanded) {
+            angular.copy(group, me.editedGroup);
+          }
         };
 
         me.toggleWidget = function() {

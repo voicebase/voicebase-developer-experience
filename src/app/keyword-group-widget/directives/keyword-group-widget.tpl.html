@@ -47,7 +47,7 @@
 
           <div class="raml-console-keywords-group-list-item-form" ng-if="keywordGroup.expanded">
             <ng-form name="keywordWidgetCtrl.editKeywordGroupForm" novalidate focus-form>
-              <keyword-group-form keyword-group="keywordGroup"></keyword-group-form>
+              <keyword-group-form keyword-group="keywordWidgetCtrl.editedGroup"></keyword-group-form>
               <input type="button" value="Edit" class="raml-console-sidebar-action raml-console-sidebar-action-get" ng-click="keywordWidgetCtrl.editGroup(keywordGroup)"/>
               <input type="button" value="Cancel" class="raml-console-sidebar-action raml-console-sidebar-action-reset" ng-click="keywordGroup.expanded = false;"/>
             </ng-form>
