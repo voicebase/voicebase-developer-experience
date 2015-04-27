@@ -8,7 +8,7 @@
       link: function (scope, elem, attr, ngModel) {
         elem.change(function() {
           var words = elem.val().split(' ');
-          var valid = (words.length <= 3);
+          var valid = (words.length <= 10);
           ngModel.$setValidity('many-words', valid);
         });
       }
