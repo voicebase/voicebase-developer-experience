@@ -660,7 +660,7 @@ RAML.Decorators = (function (Decorators) {
   var focusForm = function () {
     return {
       restrict: 'A',
-      link: function (scope, elem, attr, ngModel) {
+      link: function (scope, elem) {
         elem.submit(function () {
           jQuery(elem).find('.ng-invalid:not("ng-form")').first().focus();
         });
@@ -768,7 +768,7 @@ RAML.Decorators = (function (Decorators) {
         };
 
         me.createLoading = false;
-        me.createGroup = function($event) {
+        me.createGroup = function() {
           var form = me.createKeywordGroupForm;
           formValidate.validateAndDirtyForm(form);
           if(!form.$invalid) {
@@ -793,7 +793,7 @@ RAML.Decorators = (function (Decorators) {
             oldGroup.startEdit = true;
             oldGroup.expanded = false;
             me.editedGroup.expanded = false;
-            keywordGroupApi.createKeywordGroup(tokenData.token, me.editedGroup).then(function(data) {
+            keywordGroupApi.createKeywordGroup(tokenData.token, me.editedGroup).then(function() {
               oldGroup.startEdit = false;
               angular.copy(me.editedGroup, oldGroup);
             }, function() {

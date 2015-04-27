@@ -43,7 +43,7 @@
         };
 
         me.createLoading = false;
-        me.createGroup = function($event) {
+        me.createGroup = function() {
           var form = me.createKeywordGroupForm;
           formValidate.validateAndDirtyForm(form);
           if(!form.$invalid) {
@@ -68,7 +68,7 @@
             oldGroup.startEdit = true;
             oldGroup.expanded = false;
             me.editedGroup.expanded = false;
-            keywordGroupApi.createKeywordGroup(tokenData.token, me.editedGroup).then(function(data) {
+            keywordGroupApi.createKeywordGroup(tokenData.token, me.editedGroup).then(function() {
               oldGroup.startEdit = false;
               angular.copy(me.editedGroup, oldGroup);
             }, function() {
