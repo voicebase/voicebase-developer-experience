@@ -6,6 +6,16 @@
   margin-bottom: 18px;
 }
 
+@mixin standartError() {
+  color: #FFF;
+  position: absolute;
+  margin-top: -20px;
+  font-size: 13px;
+  background-color: #F00;
+  width: 100%;
+  text-align: center;
+}
+
 .raml-console-vbs-validation-error {
   display: none;
 }
@@ -31,3 +41,16 @@ form.checkDirty.ng-dirty {
 
 }
 
+input.ng-dirty.ng-invalid-many-words + .raml-console-multi-errors {
+  .raml-console-vbs-validation-many-words-error {
+    @include standartError();
+    display: block!important;
+  }
+}
+
+input.ng-dirty.ng-invalid-required + .raml-console-multi-errors {
+  .raml-console-vbs-validation-required {
+    @include standartError();
+    display: block!important;
+  }
+}

@@ -11,8 +11,13 @@ RAML.Decorators = (function (Decorators) {
         $scope.$watch('loaded', function () {
           if ($scope.loaded) {
             $timeout(function () {
+              var $container = jQuery('<div class="raml-console-left-toolbar"></div>');
+              jQuery('.raml-console-title').before($container);
               var el = $compile('<voicebase-sign></voicebase-sign>')($scope);
-              jQuery('.raml-console-title').before(el);
+              $container.append(el);
+
+              el = $compile('<keyword-group-widget></keyword-group-widget>')($scope);
+              $container.append(el);
             }, 0);
           }
         });

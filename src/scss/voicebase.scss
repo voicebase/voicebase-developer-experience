@@ -1,3 +1,45 @@
+.vbs-popup {
+  background: $color-sidebar-bg;
+  z-index: 10;
+  position: absolute;
+  left: 0;
+  top: 50px;
+  border: 1px solid $color-sidebar-header-border;
+  box-shadow: 0 0 5px $color-sidebar-header-border;
+
+  .vbs-popup-close {
+    color: #878787;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    line-height: 12px;
+    cursor: pointer;
+    font-weight: bold;
+
+    &::before {
+      content: "\00d7";
+    }
+
+    &:hover {
+      color: $color-console-heading-text;
+    }
+  }
+
+  .vbs-popup-header {
+    padding: 15px;
+    color: $color-console-heading-text;
+
+    .vbs-popup-title {
+      margin: 0;
+    }
+
+  }
+
+  .vbs-popup-body {
+    padding: 15px;
+  }
+}
+
 .vbs-tokens-container {
   position: relative;
 
@@ -9,15 +51,8 @@
 }
 
 .vbs-token-auth-form, .vbs-tokens-error {
-  float: right;
-  background: $color-sidebar-bg;
-  z-index: 10;
-  position: absolute;
-  left: 0;
-  top: 50px;
+  @extend .vbs-popup;
   width: 400px;
-  border: 1px solid $color-sidebar-header-border;
-  box-shadow: 0 0 5px $color-sidebar-header-border;
 
   .vbs-auth-form-btns {
     margin-top: -15px;
@@ -58,10 +93,14 @@
   }
 }
 
-.vbs-sign-container {
+.left-toolbar {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.vbs-sign-container {
+  float: left;
 
   .vbs-token-auth-form, .vbs-tokens-error {
     left: 5px;
@@ -85,3 +124,11 @@
 .pull-left {
   float: left !important;
 }
+
+.sidebar-textarea {
+  @extend .sidebar-input;
+
+  height: 80px;
+  padding-left: 10px;
+}
+
