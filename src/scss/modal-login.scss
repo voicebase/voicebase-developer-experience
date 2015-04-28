@@ -28,21 +28,24 @@
 
     .login-header-right {
       float: right;
-      margin-top: 18px;
     }
 
     .login-header-left {
       float: left;
-      margin-top: 18px;
     }
 
     .login-header-btn {
+      display: table-cell;
+      vertical-align: middle;
+      height: 44px;
       color: #FFF;
       text-decoration: none;
       border: 1px solid #FFF;
-      padding: 16px;
-      border-radius: 5px;
+      border-radius: 3px;
       text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      width: 180px;
 
       &:hover {
         background: #fff;
@@ -52,10 +55,6 @@
     }
 
     .skip-console-btn {
-      display: table;
-      float: right;
-      margin-top: -15px;
-      width: 135px;
 
       .spinner {
         margin: 0 20px;

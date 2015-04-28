@@ -4501,34 +4501,30 @@ span.raml-console-side-bar-required-field {
 
 .raml-console-login-page-container .raml-console-login-header .raml-console-login-header-right {
   float: right;
-  margin-top: 18px;
 }
 
 .raml-console-login-page-container .raml-console-login-header .raml-console-login-header-left {
   float: left;
-  margin-top: 18px;
 }
 
 .raml-console-login-page-container .raml-console-login-header .raml-console-login-header-btn {
+  display: table-cell;
+  vertical-align: middle;
+  height: 44px;
   color: #FFF;
   text-decoration: none;
   border: 1px solid #FFF;
-  padding: 16px;
-  border-radius: 5px;
+  border-radius: 3px;
   text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  width: 180px;
 }
 
 .raml-console-login-page-container .raml-console-login-header .raml-console-login-header-btn:hover {
   background: #fff;
   color: #242f3e;
   transition: all 250ms ease-out;
-}
-
-.raml-console-login-page-container .raml-console-login-header .raml-console-skip-console-btn {
-  display: table;
-  float: right;
-  margin-top: -15px;
-  width: 135px;
 }
 
 .raml-console-login-page-container .raml-console-login-header .raml-console-skip-console-btn .raml-console-spinner {
