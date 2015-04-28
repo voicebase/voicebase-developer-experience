@@ -2,6 +2,14 @@
   float: left;
   position: relative;
 
+  a {
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   .vbs-popup {
     width: 400px;
     height: auto;

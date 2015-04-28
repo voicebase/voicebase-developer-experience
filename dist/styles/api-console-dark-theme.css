@@ -723,6 +723,7 @@ input.ng-dirty.ng-invalid-repeat + span.raml-console-field-validation-error::aft
   color: #2a6496;
   background-color: #eee;
   border-color: #ddd;
+  text-decoration: none;
 }
 .pagination li:first-child a,
 .pagination li:first-child span {
@@ -4774,6 +4775,14 @@ span.raml-console-side-bar-required-field {
 .raml-console-vbs-keyword-group-widget-container {
   float: left;
   position: relative;
+}
+
+.raml-console-vbs-keyword-group-widget-container a {
+  text-decoration: none;
+}
+
+.raml-console-vbs-keyword-group-widget-container a:hover {
+  text-decoration: underline;
 }
 
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup,
