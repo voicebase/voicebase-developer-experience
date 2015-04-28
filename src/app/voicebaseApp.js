@@ -12,6 +12,7 @@
     'ui.codemirror',
     'hljs',
     'ramlConsoleApp',
+    'angularUtils.directives.dirPagination',
     'vbsKeywordGroupWidget'
   ]).config(function ($provide, $routeProvider) {
     RAML.Decorators.ramlConsole($provide);

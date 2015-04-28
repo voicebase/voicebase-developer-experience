@@ -12,6 +12,7 @@ module.exports = function (grunt) {
       jsVendor: [
         'bower_components/api-console-voicebase/dist/scripts/api-console-vendor.js',
         'bower_components/angular-route/angular-route.js',
+        'bower_components/angular-utils-pagination/dirPagination.js',
         'bower_components/api-console-voicebase/dist/scripts/api-console.js'
       ],
       html: ['src/index.html'],
@@ -150,6 +151,7 @@ module.exports = function (grunt) {
           'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
           'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
           'bower_components/api-console-voicebase/src/assets/styles/error.css',
+          '<%= distdir %>/styles/pagination.css',
           '<%= distdir %>/styles/voicebase-error.css',
           '<%= distdir %>/styles/api-console-dark-theme.css',
           'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-dark.css'
@@ -168,6 +170,7 @@ module.exports = function (grunt) {
           'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
           'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
           'bower_components/api-console-voicebase/src/assets/styles/error.css',
+          '<%= distdir %>/styles/pagination.css',
           '<%= distdir %>/styles/voicebase-error.css',
           '<%= distdir %>/styles/api-console-light-theme.css',
           'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-light.css'
@@ -214,6 +217,7 @@ module.exports = function (grunt) {
         },
 
         files: {
+          '<%= distdir %>/styles/pagination.css': 'src/scss/pagination.scss',
           '<%= distdir %>/styles/voicebase-error.css': 'src/scss/voicebase-error.scss',
           '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',
           '<%= distdir %>/styles/api-console-dark-theme.css': 'src/scss/dark-theme.scss'
@@ -227,6 +231,7 @@ module.exports = function (grunt) {
         },
 
         files: {
+          '<%= distdir %>/styles/pagination.css': 'src/scss/pagination.scss',
           '<%= distdir %>/styles/voicebase-error.css': 'src/scss/voicebase-error.scss',
           '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',
           '<%= distdir %>/styles/api-console-dark-theme.css': 'src/scss/dark-theme.scss'

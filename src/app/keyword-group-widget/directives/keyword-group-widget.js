@@ -16,6 +16,7 @@
         me.newGroup = {};
         me.editedGroup = {};
         me.showCreateForm = false;
+        me.groupsPerPage = 5;
 
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
@@ -112,7 +113,6 @@
                 group.startDelete = false;
                 group.startEdit = false;
               });
-              console.log(data);
             }, function() {
               me.isLoaded = false;
               me.errorMessage = 'Something going wrong!';
