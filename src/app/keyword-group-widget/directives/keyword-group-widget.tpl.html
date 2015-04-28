@@ -12,7 +12,7 @@
     <div class="raml-console-vbs-popup-body">
 
       <!--Toolbar-->
-      <div class="raml-console-popup-body-toolbar">
+      <div class="raml-console-popup-body-toolbar" ng-if="keywordWidgetCtrl.isLogin">
         <a href="javascript:void(0)" class="raml-console-icon raml-console-icon-plus" ng-click="keywordWidgetCtrl.startCreateGroup()" ng-show="!keywordWidgetCtrl.createLoading">
           Create Group
         </a>

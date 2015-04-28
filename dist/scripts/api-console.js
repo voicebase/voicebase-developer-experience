@@ -1612,7 +1612,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    <div class=\"raml-console-vbs-popup-body\">\n" +
     "\n" +
     "      <!--Toolbar-->\n" +
-    "      <div class=\"raml-console-popup-body-toolbar\">\n" +
+    "      <div class=\"raml-console-popup-body-toolbar\" ng-if=\"keywordWidgetCtrl.isLogin\">\n" +
     "        <a href=\"javascript:void(0)\" class=\"raml-console-icon raml-console-icon-plus\" ng-click=\"keywordWidgetCtrl.startCreateGroup()\" ng-show=\"!keywordWidgetCtrl.createLoading\">\n" +
     "          Create Group\n" +
     "        </a>\n" +
