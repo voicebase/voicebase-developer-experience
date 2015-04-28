@@ -723,7 +723,7 @@ input.ng-dirty.ng-invalid-repeat + span.raml-console-field-validation-error::aft
   color: #2a6496;
   background-color: #eee;
   border-color: #ddd;
-  text-decoration: none;
+  text-decoration: none !important;
 }
 .pagination li:first-child a,
 .pagination li:first-child span {
@@ -4777,19 +4777,23 @@ span.raml-console-side-bar-required-field {
   position: relative;
 }
 
-.raml-console-vbs-keyword-group-widget-container a {
-  text-decoration: none;
-}
-
-.raml-console-vbs-keyword-group-widget-container a:hover {
-  text-decoration: underline;
-}
-
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup,
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form,
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error {
   width: 400px;
   height: auto;
+}
+
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup a,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form a,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error a {
+  text-decoration: none;
+}
+
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup a:hover,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form a:hover,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error a:hover {
+  text-decoration: underline;
 }
 
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup .raml-console-vbs-popup-header,

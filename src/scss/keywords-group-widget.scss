@@ -2,17 +2,17 @@
   float: left;
   position: relative;
 
-  a {
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
   .vbs-popup {
     width: 400px;
     height: auto;
+
+    a {
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
 
     .vbs-popup-header {
       background: $color-console-documentation-header;

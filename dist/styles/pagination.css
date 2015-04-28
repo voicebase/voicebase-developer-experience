@@ -25,7 +25,7 @@
   color: #2a6496;
   background-color: #eee;
   border-color: #ddd;
-  text-decoration: none;
+  text-decoration: none !important;
 }
 .pagination li:first-child a,
 .pagination li:first-child span {
