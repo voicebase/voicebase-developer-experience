@@ -4,7 +4,7 @@
   RAML.Directives.voicebaseSign = function() {
     return {
       restrict: 'E',
-      templateUrl: 'directives/voicebase-sign.tpl.html',
+      templateUrl: 'console/directives/voicebase-sign.tpl.html',
       replace: true,
       controller: function($scope, $location, resourceHelper, voicebaseTokensApi) {
         $scope.resource = resourceHelper.findResourceByUrl($scope.raml, '/access/users/{userId}/tokens');

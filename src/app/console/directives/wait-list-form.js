@@ -4,7 +4,7 @@
   RAML.Directives.waitListForm = function() {
     return {
       restrict: 'E',
-      templateUrl: 'directives/wait-list-form.tpl.html',
+      templateUrl: 'console/directives/wait-list-form.tpl.html',
       replace: false,
       controller: function($scope, formValidate, waitList) {
         $scope.credentials = {};

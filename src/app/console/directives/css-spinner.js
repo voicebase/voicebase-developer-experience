@@ -4,7 +4,7 @@
   RAML.Directives.cssSpinner = function() {
     return {
       restrict: 'E',
-      templateUrl: 'directives/css-spinner.tpl.html',
+      templateUrl: 'console/directives/css-spinner.tpl.html',
       replace: false
     };
   };

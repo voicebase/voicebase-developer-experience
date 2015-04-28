@@ -4,7 +4,7 @@
   RAML.Directives.mainLogin = function($location, $timeout, voicebaseTokensApi) {
     return {
       restrict: 'E',
-      templateUrl: 'directives/main-login.tpl.html',
+      templateUrl: 'console/directives/main-login.tpl.html',
       replace: false,
       controller: function($scope, formValidate) {
         $scope.credentials = {};

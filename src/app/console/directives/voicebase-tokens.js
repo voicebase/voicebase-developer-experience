@@ -4,7 +4,7 @@
   RAML.Directives.voicebaseTokens = function() {
     return {
       restrict: 'E',
-      templateUrl: 'directives/voicebase-tokens.tpl.html',
+      templateUrl: 'console/directives/voicebase-tokens.tpl.html',
       replace: true,
       controller: function($scope, voicebaseTokensApi) {
 
