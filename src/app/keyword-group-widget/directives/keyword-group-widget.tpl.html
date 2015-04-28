@@ -35,7 +35,7 @@
       <!--groups list-->
       <div class="raml-console-keywords-group-list">
         <div class="raml-console-keywords-group-list-item"
-           dir-paginate="keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage">
+           dir-paginate="keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage" current-page="keywordWidgetCtrl.currentPage">
 
           <div class="raml-console-keywords-group-list-item-cell">
             <a href="javascript:void(0)" class="raml-console-keywords-group-name" ng-click="keywordWidgetCtrl.toggleGroupForm(keywordGroup)">{{ keywordGroup.name }}</a>

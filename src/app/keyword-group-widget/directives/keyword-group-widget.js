@@ -17,6 +17,7 @@
         me.editedGroup = {};
         me.showCreateForm = false;
         me.groupsPerPage = 5;
+        me.currentPage = 1;
 
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
@@ -53,6 +54,7 @@
             keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
               me.keywordGroups.groups.push(me.newGroup);
               me.createLoading = false;
+              me.currentPage = Math.floor(me.keywordGroups.groups.length / me.groupsPerPage) + 1;
             }, function() {
               me.showCreateForm = false;
               me.createLoading = false;
@@ -134,6 +136,7 @@
           me.keywordGroups = null;
           me.showCreateForm = false;
           me.createLoading = false;
+          me.currentPage = 1;
         };
       }
     };

@@ -743,6 +743,7 @@ RAML.Decorators = (function (Decorators) {
         me.editedGroup = {};
         me.showCreateForm = false;
         me.groupsPerPage = 5;
+        me.currentPage = 1;
 
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
@@ -779,6 +780,7 @@ RAML.Decorators = (function (Decorators) {
             keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
               me.keywordGroups.groups.push(me.newGroup);
               me.createLoading = false;
+              me.currentPage = Math.floor(me.keywordGroups.groups.length / me.groupsPerPage) + 1;
             }, function() {
               me.showCreateForm = false;
               me.createLoading = false;
@@ -860,6 +862,7 @@ RAML.Decorators = (function (Decorators) {
           me.keywordGroups = null;
           me.showCreateForm = false;
           me.createLoading = false;
+          me.currentPage = 1;
         };
       }
     };
@@ -1612,7 +1615,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <!--groups list-->\n" +
     "      <div class=\"raml-console-keywords-group-list\">\n" +
     "        <div class=\"raml-console-keywords-group-list-item\"\n" +
-    "           dir-paginate=\"keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage\">\n" +
+    "           dir-paginate=\"keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage\" current-page=\"keywordWidgetCtrl.currentPage\">\n" +
     "\n" +
     "          <div class=\"raml-console-keywords-group-list-item-cell\">\n" +
     "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-name\" ng-click=\"keywordWidgetCtrl.toggleGroupForm(keywordGroup)\">{{ keywordGroup.name }}</a>\n" +
