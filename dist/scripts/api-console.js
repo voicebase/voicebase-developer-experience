@@ -1564,7 +1564,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "              </span>\n" +
     "            </div>\n" +
     "          </ng-form>\n" +
-    "        <a href=\"javascript:void(0)\" class=\"raml-console-icon-delete\" title=\"Remove word/phrase\" ng-click=\"removeKeyword($index)\">\n" +
+    "        <a href=\"javascript:void(0)\" class=\"raml-console-icon-delete\" title=\"Remove word/phrase\" ng-click=\"removeKeyword($index)\" ng-if=\"keywordGroup.keywords.length > 1\">\n" +
     "          <span>&#10006;</span>\n" +
     "        </a>\n" +
     "      </div>\n" +

@@ -27,7 +27,7 @@
               </span>
             </div>
           </ng-form>
-        <a href="javascript:void(0)" class="raml-console-icon-delete" title="Remove word/phrase" ng-click="removeKeyword($index)">
+        <a href="javascript:void(0)" class="raml-console-icon-delete" title="Remove word/phrase" ng-click="removeKeyword($index)" ng-if="keywordGroup.keywords.length > 1">
           <span>&#10006;</span>
         </a>
       </div>
