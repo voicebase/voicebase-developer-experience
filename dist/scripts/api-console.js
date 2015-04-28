@@ -12,6 +12,7 @@
     'ui.codemirror',
     'hljs',
     'ramlConsoleApp',
+    'angularUtils.directives.dirPagination',
     'vbsKeywordGroupWidget'
   ]).config(function ($provide, $routeProvider) {
     RAML.Decorators.ramlConsole($provide);
@@ -741,6 +742,7 @@ RAML.Decorators = (function (Decorators) {
         me.newGroup = {};
         me.editedGroup = {};
         me.showCreateForm = false;
+        me.groupsPerPage = 5;
 
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
@@ -837,7 +839,6 @@ RAML.Decorators = (function (Decorators) {
                 group.startDelete = false;
                 group.startEdit = false;
               });
-              console.log(data);
             }, function() {
               me.isLoaded = false;
               me.errorMessage = 'Something going wrong!';
@@ -1610,7 +1611,9 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "      <!--groups list-->\n" +
     "      <div class=\"raml-console-keywords-group-list\">\n" +
-    "        <div class=\"raml-console-keywords-group-list-item\" ng-repeat=\"keywordGroup in keywordWidgetCtrl.keywordGroups.groups\">\n" +
+    "        <div class=\"raml-console-keywords-group-list-item\"\n" +
+    "           dir-paginate=\"keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage\">\n" +
+    "\n" +
     "          <div class=\"raml-console-keywords-group-list-item-cell\">\n" +
     "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-name\" ng-click=\"keywordWidgetCtrl.toggleGroupForm(keywordGroup)\">{{ keywordGroup.name }}</a>\n" +
     "          </div>\n" +
@@ -1630,10 +1633,37 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "          </div>\n" +
     "\n" +
     "        </div>\n" +
+    "        <div class=\"raml-console-keywords-pagination\">\n" +
+    "          <dir-pagination-controls\n" +
+    "            template-url=\"pagination/dirPagination.tpl.html\">\n" +
+    "          </dir-pagination-controls>\n" +
+    "        </div>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</div>\n"
+  );
+
+
+  $templateCache.put('pagination/dirPagination.tpl.html',
+    "<ul class=\"pagination\" ng-if=\"1 < pages.length\">\n" +
+    "    <li ng-if=\"boundaryLinks\" ng-class=\"{ disabled : pagination.current == 1 }\">\n" +
+    "        <a href=\"\" ng-click=\"setCurrent(1)\">&laquo;</a>\n" +
+    "    </li>\n" +
+    "    <li ng-if=\"directionLinks\" ng-class=\"{ disabled : pagination.current == 1 }\">\n" +
+    "        <a href=\"\" ng-click=\"setCurrent(pagination.current - 1)\">&lsaquo;</a>\n" +
+    "    </li>\n" +
+    "    <li ng-repeat=\"pageNumber in pages track by $index\" ng-class=\"{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }\">\n" +
+    "        <a href=\"\" ng-click=\"setCurrent(pageNumber)\">{{ pageNumber }}</a>\n" +
+    "    </li>\n" +
+    "\n" +
+    "    <li ng-if=\"directionLinks\" ng-class=\"{ disabled : pagination.current == pagination.last }\">\n" +
+    "        <a href=\"\" ng-click=\"setCurrent(pagination.current + 1)\">&rsaquo;</a>\n" +
+    "    </li>\n" +
+    "    <li ng-if=\"boundaryLinks\"  ng-class=\"{ disabled : pagination.current == pagination.last }\">\n" +
+    "        <a href=\"\" ng-click=\"setCurrent(pagination.last)\">&raquo;</a>\n" +
+    "    </li>\n" +
+    "</ul>\n"
   );
 
 
