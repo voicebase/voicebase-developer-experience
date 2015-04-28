@@ -4784,18 +4784,6 @@ span.raml-console-side-bar-required-field {
   height: auto;
 }
 
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup a,
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form a,
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error a {
-  text-decoration: none;
-}
-
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup a:hover,
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form a:hover,
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error a:hover {
-  text-decoration: underline;
-}
-
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup .raml-console-vbs-popup-header,
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form .raml-console-vbs-popup-header,
 .raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error .raml-console-vbs-popup-header {
@@ -4912,6 +4900,22 @@ span.raml-console-side-bar-required-field {
 
 .raml-console-keywords-pagination {
   padding-top: 15px;
+}
+
+.raml-console-keywords-group-name,
+.raml-console-popup-body-toolbar a,
+a.raml-console-icon {
+  text-decoration: none;
+}
+
+.raml-console-keywords-group-name:hover,
+.raml-console-popup-body-toolbar a:hover,
+a.raml-console-icon:hover {
+  text-decoration: underline;
+}
+
+.raml-console-meta-button {
+  text-decoration: none;
 }
 
 /*

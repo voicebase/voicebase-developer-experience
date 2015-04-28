@@ -6,14 +6,6 @@
     width: 400px;
     height: auto;
 
-    a {
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
     .vbs-popup-header {
       background: $color-console-documentation-header;
     }
@@ -138,3 +130,18 @@
 .keywords-pagination {
   padding-top: 15px;
 }
+
+.keywords-group-name,
+.popup-body-toolbar a,
+a.icon {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.meta-button {
+  text-decoration: none;
+}
+
