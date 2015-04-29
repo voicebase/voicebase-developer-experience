@@ -151,6 +151,7 @@ module.exports = function (grunt) {
           'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
           'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
           'bower_components/api-console-voicebase/src/assets/styles/error.css',
+          '<%= distdir %>/styles/toggle-button.css',
           '<%= distdir %>/styles/pagination.css',
           '<%= distdir %>/styles/voicebase-error.css',
           '<%= distdir %>/styles/api-console-dark-theme.css',
@@ -170,6 +171,7 @@ module.exports = function (grunt) {
           'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
           'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
           'bower_components/api-console-voicebase/src/assets/styles/error.css',
+          '<%= distdir %>/styles/toggle-button.css',
           '<%= distdir %>/styles/pagination.css',
           '<%= distdir %>/styles/voicebase-error.css',
           '<%= distdir %>/styles/api-console-light-theme.css',
@@ -218,6 +220,7 @@ module.exports = function (grunt) {
 
         files: {
           '<%= distdir %>/styles/pagination.css': 'src/scss/pagination.scss',
+          '<%= distdir %>/styles/toggle-button.css': 'src/scss/toggle-button.scss',
           '<%= distdir %>/styles/voicebase-error.css': 'src/scss/voicebase-error.scss',
           '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',
           '<%= distdir %>/styles/api-console-dark-theme.css': 'src/scss/dark-theme.scss'
@@ -232,6 +235,7 @@ module.exports = function (grunt) {
 
         files: {
           '<%= distdir %>/styles/pagination.css': 'src/scss/pagination.scss',
+          '<%= distdir %>/styles/toggle-button.css': 'src/scss/toggle-button.scss',
           '<%= distdir %>/styles/voicebase-error.css': 'src/scss/voicebase-error.scss',
           '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',
           '<%= distdir %>/styles/api-console-dark-theme.css': 'src/scss/dark-theme.scss'

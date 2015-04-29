@@ -25,10 +25,17 @@
                ng-model="credentials.password"/>
       </div>
       <div>
-        <label class="raml-console-login-label">
-          <input type="checkbox" class="" ng-checked="isRemember" ng-click="changeRemember()"/>
-          Remember me
-        </label>
+        <div class="raml-console-remember-toggle">
+          <input type="checkbox"
+                 toggle-button on-value="yes" off-value="no"
+                 ng-checked="isRemember"
+                 ng-click="changeRemember()"/>
+        </div>
+        <div>
+          <label class="raml-console-login-label">
+            Remember me
+          </label>
+        </div>
       </div>
       <div>
         <button type="submit" class="raml-console-login-submit raml-console-margin-top-input">

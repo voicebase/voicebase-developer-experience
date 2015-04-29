@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('vbsKeywordGroupWidget', [
-    'angularUtils.directives.dirPagination',
+    'angularUtils.directives.dirPagination'
   ]);
 
   angular.module('ramlVoicebaseConsoleApp', [
