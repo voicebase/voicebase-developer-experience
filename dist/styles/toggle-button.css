@@ -1,0 +1,65 @@
+.toggleable-button {
+  display: none;
+}
+
+.toggleable-button-outer {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  display: inline-block;
+  direction: ltr;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #cccccc;
+  position: relative;
+  text-align: left;
+  overflow: hidden;
+  line-height: 8px;
+  z-index: 0;
+  vertical-align: middle;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.toggleable-button-inner {
+  display: inline-block;
+  border-radius: 4px;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+.toggleable-button-inner.toggleable-button-on .toggleable-button-inner-text {
+  float: left;
+}
+.toggleable-button-inner.toggleable-button-on .toggleable-button-handle {
+  float: right;
+}
+.toggleable-button-inner.toggleable-button-off .toggleable-button-inner-text {
+  float: right;
+}
+.toggleable-button-inner.toggleable-button-off .toggleable-button-handle {
+  float: left;
+}
+
+.toggleable-button-inner-text,
+.toggleable-button-handle {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: table-cell !important;
+  padding: 6px 12px;
+  width: 52px;
+  font-size: 18px;
+  line-height: 20px;
+  height: 32px;
+}
+
+.toggleable-button-handle {
+  background: #fff;
+}
+
+.toggleable-button-inner-text {
+  background: #0079C0;
+  color: #fff;
+}
