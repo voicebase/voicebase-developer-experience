@@ -2,6 +2,7 @@
   'use strict';
 
   angular.module('vbsKeywordGroupWidget', [
+    'cssSpinnerModule',
     'angularUtils.directives.dirPagination'
   ]);
 
@@ -13,6 +14,7 @@
     'hc.marked',
     'ui.codemirror',
     'hljs',
+    'cssSpinnerModule',
     'ramlConsoleApp',
     'vbsKeywordGroupWidget'
   ]).config(function ($provide, $routeProvider) {
@@ -285,22 +287,6 @@ RAML.Decorators = (function (Decorators) {
   return Decorators;
 
 })(RAML.Decorators || {});
-
-(function () {
-  'use strict';
-
-  RAML.Directives.cssSpinner = function() {
-    return {
-      restrict: 'E',
-      templateUrl: 'console/directives/css-spinner.tpl.html',
-      replace: false
-    };
-  };
-
-  angular.module('RAML.Directives')
-    .directive('cssSpinner', RAML.Directives.cssSpinner);
-
-})();
 
 (function () {
   'use strict';
@@ -950,6 +936,29 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  angular.module('cssSpinnerModule', []);
+
+})();
+
+(function () {
+  'use strict';
+
+  var cssSpinner = function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'css-spinner/css-spinner.tpl.html',
+      replace: false
+    };
+  };
+
+  angular.module('cssSpinnerModule')
+    .directive('cssSpinner', cssSpinner);
+
+})();
+
+(function () {
+  'use strict';
+
   var focusForm = function () {
     return {
       restrict: 'A',
@@ -1429,17 +1438,6 @@ var ToggleableButton = (function() {
 angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache) {
   'use strict';
 
-  $templateCache.put('console/directives/css-spinner.tpl.html',
-    "<div class=\"raml-console-spinner\">\n" +
-    "  <div class=\"raml-console-rect1\"></div>\n" +
-    "  <div class=\"raml-console-rect2\"></div>\n" +
-    "  <div class=\"raml-console-rect3\"></div>\n" +
-    "  <div class=\"raml-console-rect4\"></div>\n" +
-    "  <div class=\"raml-console-rect5\"></div>\n" +
-    "</div>\n"
-  );
-
-
   $templateCache.put('console/directives/main-login.tpl.html',
     "<div class=\"raml-console-main-login-form\">\n" +
     "  <css-spinner ng-show=\"isInit\"></css-spinner>\n" +
@@ -1708,6 +1706,17 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  <span ng-hide=\"isSkipping\">Explore the API</span>\n" +
     "  <css-spinner ng-show=\"isSkipping\"></css-spinner>\n" +
     "</a>\n"
+  );
+
+
+  $templateCache.put('css-spinner/css-spinner.tpl.html',
+    "<div class=\"raml-console-spinner\">\n" +
+    "  <div class=\"raml-console-rect1\"></div>\n" +
+    "  <div class=\"raml-console-rect2\"></div>\n" +
+    "  <div class=\"raml-console-rect3\"></div>\n" +
+    "  <div class=\"raml-console-rect4\"></div>\n" +
+    "  <div class=\"raml-console-rect5\"></div>\n" +
+    "</div>\n"
   );
 
 

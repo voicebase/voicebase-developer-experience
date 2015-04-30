@@ -2,6 +2,7 @@
   'use strict';
 
   angular.module('vbsKeywordGroupWidget', [
+    'cssSpinnerModule',
     'angularUtils.directives.dirPagination'
   ]);
 
@@ -13,6 +14,7 @@
     'hc.marked',
     'ui.codemirror',
     'hljs',
+    'cssSpinnerModule',
     'ramlConsoleApp',
     'vbsKeywordGroupWidget'
   ]).config(function ($provide, $routeProvider) {
