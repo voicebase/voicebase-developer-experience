@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  RAML.Services.FormValidate = function() {
+  var formValidate = function() {
 
     var validateForm = function(form) {
       var errors = form.$error;
@@ -41,7 +41,7 @@
 
   };
 
-  angular.module('RAML.Services')
-    .service('formValidate', RAML.Services.FormValidate);
+  angular.module('formValidateModule')
+    .service('formValidate', formValidate);
 
 })();

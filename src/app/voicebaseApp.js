@@ -2,6 +2,7 @@
   'use strict';
 
   angular.module('vbsKeywordGroupWidget', [
+    'formValidateModule',
     'cssSpinnerModule',
     'angularUtils.directives.dirPagination'
   ]);
@@ -14,6 +15,7 @@
     'hc.marked',
     'ui.codemirror',
     'hljs',
+    'formValidateModule',
     'cssSpinnerModule',
     'ramlConsoleApp',
     'vbsKeywordGroupWidget'
