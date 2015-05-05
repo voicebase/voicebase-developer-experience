@@ -233,7 +233,7 @@ RAML.Decorators = (function (Decorators) {
       directive.compile = function () {
         return {
           pre: function (scope, element) {
-            var tokensTemplate = $compile('<voicebase-tokens></voicebase-tokens>')(scope);
+            var tokensTemplate = $compile('<voicebase-tokens ng-if="currentSchemeType === \'x-OAuth 2 Bearer\'"></voicebase-tokens>')(scope);
             element.find('.raml-console-sidebar-securty').append(tokensTemplate);
           }
         };
@@ -374,13 +374,31 @@ RAML.Decorators = (function (Decorators) {
         if(parentFormController) {
           parentFormController.$removeControl(formController);
 
+          if ( !parentFormController )
+          {
+            return; // root form, no need to isolate
+          }
+
+          // Do a copy of the controller
+          var originalCtrl = {};
+          angular.copy( formController, originalCtrl );
+
           // Replace form controller with a "null-controller"
           var nullFormCtrl = {
-            $addControl: angular.noop,
-            $removeControl: angular.noop,
-            $setValidity: angular.noop,
-            $setDirty: angular.noop,
-            $setPristine: angular.noop
+            $setValidity   : function ( validationToken, isValid, control ) {
+              originalCtrl.$setValidity( validationToken, isValid, control );
+              parentFormController.$setValidity( validationToken, true, formController );
+            },
+            $setDirty      : function () {
+              element.removeClass( 'ng-pristine' ).addClass( 'ng-dirty' );
+              formController.$dirty = true;
+              formController.$pristine = false;
+            },
+            $setPristine   : function () {
+              element.addClass( 'ng-pristine' ).removeClass( 'ng-dirty' );
+              formController.$dirty = false;
+              formController.$pristine = true;
+            }
           };
 
           angular.extend(formController, nullFormCtrl);
@@ -467,6 +485,19 @@ RAML.Decorators = (function (Decorators) {
           return false;
         };
 
+        $scope.auth = function(credentials, errorCallback) {
+          $scope.isLoaded = true;
+          var client = RAML.Client.create($scope.raml);
+          voicebaseTokensApi.getTokens(client.baseUri, credentials).then(function() {
+            $scope.isLoaded = false;
+          }, function(error){
+            $scope.isLoaded = false;
+            if(errorCallback) {
+              errorCallback(error);
+            }
+          });
+        };
+
       }
     };
   };
@@ -505,19 +536,6 @@ RAML.Decorators = (function (Decorators) {
           $location.path('/');
         };
 
-        $scope.auth = function(credentials, errorCallback) {
-          $scope.isLoaded = true;
-          var client = RAML.Client.create($scope.raml);
-          voicebaseTokensApi.getTokens(client.baseUri, credentials).then(function() {
-            $scope.isLoaded = false;
-          }, function(error){
-            $scope.isLoaded = false;
-            if(errorCallback) {
-              errorCallback(error);
-            }
-          });
-        };
-
         $scope.$watch(function() {
           return voicebaseTokensApi.getTokensObj();
         }, function(tokensObj) {
@@ -550,18 +568,6 @@ RAML.Decorators = (function (Decorators) {
         $scope.isLoaded = false;
         $scope.tokens = [];
         $scope.selectedToken = null;
-
-        $scope.auth = function(credentials, errorCallback) {
-          $scope.isLoaded = true;
-          var client = RAML.Client.create($scope.raml);
-          voicebaseTokensApi.getTokens(client.baseUri, credentials).then(function() {
-          }, function(error){
-            $scope.isLoaded = false;
-            if(errorCallback) {
-              errorCallback(error);
-            }
-          });
-        };
 
         $scope.$watch(function() {
           return voicebaseTokensApi.getTokensObj();
@@ -1642,7 +1648,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
 
   $templateCache.put('console/directives/voicebase-tokens.tpl.html',
-    "<div class=\"raml-console-vbs-tokens-container\" ng-if=\"currentSchemeType === 'x-OAuth 2 Bearer'\">\n" +
+    "<div class=\"raml-console-vbs-tokens-container\">\n" +
     "  <button type=\"button\" ng-click=\"showForm()\" class=\"raml-console-vbs-get-tokens raml-console-sidebar-action raml-console-sidebar-action-get\" ng-show=\"!tokens.length\">\n" +
     "    <span ng-show=\"!isLoaded\">Sign in to select token</span>\n" +
     "    <span ng-show=\"isLoaded\">Getting tokens...</span>\n" +

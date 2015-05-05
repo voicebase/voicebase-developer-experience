@@ -8,7 +8,7 @@ RAML.Decorators = (function (Decorators) {
       directive.compile = function () {
         return {
           pre: function (scope, element) {
-            var tokensTemplate = $compile('<voicebase-tokens></voicebase-tokens>')(scope);
+            var tokensTemplate = $compile('<voicebase-tokens ng-if="currentSchemeType === \'x-OAuth 2 Bearer\'"></voicebase-tokens>')(scope);
             element.find('.raml-console-sidebar-securty').append(tokensTemplate);
           }
         };

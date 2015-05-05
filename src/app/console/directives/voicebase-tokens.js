@@ -12,18 +12,6 @@
         $scope.tokens = [];
         $scope.selectedToken = null;
 
-        $scope.auth = function(credentials, errorCallback) {
-          $scope.isLoaded = true;
-          var client = RAML.Client.create($scope.raml);
-          voicebaseTokensApi.getTokens(client.baseUri, credentials).then(function() {
-          }, function(error){
-            $scope.isLoaded = false;
-            if(errorCallback) {
-              errorCallback(error);
-            }
-          });
-        };
-
         $scope.$watch(function() {
           return voicebaseTokensApi.getTokensObj();
         }, function(tokensData) {
