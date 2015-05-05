@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  RAML.Services.VoicebaseTokensApi = function($http, $q) {
+  var voicebaseTokensApi = function($http, $q) {
     var tokens = null;
     var currentToken = null;
     var needRemember = localStorage.getItem('needRemember') || false;
@@ -170,7 +170,7 @@
 
   };
 
-  angular.module('RAML.Services')
-    .service('voicebaseTokensApi', RAML.Services.VoicebaseTokensApi);
+  angular.module('voicebaseTokensModule')
+    .service('voicebaseTokensApi', voicebaseTokensApi);
 
 })();

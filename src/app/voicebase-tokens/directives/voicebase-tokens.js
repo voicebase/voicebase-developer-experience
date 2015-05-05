@@ -1,10 +1,10 @@
 (function () {
   'use strict';
 
-  RAML.Directives.voicebaseTokens = function() {
+  var voicebaseTokens = function() {
     return {
       restrict: 'E',
-      templateUrl: 'console/directives/voicebase-tokens.tpl.html',
+      templateUrl: 'voicebase-tokens/directives/voicebase-tokens.tpl.html',
       replace: true,
       controller: function($scope, voicebaseTokensApi) {
 
@@ -42,6 +42,6 @@
     };
   };
 
-  angular.module('RAML.Directives')
-    .directive('voicebaseTokens', RAML.Directives.voicebaseTokens);
+  angular.module('voicebaseTokensModule')
+    .directive('voicebaseTokens', voicebaseTokens);
 })();

@@ -1,10 +1,10 @@
 (function () {
   'use strict';
 
-  RAML.Directives.voicebaseSign = function() {
+  var voicebaseSign = function() {
     return {
       restrict: 'E',
-      templateUrl: 'console/directives/voicebase-sign.tpl.html',
+      templateUrl: 'voicebase-tokens/directives/voicebase-sign.tpl.html',
       replace: true,
       controller: function($scope, $location, resourceHelper, voicebaseTokensApi) {
         $scope.resource = resourceHelper.findResourceByUrl($scope.raml, '/access/users/{userId}/tokens');
@@ -41,7 +41,7 @@
     };
   };
 
-  angular.module('RAML.Directives')
-    .directive('voicebaseSign', RAML.Directives.voicebaseSign);
+  angular.module('voicebaseTokensModule')
+    .directive('voicebaseSign', voicebaseSign);
 
 })();

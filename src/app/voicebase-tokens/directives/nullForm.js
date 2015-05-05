@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  RAML.Directives.nullForm = function() {
+  var nullForm = function() {
     return {
       restrict: 'A',
       require: '?form',
@@ -48,6 +48,6 @@
     };
   };
 
-  angular.module('RAML.Directives')
-    .directive('nullForm', RAML.Directives.nullForm);
+  angular.module('voicebaseTokensModule')
+    .directive('nullForm', nullForm);
 })();

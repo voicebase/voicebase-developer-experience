@@ -1,10 +1,10 @@
 (function () {
   'use strict';
 
-  RAML.Directives.voicebaseAuthForm = function() {
+  var voicebaseAuthForm = function() {
     return {
       restrict: 'E',
-      templateUrl: 'console/directives/voicebase-auth-form.tpl.html',
+      templateUrl: 'voicebase-tokens/directives/voicebase-auth-form.tpl.html',
       controller: function($scope, formValidate, voicebaseTokensApi) {
         $scope.credentials = {};
         $scope.showAuthForm = false;
@@ -61,7 +61,7 @@
     };
   };
 
-  angular.module('RAML.Directives')
-    .directive('voicebaseAuthForm', RAML.Directives.voicebaseAuthForm);
+  angular.module('voicebaseTokensModule')
+    .directive('voicebaseAuthForm', voicebaseAuthForm);
 
 })();
