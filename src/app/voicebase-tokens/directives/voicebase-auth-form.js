@@ -46,8 +46,13 @@
 
         $scope.auth = function(credentials, errorCallback) {
           $scope.isLoaded = true;
-          var client = RAML.Client.create($scope.raml);
-          voicebaseTokensApi.getTokens(client.baseUri, credentials).then(function() {
+          var baseUri = 'https://apis.voicebase.com/v2-beta';
+          if(RAML.Client && $scope.raml) {
+            var client = RAML.Client.create($scope.raml);
+            baseUri = client.baseUri;
+          }
+
+          voicebaseTokensApi.getTokens(baseUri, credentials).then(function() {
             $scope.isLoaded = false;
           }, function(error){
             $scope.isLoaded = false;

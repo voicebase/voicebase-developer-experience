@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API Console</title>
+  <link href="../../dist/styles/api-console-light-theme.css" rel="stylesheet" class="theme">
+</head>
+<body ng-app="testApp" ng-cloak class="raml-console-body">
+  <voicebase-sign></voicebase-sign>
+  <keyword-group-widget></keyword-group-widget>
+
+  <script src="../../dist/scripts/api-console-vendor.js"></script>
+  <script src="../../dist/scripts/api-console.js"></script>
+  <script>
+    $.noConflict();
+
+    angular.module('testApp', [
+      'voicebaseTokensModule',
+      'vbsKeywordGroupWidget'
+    ]);
+
+  </script>
+</body>
+</html>

@@ -6,12 +6,7 @@
       restrict: 'E',
       templateUrl: 'voicebase-tokens/directives/voicebase-sign.tpl.html',
       replace: true,
-      controller: function($scope, $location, resourceHelper, voicebaseTokensApi) {
-        $scope.resource = resourceHelper.findResourceByUrl($scope.raml, '/access/users/{userId}/tokens');
-        if($scope.resource) {
-          $scope.methodInfo = $scope.resource.methods[0];
-          $scope.context = new RAML.Services.TryIt.Context($scope.raml.baseUriParameters, $scope.resource, $scope.methodInfo);
-        }
+      controller: function($scope, $location, voicebaseTokensApi) {
 
         $scope.signed = false;
         $scope.isLoaded = false;
