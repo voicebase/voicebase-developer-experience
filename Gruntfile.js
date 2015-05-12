@@ -116,6 +116,24 @@ module.exports = function (grunt) {
           ]
         }]
 
+      },
+
+      fontAwesome: {
+        files: [{
+          expand: true,
+          dest: '<%= distdir %>/fontawesome/css/',
+          cwd: 'bower_components/fontawesome/css/',
+          src: [
+            'font-awesome.min.css'
+          ]
+        }, {
+          expand: true,
+          dest: '<%= distdir %>/fontawesome/fonts/',
+          cwd: 'bower_components/fontawesome/fonts/',
+          src: [
+            '**'
+          ]
+        }]
       }
     },
 
@@ -225,6 +243,7 @@ module.exports = function (grunt) {
       ],
 
       customBootstrap: [
+        'copy:fontAwesome',
         'copy:customBootstrap',
         'sass:customBootstrap'
       ],
