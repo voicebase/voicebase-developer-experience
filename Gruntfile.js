@@ -97,6 +97,25 @@ module.exports = function (grunt) {
             '**'
           ]
         }]
+      },
+
+      customBootstrap: {
+        files: [{
+          expand: true,
+          dest: '<%= distdir %>/bootstrap/javascripts/',
+          cwd: 'bower_components/bootstrap-sass/assets/javascripts/',
+          src: [
+            'bootstrap.min.js'
+          ]
+        }, {
+          expand: true,
+          dest: '<%= distdir %>/bootstrap/fonts/',
+          cwd: 'bower_components/bootstrap-sass/assets/fonts/',
+          src: [
+            '**'
+          ]
+        }]
+
       }
     },
 
@@ -205,6 +224,11 @@ module.exports = function (grunt) {
         'build:styles'
       ],
 
+      customBootstrap: [
+        'copy:customBootstrap',
+        'sass:customBootstrap'
+      ],
+
       themes: [
         'concat:darkTheme',
         'concat:lightTheme'
@@ -239,6 +263,16 @@ module.exports = function (grunt) {
           '<%= distdir %>/styles/voicebase-error.css': 'src/scss/voicebase-error.scss',
           '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',
           '<%= distdir %>/styles/api-console-dark-theme.css': 'src/scss/dark-theme.scss'
+        }
+      },
+
+      customBootstrap: {
+        options: {
+          sourcemap: 'none',
+          style: 'expanded'
+        },
+        files: {
+          '<%= distdir %>/bootstrap/stylesheets/bootstrap.css': 'src/scss/bootstrap.scss'
         }
       }
     },
@@ -365,6 +399,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'jshint',
     'clean',
+    'concurrent:customBootstrap',
     'concurrent:build'
   ]);
 
