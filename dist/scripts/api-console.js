@@ -4,6 +4,7 @@
   angular.module('voicebaseTokensModule', []);
 
   angular.module('vbsKeywordGroupWidget', [
+    'angularModalService',
     'formValidateModule',
     'cssSpinnerModule',
     'angularUtils.directives.dirPagination'
@@ -657,7 +658,7 @@ RAML.Decorators = (function (Decorators) {
       templateUrl: 'keyword-group-widget/directives/keyword-group-widget.tpl.html',
       replace: true,
       controllerAs: 'keywordWidgetCtrl',
-      controller: function(voicebaseTokensApi, formValidate, keywordGroupApi) {
+      controller: function(voicebaseTokensApi, formValidate, keywordGroupApi, ModalService) {
         var me = this;
         me.isShowWidget = false;
         me.isLoaded = true;
@@ -690,8 +691,21 @@ RAML.Decorators = (function (Decorators) {
             description: '',
             keywords: ['']
           };
-          me.showCreateForm = true;
-          me.createKeywordGroupForm.$setPristine();
+          ModalService.showModal({
+            templateUrl: 'createModal.html',
+            controller: 'ModalController',
+            inputs: {
+              keywordGroup: me.newGroup
+            }
+          }).then(function(modal) {
+            modal.element.modal();
+            modal.close.then(function(result) {
+              console.log(123);
+            });
+          });
+
+          //me.showCreateForm = true;
+          //me.createKeywordGroupForm.$setPristine();
         };
 
         me.createLoading = false;
@@ -792,6 +806,15 @@ RAML.Decorators = (function (Decorators) {
     };
   };
 
+  angular.module('vbsKeywordGroupWidget').controller('ModalController', function($scope, keywordGroup, close) {
+
+    $scope.keywordGroup = keywordGroup;
+    $scope.close = function(result) {
+      close(result, 500); // close, but give 500ms for bootstrap to animate
+    };
+
+  });
+
   angular.module('vbsKeywordGroupWidget')
     .directive('keywordGroupWidget', keywordGroupWidget);
 
@@ -816,6 +839,24 @@ RAML.Decorators = (function (Decorators) {
 
   angular.module('vbsKeywordGroupWidget')
     .directive('scrollToBottom', scrollToBottom);
+
+})();
+
+(function() {
+  'use strict';
+
+  var keywordsFilter = function() {
+    return function(keywords) {
+      var etc = (keywords.length > 5) ? '...' : '';
+      var _keywords = keywords.slice(0, 5);
+      _keywords = _keywords.join(', ') + etc;
+      return _keywords;
+    };
+
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .filter('keywordsFilter', keywordsFilter);
 
 })();
 
@@ -1661,45 +1702,62 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
 
   $templateCache.put('keyword-group-widget/directives/keyword-group-form.tpl.html',
-    "<div class=\"raml-console-keywords-group-list-item-form\">\n" +
-    "  <div class=\"raml-console-sidebar-input-container\">\n" +
-    "    <label class=\"raml-console-sidebar-label\">\n" +
+    "<div>\n" +
+    "  <div class=\"form-group\">\n" +
+    "    <label class=\"control-label col-sm-4 raml-console-keyword-label\">\n" +
     "      Detection Group Name\n" +
     "      <span class=\"raml-console-side-bar-required-field\">*</span>\n" +
     "    </label>\n" +
-    "    <input type=\"text\" name=\"groupName\" required=\"true\" maxlength=\"64\" class=\"raml-console-sidebar-input raml-console-sidebar-input-custom\" ng-model=\"keywordGroup.name\"/>\n" +
-    "    <span class=\"raml-console-field-validation-error\"></span>\n" +
-    "  </div>\n" +
-    "  <div class=\"raml-console-sidebar-input-container\">\n" +
-    "    <label class=\"raml-console-sidebar-label\">Detection Description</label>\n" +
-    "    <textarea name=\"description\" maxlength=\"1000\" ng-model=\"keywordGroup.description\" class=\"raml-console-sidebar-textarea\"></textarea>\n" +
-    "  </div>\n" +
-    "  <div class=\"raml-console-sidebar-input-container\">\n" +
-    "    <label class=\"raml-console-sidebar-label\">Words/Phrases to detect</label>\n" +
-    "    <div class=\"raml-console-keywords-list-container\" data-scroll-to-bottom='keywordGroup.keywords.length'>\n" +
-    "      <div class=\"raml-console-keyword-container\"\n" +
-    "           ng-repeat=\"keyword in keywordGroup.keywords track by $index\">\n" +
-    "          <ng-form name=\"keywordForm\">\n" +
-    "            <div class=\"raml-console-sidebar-input-container\">\n" +
-    "              <input type=\"text\" name=\"keyword\" maxlength=\"64\" required=\"true\" class=\"raml-console-sidebar-input raml-console-sidebar-input-custom raml-console-keyword-input\"\n" +
-    "                     ng-model=\"keywordGroup.keywords[$index]\"\n" +
-    "                     input-max-word-validate />\n" +
-    "              <span class=\"raml-console-multi-errors\">\n" +
-    "                <span class=\"raml-console-vbs-validation-error raml-console-vbs-validation-required\">Required</span>\n" +
-    "                <span class=\"raml-console-vbs-validation-error raml-console-vbs-validation-many-words-error\">Maximum 10 words</span>\n" +
-    "              </span>\n" +
-    "            </div>\n" +
-    "          </ng-form>\n" +
-    "        <a href=\"javascript:void(0)\" class=\"raml-console-icon-delete\" title=\"Remove word/phrase\" ng-click=\"removeKeyword($index)\" ng-if=\"keywordGroup.keywords.length > 1\">\n" +
-    "          <span>&#10006;</span>\n" +
-    "        </a>\n" +
-    "      </div>\n" +
+    "\n" +
+    "    <div class=\"col-sm-8\">\n" +
+    "      <input class=\"form-control\" type=\"text\" placeholder=\"Name\" name=\"groupName\" required=\"true\" maxlength=\"64\"\n" +
+    "             ng-model=\"keywordGroup.name\">\n" +
+    "      <span class=\"raml-console-field-validation-error\"></span>\n" +
     "    </div>\n" +
-    "    <a href=\"javascript:void(0)\" class=\"raml-console-icon raml-console-icon-plus\" ng-click=\"addKeyword()\" ng-show=\"keywordGroup.keywords.length < 32\">\n" +
-    "      Add a Word/Phrase\n" +
-    "    </a>\n" +
     "  </div>\n" +
-    "</div>\n"
+    "  <div class=\"form-group\">\n" +
+    "    <label class=\"control-label col-sm-4 raml-console-keyword-label\">Detection Group Description</label>\n" +
+    "\n" +
+    "    <div class=\"col-sm-8\">\n" +
+    "      <textarea class=\"form-control\" placeholder=\"Description\" name=\"description\" maxlength=\"1000\"\n" +
+    "                ng-model=\"keywordGroup.description\"></textarea>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"form-group\">\n" +
+    "    <label class=\"control-label col-sm-4 raml-console-keyword-label\">Words/Phrases to detect</label>\n" +
+    "\n" +
+    "    <div class=\"col-sm-5\">\n" +
+    "      <div class=\"raml-console-keywords-list-container\" data-scroll-to-bottom='keywordGroup.keywords.length'>\n" +
+    "        <div ng-repeat=\"keyword in keywordGroup.keywords track by $index\">\n" +
+    "          <ng-form name=\"keywordForm\" class=\"input-group raml-console-input-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"Word/Phrase\" name=\"keyword\" maxlength=\"64\"\n" +
+    "                   required=\"true\">\n" +
+    "          <span class=\"raml-console-multi-errors\">\n" +
+    "            <span class=\"raml-console-vbs-validation-error raml-console-vbs-validation-required\">Required</span>\n" +
+    "            <span\n" +
+    "              class=\"raml-console-vbs-validation-error raml-console-vbs-validation-many-words-error\">Maximum 10 words</span>\n" +
+    "          </span>\n" +
+    "          <span class=\"input-group-btn\">\n" +
+    "            <button class=\"btn btn-default\" type=\"button\"\n" +
+    "                    title=\"Remove word/phrase\" ng-click=\"removeKeyword($index)\"\n" +
+    "                    ng-if=\"keywordGroup.keywords.length > 1\">\n" +
+    "              <i class=\"fa fa-times-circle\"></i>\n" +
+    "            </button>\n" +
+    "          </span>\n" +
+    "\n" +
+    "          </ng-form>\n" +
+    "        </div>\n" +
+    "\n" +
+    "      </div>\n" +
+    "      <button type=\"button\" class=\"btn btn-link add-keyword\"\n" +
+    "              ng-click=\"addKeyword()\" ng-show=\"keywordGroup.keywords.length < 32\">\n" +
+    "        <i class=\"fa fa-plus-circle\"></i>\n" +
+    "        Add another Word/Phrase\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "\n"
   );
 
 
@@ -1709,68 +1767,95 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    <span>Keywords spotting widget</span>\n" +
     "  </a>\n" +
     "\n" +
-    "  <div class=\"raml-console-vbs-popup\" ng-show=\"keywordWidgetCtrl.isShowWidget\">\n" +
+    "  <div class=\"raml-console-vbs-popup tw-bs\" ng-show=\"keywordWidgetCtrl.isShowWidget\">\n" +
     "    <div class=\"raml-console-vbs-popup-header\">\n" +
-    "      <h2 class=\"raml-console-vbs-popup-title\">Keyword Spotting Groups</h2>\n" +
-    "      <div class=\"raml-console-vbs-popup-close\" ng-click=\"keywordWidgetCtrl.hideWidget()\"></div>\n" +
+    "      <h3 class=\"raml-console-vbs-popup-title\">Keyword Spotting Groups</h3>\n" +
+    "      <div class=\"raml-console-vbs-popup-close\" ng-click=\"keywordWidgetCtrl.hideWidget()\">\n" +
+    "        <i class=\"fa fa-remove\"></i>\n" +
+    "      </div>\n" +
     "    </div>\n" +
     "\n" +
     "    <div class=\"raml-console-vbs-popup-body\">\n" +
+    "      <div class=\"panel panel-default raml-console-panel\">\n" +
+    "        <!--Toolbar-->\n" +
+    "        <div class=\"list-group\" ng-if=\"keywordWidgetCtrl.isLogin\">\n" +
+    "          <a class=\"list-group-item raml-console-add-group\"\n" +
+    "             ng-click=\"keywordWidgetCtrl.startCreateGroup()\"\n" +
+    "             ng-show=\"!keywordWidgetCtrl.createLoading\">\n" +
     "\n" +
-    "      <!--Toolbar-->\n" +
-    "      <div class=\"raml-console-popup-body-toolbar\" ng-if=\"keywordWidgetCtrl.isLogin\">\n" +
-    "        <a href=\"javascript:void(0)\" class=\"raml-console-icon raml-console-icon-plus\" ng-click=\"keywordWidgetCtrl.startCreateGroup()\" ng-show=\"!keywordWidgetCtrl.createLoading\">\n" +
-    "          Create Group\n" +
-    "        </a>\n" +
-    "        <css-spinner ng-show=\"keywordWidgetCtrl.createLoading\"></css-spinner>\n" +
-    "      </div>\n" +
+    "            <h4 class=\"list-group-item-heading raml-console-item-heading\">\n" +
+    "              <i class=\"fa fa-plus-circle\"></i>\n" +
+    "              Add Keyword Spotting Group\n" +
+    "            </h4>\n" +
     "\n" +
-    "      <css-spinner ng-if=\"keywordWidgetCtrl.isLoaded\"></css-spinner>\n" +
-    "      <div ng-if=\"!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded\" class=\"raml-console-error-message\">Please sign in</div>\n" +
-    "      <div ng-if=\"keywordWidgetCtrl.errorMessage && !keywordWidgetCtrl.isLoaded\" class=\"raml-console-error-message\">{{ keywordWidgetCtrl.errorMessage }}</div>\n" +
-    "\n" +
-    "      <!--Create group form-->\n" +
-    "      <div class=\"raml-console-create-group-form raml-console-clearfix\" ng-show=\"keywordWidgetCtrl.showCreateForm\">\n" +
-    "        <form name=\"keywordWidgetCtrl.createKeywordGroupForm\" novalidate focus-form ng-submit=\"keywordWidgetCtrl.createGroup($event)\">\n" +
-    "          <keyword-group-form keyword-group=\"keywordWidgetCtrl.newGroup\"></keyword-group-form>\n" +
-    "          <input type=\"submit\" value=\"Create\" class=\"raml-console-sidebar-action raml-console-sidebar-action-get\"/>\n" +
-    "          <input type=\"button\" value=\"Cancel\" class=\"raml-console-sidebar-action raml-console-sidebar-action-reset\" ng-click=\"keywordWidgetCtrl.showCreateForm = false;\"/>\n" +
-    "        </form>\n" +
-    "      </div>\n" +
-    "\n" +
-    "      <!--groups list-->\n" +
-    "      <div class=\"raml-console-keywords-group-list\">\n" +
-    "        <div class=\"raml-console-keywords-group-list-item\"\n" +
-    "           dir-paginate=\"keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage\" current-page=\"keywordWidgetCtrl.currentPage\">\n" +
-    "\n" +
-    "          <div class=\"raml-console-keywords-group-list-item-cell\">\n" +
-    "            <a href=\"javascript:void(0)\" class=\"raml-console-keywords-group-name\" ng-click=\"keywordWidgetCtrl.toggleGroupForm(keywordGroup)\">{{ keywordGroup.name }}</a>\n" +
-    "          </div>\n" +
-    "          <div class=\"raml-console-keywords-group-list-item-cell raml-console-keywords-group-list-item-toolbar\">\n" +
-    "            <a href=\"javascript:void(0)\" class=\"raml-console-icon-delete\" ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup)\" title=\"Delete group\" ng-show=\"!keywordGroup.startDelete && !keywordGroup.startEdit\">\n" +
-    "              <span>&#10006;</span>\n" +
-    "            </a>\n" +
-    "            <css-spinner ng-if=\"keywordGroup.startDelete || keywordGroup.startEdit\"></css-spinner>\n" +
-    "          </div>\n" +
-    "\n" +
-    "          <div class=\"raml-console-keywords-group-list-item-form\" ng-if=\"keywordGroup.expanded\">\n" +
-    "            <ng-form name=\"keywordWidgetCtrl.editKeywordGroupForm\" novalidate focus-form>\n" +
-    "              <keyword-group-form keyword-group=\"keywordWidgetCtrl.editedGroup\"></keyword-group-form>\n" +
-    "              <input type=\"button\" value=\"Edit\" class=\"raml-console-sidebar-action raml-console-sidebar-action-get\" ng-click=\"keywordWidgetCtrl.editGroup(keywordGroup)\"/>\n" +
-    "              <input type=\"button\" value=\"Cancel\" class=\"raml-console-sidebar-action raml-console-sidebar-action-reset\" ng-click=\"keywordGroup.expanded = false;\"/>\n" +
-    "            </ng-form>\n" +
-    "          </div>\n" +
-    "\n" +
+    "          </a>\n" +
+    "          <css-spinner ng-show=\"keywordWidgetCtrl.createLoading\"></css-spinner>\n" +
     "        </div>\n" +
-    "        <div class=\"raml-console-keywords-pagination\">\n" +
+    "\n" +
+    "        <css-spinner ng-if=\"keywordWidgetCtrl.isLoaded\"></css-spinner>\n" +
+    "        <div ng-if=\"!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded\" class=\"raml-console-error-message\">Please sign in</div>\n" +
+    "        <div ng-if=\"keywordWidgetCtrl.errorMessage && !keywordWidgetCtrl.isLoaded\" class=\"raml-console-error-message\">{{ keywordWidgetCtrl.errorMessage }}</div>\n" +
+    "\n" +
+    "        <div class=\"panel-heading\" ng-if=\"!keywordWidgetCtrl.isLoaded\">\n" +
+    "          <h3 class=\"panel-title\">Your Groups</h3>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"list-group raml-console-keywords-group-list\">\n" +
+    "          <a class=\"list-group-item raml-console-keywords-group-list-item\" data-toggle=\"modal\" data-target=\"#editGroup\"\n" +
+    "             dir-paginate=\"keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage\" current-page=\"keywordWidgetCtrl.currentPage\">\n" +
+    "\n" +
+    "            <h4 class=\"list-group-item-heading raml-console-keywords-group-name\">{{ keywordGroup.name }}</h4>\n" +
+    "            <small class=\"list-group-item-text\">{{ keywordGroup.keywords | keywordsFilter }}</small>\n" +
+    "            <i class=\"fa fa-times-circle raml-console-keywords-group-remove\" title=\"Delete group\"\n" +
+    "               ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup)\"\n" +
+    "               ng-show=\"!keywordGroup.startDelete && !keywordGroup.startEdit\">\n" +
+    "            </i>\n" +
+    "            <css-spinner ng-if=\"keywordGroup.startDelete || keywordGroup.startEdit\"></css-spinner>\n" +
+    "          </a>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"raml-console-keywords-pagination\" >\n" +
     "          <dir-pagination-controls\n" +
     "            template-url=\"pagination/dirPagination.tpl.html\">\n" +
     "          </dir-pagination-controls>\n" +
     "        </div>\n" +
+    "\n" +
     "      </div>\n" +
+    "\n" +
     "    </div>\n" +
     "  </div>\n" +
-    "</div>\n"
+    "\n" +
+    "  <script type=\"text/ng-template\" id=\"createModal.html\">\n" +
+    "    <div class=\"modal fade\">\n" +
+    "      <div class=\"modal-dialog\">\n" +
+    "        <div class=\"modal-content raml-console-modal\">\n" +
+    "          <div class=\"modal-header raml-console-modal-header\">\n" +
+    "            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\"><i class=\"fa fa-times\"></i></button>\n" +
+    "            <h4 class=\"modal-title raml-console-modal-title\">Add Keyword Spotting Group</h4>\n" +
+    "          </div>\n" +
+    "          <div class=\"modal-body\">\n" +
+    "            <form class=\"form-horizontal\" name=\"keywordWidgetCtrl.createKeywordGroupForm\" novalidate focus-form ng-submit=\"keywordWidgetCtrl.createGroup($event)\">\n" +
+    "              <keyword-group-form keyword-group=\"keywordGroup\"></keyword-group-form>\n" +
+    "            </form>\n" +
+    "          </div>\n" +
+    "          <div class=\"modal-footer raml-console-modal-footer\">\n" +
+    "            <button type=\"submit\" class=\"btn btn-success\" data-dismiss=\"modal\">\n" +
+    "              <i class=\"fa fa-check\"></i>\n" +
+    "              Save\n" +
+    "            </button>\n" +
+    "            <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\">\n" +
+    "              <i class=\"fa fa-times\"></i>\n" +
+    "              Cancel\n" +
+    "            </button>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "  </script>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n"
   );
 
 

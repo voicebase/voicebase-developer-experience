@@ -4716,12 +4716,6 @@ span.raml-console-side-bar-required-field {
   font-weight: bold;
 }
 
-.raml-console-vbs-popup .raml-console-vbs-popup-close::before,
-.raml-console-vbs-token-auth-form .raml-console-vbs-popup-close::before,
-.raml-console-vbs-tokens-error .raml-console-vbs-popup-close::before {
-  content: "\00d7";
-}
-
 .raml-console-vbs-popup .raml-console-vbs-popup-close:hover,
 .raml-console-vbs-token-auth-form .raml-console-vbs-popup-close:hover,
 .raml-console-vbs-tokens-error .raml-console-vbs-popup-close:hover {
@@ -4739,12 +4733,6 @@ span.raml-console-side-bar-required-field {
 .raml-console-vbs-token-auth-form .raml-console-vbs-popup-header .raml-console-vbs-popup-title,
 .raml-console-vbs-tokens-error .raml-console-vbs-popup-header .raml-console-vbs-popup-title {
   margin: 0;
-}
-
-.raml-console-vbs-popup .raml-console-vbs-popup-body,
-.raml-console-vbs-token-auth-form .raml-console-vbs-popup-body,
-.raml-console-vbs-tokens-error .raml-console-vbs-popup-body {
-  padding: 15px;
 }
 
 .raml-console-vbs-tokens-container {
@@ -4852,10 +4840,16 @@ span.raml-console-side-bar-required-field {
   height: auto;
 }
 
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup .raml-console-vbs-popup-header,
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form .raml-console-vbs-popup-header,
-.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error .raml-console-vbs-popup-header {
-  background: #e0e0e0;
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup .raml-console-vbs-popup-body,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form .raml-console-vbs-popup-body,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error .raml-console-vbs-popup-body {
+  padding: 15px;
+}
+
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-popup .raml-console-vbs-popup-body .raml-console-panel,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-token-auth-form .raml-console-vbs-popup-body .raml-console-panel,
+.raml-console-vbs-keyword-group-widget-container .raml-console-vbs-tokens-error .raml-console-vbs-popup-body .raml-console-panel {
+  margin: 0;
 }
 
 .raml-console-vbs-keyword-group-widget-container .raml-console-spinner {
@@ -4870,89 +4864,58 @@ span.raml-console-side-bar-required-field {
   color: #d14956;
 }
 
-.raml-console-keywords-group-list {
-  width: 100%;
+.raml-console-vbs-keyword-group-widget-container .raml-console-item-heading {
+  color: #85D04A !important;
+  margin: 5px 0;
+}
+
+.raml-console-vbs-keyword-group-widget-container .raml-console-add-group {
+  cursor: pointer;
 }
 
 .raml-console-keywords-group-list .raml-console-keywords-group-list-item {
-  border-bottom: 1px solid #CCC;
-  padding: 15px 0;
-  display: table;
-  width: 100%;
+  cursor: pointer;
 }
 
-.raml-console-keywords-group-list .raml-console-keywords-group-list-item-cell {
-  float: left;
-}
-
-.raml-console-keywords-group-list .raml-console-keywords-group-list-item-toolbar {
-  margin-left: 15px;
-}
-
-.raml-console-keywords-group-list .raml-console-keywords-group-list-item-toolbar .raml-console-spinner {
+.raml-console-keywords-group-list .raml-console-keywords-group-list-item .raml-console-spinner {
   width: auto;
   height: 19px;
   margin: 5px;
 }
 
+.raml-console-keywords-group-list .raml-console-keywords-group-list-item .raml-console-keywords-group-remove {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  display: block;
+  font-size: 20px;
+  line-height: 20px;
+  margin-top: -30px;
+  color: #BBB;
+  padding: 20px;
+  transition: color 0.3s ease;
+}
+
+.raml-console-keywords-group-list .raml-console-keywords-group-list-item .raml-console-keywords-group-remove:hover {
+  color: #D9534F;
+}
+
 .raml-console-keywords-group-list .raml-console-keywords-group-name {
-  color: #333;
-  font-weight: bold;
+  color: #0079C0 !important;
 }
 
 .raml-console-keywords-group-list .raml-console-keywords-group-list-item-form {
   clear: both;
 }
 
-.raml-console-icon {
-  width: 32px;
-  height: 32px;
-}
-
 .raml-console-popup-body-toolbar {
   float: right;
-}
-
-.raml-console-icon-delete {
-  text-decoration: none;
-  color: #ccc;
-  font-weight: bold;
-}
-
-.raml-console-icon-delete:hover {
-  text-decoration: none;
-  color: #333;
-}
-
-.raml-console-icon-plus {
-  color: #61ca03;
-  font-weight: bold;
-}
-
-.raml-console-icon-plus:before {
-  content: "\002B";
 }
 
 .raml-console-keywords-list-container {
   max-height: 180px;
   overflow-y: auto;
-}
-
-.raml-console-keyword-container {
-  display: table;
-  width: 100%;
-  position: relative;
-}
-
-.raml-console-keyword-container .raml-console-sidebar-input-container {
-  width: 80%;
-  float: left;
-}
-
-.raml-console-keyword-container .raml-console-icon-delete {
-  margin: 5px;
-  position: relative;
-  top: 10px;
+  padding-right: 15px;
 }
 
 .raml-console-clearfix {
@@ -4966,24 +4929,47 @@ span.raml-console-side-bar-required-field {
   margin: 5px;
 }
 
-.raml-console-keywords-pagination {
-  padding-top: 15px;
-}
-
 .raml-console-keywords-group-name,
 .raml-console-popup-body-toolbar a,
 a.raml-console-icon {
   text-decoration: none;
 }
 
-.raml-console-keywords-group-name:hover,
-.raml-console-popup-body-toolbar a:hover,
-a.raml-console-icon:hover {
-  text-decoration: underline;
-}
-
 .raml-console-meta-button {
   text-decoration: none;
+}
+
+.raml-console-keyword-label {
+  font-weight: 700;
+  font-size: 14px;
+  color: #333;
+}
+
+.raml-console-input-group {
+  margin-bottom: 15px;
+}
+
+.raml-console-input-group button {
+  line-height: 20px;
+}
+
+.raml-console-modal .raml-console-modal-header {
+  background-color: #f5f5f5;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.raml-console-modal .raml-console-modal-header .raml-console-modal-title {
+  font-weight: 500;
+  line-height: 1.1;
+  color: #333;
+}
+
+.raml-console-modal .raml-console-modal-footer {
+  background-color: #f5f5f5;
+  text-align: center;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 
 /*
