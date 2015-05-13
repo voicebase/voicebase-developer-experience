@@ -7,7 +7,7 @@
       templateUrl: 'keyword-group-widget/directives/keyword-group-widget.tpl.html',
       replace: true,
       controllerAs: 'keywordWidgetCtrl',
-      controller: function(voicebaseTokensApi, formValidate, keywordGroupApi) {
+      controller: function(voicebaseTokensApi, formValidate, keywordGroupApi, ModalService) {
         var me = this;
         me.isShowWidget = false;
         me.isLoaded = true;
@@ -40,8 +40,21 @@
             description: '',
             keywords: ['']
           };
-          me.showCreateForm = true;
-          me.createKeywordGroupForm.$setPristine();
+          ModalService.showModal({
+            templateUrl: 'createModal.html',
+            controller: 'ModalController',
+            inputs: {
+              keywordGroup: me.newGroup
+            }
+          }).then(function(modal) {
+            modal.element.modal();
+            modal.close.then(function(result) {
+              console.log(123);
+            });
+          });
+
+          //me.showCreateForm = true;
+          //me.createKeywordGroupForm.$setPristine();
         };
 
         me.createLoading = false;
@@ -141,6 +154,15 @@
       }
     };
   };
+
+  angular.module('vbsKeywordGroupWidget').controller('ModalController', function($scope, keywordGroup, close) {
+
+    $scope.keywordGroup = keywordGroup;
+    $scope.close = function(result) {
+      close(result, 500); // close, but give 500ms for bootstrap to animate
+    };
+
+  });
 
   angular.module('vbsKeywordGroupWidget')
     .directive('keywordGroupWidget', keywordGroupWidget);

@@ -4,6 +4,7 @@
   angular.module('voicebaseTokensModule', []);
 
   angular.module('vbsKeywordGroupWidget', [
+    'angularModalService',
     'formValidateModule',
     'cssSpinnerModule',
     'angularUtils.directives.dirPagination'

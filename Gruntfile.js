@@ -12,6 +12,7 @@ module.exports = function (grunt) {
       jsVendor: [
         'bower_components/api-console-voicebase/dist/scripts/api-console-vendor.js',
         'bower_components/angular-route/angular-route.js',
+        'bower_components/angular-modal-service/dst/angular-modal-service.js',
         'bower_components/angular-utils-pagination/dirPagination.js',
         'bower_components/api-console-voicebase/dist/scripts/api-console.js'
       ],

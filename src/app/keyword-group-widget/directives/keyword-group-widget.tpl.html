@@ -32,7 +32,7 @@
         <div ng-if="!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">Please sign in</div>
         <div ng-if="keywordWidgetCtrl.errorMessage && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">{{ keywordWidgetCtrl.errorMessage }}</div>
 
-        <div class="panel-heading">
+        <div class="panel-heading" ng-if="!keywordWidgetCtrl.isLoaded">
           <h3 class="panel-title">Your Groups</h3>
         </div>
 
@@ -60,37 +60,29 @@
 
     </div>
   </div>
+
   <script type="text/ng-template" id="createModal.html">
-    <div class="modal fade in" id="addGroup" tabindex="-1" role="dialog" aria-hidden="false" style="display: block; padding-right: 15px;">
-      <div class="modal-backdrop fade in" style="height: 544px;"></div>
+    <div class="modal fade">
       <div class="modal-dialog">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title">Add Keyword Spotting Group</h4>
-            <a href="javascript:void(0);" class="close" data-dismiss="modal">
-              <i class="fa fa-times"></i>
-            </a>
+        <div class="modal-content raml-console-modal">
+          <div class="modal-header raml-console-modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+            <h4 class="modal-title raml-console-modal-title">Add Keyword Spotting Group</h4>
           </div>
-          <div class="panel-body">
+          <div class="modal-body">
             <form class="form-horizontal" name="keywordWidgetCtrl.createKeywordGroupForm" novalidate focus-form ng-submit="keywordWidgetCtrl.createGroup($event)">
-              <keyword-group-form keyword-group="keywordWidgetCtrl.newGroup"></keyword-group-form>
-
-              <div class="panel-footer clearfix">
-                <div class="row">
-                  <div class="col-sm-8 col-sm-offset-4">
-                    <button type="submit" class="btn btn-success" data-dismiss="modal">
-                      <i class="fa fa-check"></i>
-                      Save
-                    </button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">
-                      <i class="fa fa-times"></i>
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-
+              <keyword-group-form keyword-group="keywordGroup"></keyword-group-form>
             </form>
+          </div>
+          <div class="modal-footer raml-console-modal-footer">
+            <button type="submit" class="btn btn-success" data-dismiss="modal">
+              <i class="fa fa-check"></i>
+              Save
+            </button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">
+              <i class="fa fa-times"></i>
+              Cancel
+            </button>
           </div>
         </div>
       </div>

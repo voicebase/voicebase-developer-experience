@@ -1,39 +1,56 @@
-<div class="raml-console-keywords-group-list-item-form">
-  <div class="raml-console-sidebar-input-container">
-    <label class="raml-console-sidebar-label">
+<div>
+  <div class="form-group">
+    <label class="control-label col-sm-4 raml-console-keyword-label">
       Detection Group Name
       <span class="raml-console-side-bar-required-field">*</span>
     </label>
-    <input type="text" name="groupName" required="true" maxlength="64" class="raml-console-sidebar-input raml-console-sidebar-input-custom" ng-model="keywordGroup.name"/>
-    <span class="raml-console-field-validation-error"></span>
-  </div>
-  <div class="raml-console-sidebar-input-container">
-    <label class="raml-console-sidebar-label">Detection Description</label>
-    <textarea name="description" maxlength="1000" ng-model="keywordGroup.description" class="raml-console-sidebar-textarea"></textarea>
-  </div>
-  <div class="raml-console-sidebar-input-container">
-    <label class="raml-console-sidebar-label">Words/Phrases to detect</label>
-    <div class="raml-console-keywords-list-container" data-scroll-to-bottom='keywordGroup.keywords.length'>
-      <div class="raml-console-keyword-container"
-           ng-repeat="keyword in keywordGroup.keywords track by $index">
-          <ng-form name="keywordForm">
-            <div class="raml-console-sidebar-input-container">
-              <input type="text" name="keyword" maxlength="64" required="true" class="raml-console-sidebar-input raml-console-sidebar-input-custom raml-console-keyword-input"
-                     ng-model="keywordGroup.keywords[$index]"
-                     input-max-word-validate />
-              <span class="raml-console-multi-errors">
-                <span class="raml-console-vbs-validation-error raml-console-vbs-validation-required">Required</span>
-                <span class="raml-console-vbs-validation-error raml-console-vbs-validation-many-words-error">Maximum 10 words</span>
-              </span>
-            </div>
-          </ng-form>
-        <a href="javascript:void(0)" class="raml-console-icon-delete" title="Remove word/phrase" ng-click="removeKeyword($index)" ng-if="keywordGroup.keywords.length > 1">
-          <span>&#10006;</span>
-        </a>
-      </div>
+
+    <div class="col-sm-8">
+      <input class="form-control" type="text" placeholder="Name" name="groupName" required="true" maxlength="64"
+             ng-model="keywordGroup.name">
+      <span class="raml-console-field-validation-error"></span>
     </div>
-    <a href="javascript:void(0)" class="raml-console-icon raml-console-icon-plus" ng-click="addKeyword()" ng-show="keywordGroup.keywords.length < 32">
-      Add a Word/Phrase
-    </a>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-4 raml-console-keyword-label">Detection Group Description</label>
+
+    <div class="col-sm-8">
+      <textarea class="form-control" placeholder="Description" name="description" maxlength="1000"
+                ng-model="keywordGroup.description"></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-4 raml-console-keyword-label">Words/Phrases to detect</label>
+
+    <div class="col-sm-5">
+      <div class="raml-console-keywords-list-container" data-scroll-to-bottom='keywordGroup.keywords.length'>
+        <div ng-repeat="keyword in keywordGroup.keywords track by $index">
+          <ng-form name="keywordForm" class="input-group raml-console-input-group">
+            <input class="form-control" type="text" placeholder="Word/Phrase" name="keyword" maxlength="64"
+                   required="true">
+          <span class="raml-console-multi-errors">
+            <span class="raml-console-vbs-validation-error raml-console-vbs-validation-required">Required</span>
+            <span
+              class="raml-console-vbs-validation-error raml-console-vbs-validation-many-words-error">Maximum 10 words</span>
+          </span>
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button"
+                    title="Remove word/phrase" ng-click="removeKeyword($index)"
+                    ng-if="keywordGroup.keywords.length > 1">
+              <i class="fa fa-times-circle"></i>
+            </button>
+          </span>
+
+          </ng-form>
+        </div>
+
+      </div>
+      <button type="button" class="btn btn-link add-keyword"
+              ng-click="addKeyword()" ng-show="keywordGroup.keywords.length < 32">
+        <i class="fa fa-plus-circle"></i>
+        Add another Word/Phrase
+      </button>
+    </div>
   </div>
 </div>
+
