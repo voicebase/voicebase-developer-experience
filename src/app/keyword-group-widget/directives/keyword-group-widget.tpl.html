@@ -3,65 +3,100 @@
     <span>Keywords spotting widget</span>
   </a>
 
-  <div class="raml-console-vbs-popup" ng-show="keywordWidgetCtrl.isShowWidget">
+  <div class="raml-console-vbs-popup tw-bs" ng-show="keywordWidgetCtrl.isShowWidget">
     <div class="raml-console-vbs-popup-header">
-      <h2 class="raml-console-vbs-popup-title">Keyword Spotting Groups</h2>
-      <div class="raml-console-vbs-popup-close" ng-click="keywordWidgetCtrl.hideWidget()"></div>
+      <h3 class="raml-console-vbs-popup-title">Keyword Spotting Groups</h3>
+      <div class="raml-console-vbs-popup-close" ng-click="keywordWidgetCtrl.hideWidget()">
+        <i class="fa fa-remove"></i>
+      </div>
     </div>
 
     <div class="raml-console-vbs-popup-body">
+      <div class="panel panel-default raml-console-panel">
+        <!--Toolbar-->
+        <div class="list-group" ng-if="keywordWidgetCtrl.isLogin">
+          <a class="list-group-item raml-console-add-group"
+             ng-click="keywordWidgetCtrl.startCreateGroup()"
+             ng-show="!keywordWidgetCtrl.createLoading">
 
-      <!--Toolbar-->
-      <div class="raml-console-popup-body-toolbar" ng-if="keywordWidgetCtrl.isLogin">
-        <a href="javascript:void(0)" class="raml-console-icon raml-console-icon-plus" ng-click="keywordWidgetCtrl.startCreateGroup()" ng-show="!keywordWidgetCtrl.createLoading">
-          Create Group
-        </a>
-        <css-spinner ng-show="keywordWidgetCtrl.createLoading"></css-spinner>
-      </div>
+            <h4 class="list-group-item-heading raml-console-item-heading">
+              <i class="fa fa-plus-circle"></i>
+              Add Keyword Spotting Group
+            </h4>
 
-      <css-spinner ng-if="keywordWidgetCtrl.isLoaded"></css-spinner>
-      <div ng-if="!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">Please sign in</div>
-      <div ng-if="keywordWidgetCtrl.errorMessage && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">{{ keywordWidgetCtrl.errorMessage }}</div>
-
-      <!--Create group form-->
-      <div class="raml-console-create-group-form raml-console-clearfix" ng-show="keywordWidgetCtrl.showCreateForm">
-        <form name="keywordWidgetCtrl.createKeywordGroupForm" novalidate focus-form ng-submit="keywordWidgetCtrl.createGroup($event)">
-          <keyword-group-form keyword-group="keywordWidgetCtrl.newGroup"></keyword-group-form>
-          <input type="submit" value="Create" class="raml-console-sidebar-action raml-console-sidebar-action-get"/>
-          <input type="button" value="Cancel" class="raml-console-sidebar-action raml-console-sidebar-action-reset" ng-click="keywordWidgetCtrl.showCreateForm = false;"/>
-        </form>
-      </div>
-
-      <!--groups list-->
-      <div class="raml-console-keywords-group-list">
-        <div class="raml-console-keywords-group-list-item"
-           dir-paginate="keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage" current-page="keywordWidgetCtrl.currentPage">
-
-          <div class="raml-console-keywords-group-list-item-cell">
-            <a href="javascript:void(0)" class="raml-console-keywords-group-name" ng-click="keywordWidgetCtrl.toggleGroupForm(keywordGroup)">{{ keywordGroup.name }}</a>
-          </div>
-          <div class="raml-console-keywords-group-list-item-cell raml-console-keywords-group-list-item-toolbar">
-            <a href="javascript:void(0)" class="raml-console-icon-delete" ng-click="keywordWidgetCtrl.removeGroup(keywordGroup)" title="Delete group" ng-show="!keywordGroup.startDelete && !keywordGroup.startEdit">
-              <span>&#10006;</span>
-            </a>
-            <css-spinner ng-if="keywordGroup.startDelete || keywordGroup.startEdit"></css-spinner>
-          </div>
-
-          <div class="raml-console-keywords-group-list-item-form" ng-if="keywordGroup.expanded">
-            <ng-form name="keywordWidgetCtrl.editKeywordGroupForm" novalidate focus-form>
-              <keyword-group-form keyword-group="keywordWidgetCtrl.editedGroup"></keyword-group-form>
-              <input type="button" value="Edit" class="raml-console-sidebar-action raml-console-sidebar-action-get" ng-click="keywordWidgetCtrl.editGroup(keywordGroup)"/>
-              <input type="button" value="Cancel" class="raml-console-sidebar-action raml-console-sidebar-action-reset" ng-click="keywordGroup.expanded = false;"/>
-            </ng-form>
-          </div>
-
+          </a>
+          <css-spinner ng-show="keywordWidgetCtrl.createLoading"></css-spinner>
         </div>
-        <div class="raml-console-keywords-pagination">
+
+        <css-spinner ng-if="keywordWidgetCtrl.isLoaded"></css-spinner>
+        <div ng-if="!keywordWidgetCtrl.isLogin && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">Please sign in</div>
+        <div ng-if="keywordWidgetCtrl.errorMessage && !keywordWidgetCtrl.isLoaded" class="raml-console-error-message">{{ keywordWidgetCtrl.errorMessage }}</div>
+
+        <div class="panel-heading">
+          <h3 class="panel-title">Your Groups</h3>
+        </div>
+
+        <div class="list-group raml-console-keywords-group-list">
+          <a class="list-group-item raml-console-keywords-group-list-item" data-toggle="modal" data-target="#editGroup"
+             dir-paginate="keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage" current-page="keywordWidgetCtrl.currentPage">
+
+            <h4 class="list-group-item-heading raml-console-keywords-group-name">{{ keywordGroup.name }}</h4>
+            <small class="list-group-item-text">{{ keywordGroup.keywords | keywordsFilter }}</small>
+            <i class="fa fa-times-circle raml-console-keywords-group-remove" title="Delete group"
+               ng-click="keywordWidgetCtrl.removeGroup(keywordGroup)"
+               ng-show="!keywordGroup.startDelete && !keywordGroup.startEdit">
+            </i>
+            <css-spinner ng-if="keywordGroup.startDelete || keywordGroup.startEdit"></css-spinner>
+          </a>
+        </div>
+
+        <div class="raml-console-keywords-pagination" >
           <dir-pagination-controls
             template-url="pagination/dirPagination.tpl.html">
           </dir-pagination-controls>
         </div>
+
       </div>
+
     </div>
   </div>
+  <script type="text/ng-template" id="createModal.html">
+    <div class="modal fade in" id="addGroup" tabindex="-1" role="dialog" aria-hidden="false" style="display: block; padding-right: 15px;">
+      <div class="modal-backdrop fade in" style="height: 544px;"></div>
+      <div class="modal-dialog">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Add Keyword Spotting Group</h4>
+            <a href="javascript:void(0);" class="close" data-dismiss="modal">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+          <div class="panel-body">
+            <form class="form-horizontal" name="keywordWidgetCtrl.createKeywordGroupForm" novalidate focus-form ng-submit="keywordWidgetCtrl.createGroup($event)">
+              <keyword-group-form keyword-group="keywordWidgetCtrl.newGroup"></keyword-group-form>
+
+              <div class="panel-footer clearfix">
+                <div class="row">
+                  <div class="col-sm-8 col-sm-offset-4">
+                    <button type="submit" class="btn btn-success" data-dismiss="modal">
+                      <i class="fa fa-check"></i>
+                      Save
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                      <i class="fa fa-times"></i>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </script>
+
 </div>
+

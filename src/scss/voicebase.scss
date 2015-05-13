@@ -16,10 +16,6 @@
     cursor: pointer;
     font-weight: bold;
 
-    &::before {
-      content: "\00d7";
-    }
-
     &:hover {
       color: $color-console-heading-text;
     }
@@ -36,7 +32,6 @@
   }
 
   .vbs-popup-body {
-    padding: 15px;
   }
 }
 
