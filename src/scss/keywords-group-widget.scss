@@ -34,6 +34,14 @@
   .add-group {
     cursor: pointer;
   }
+
+  .keyword-group-toolbar {
+    .spinner {
+      width: auto;
+      height: 46px;
+      margin: 5px;
+    }
+  }
 }
 
 .keywords-group-list {
@@ -42,9 +50,12 @@
     cursor: pointer;
 
     .spinner {
+      position: absolute;
+      right: 0;
+      top: 50%;
       width: auto;
       height: 19px;
-      margin: 5px;
+      margin: -15px 5px 5px;
     }
 
     .keywords-group-remove {
@@ -74,10 +85,6 @@
   }
 }
 
-.popup-body-toolbar {
-  float: right;
-}
-
 .keywords-list-container {
   max-height: 180px;
   overflow-y: auto;
@@ -88,22 +95,7 @@
   clear: both;
 }
 
-.keywords-group-list-item-toolbar,
-.popup-body-toolbar {
-
-  .spinner {
-    width: auto;
-    height: 19px;
-    margin: 5px;
-  }
-}
-
-.keywords-pagination {
-//  padding-top: 15px;
-}
-
 .keywords-group-name,
-.popup-body-toolbar a,
 a.icon {
   text-decoration: none;
 
@@ -121,6 +113,7 @@ a.icon {
 
 .input-group {
   margin-bottom: 15px;
+  padding-top: 5px;
 
   button {
     line-height: 20px;

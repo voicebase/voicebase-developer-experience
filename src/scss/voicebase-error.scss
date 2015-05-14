@@ -9,7 +9,7 @@
 @mixin standartError() {
   color: #FFF;
   position: absolute;
-  margin-top: -20px;
+  margin-top: -2px;
   font-size: 13px;
   background-color: #F00;
   width: 100%;
@@ -41,6 +41,10 @@ form.checkDirty.ng-dirty {
 
 }
 
+.raml-console-multi-errors {
+  padding: 0;
+}
+
 input.ng-dirty.ng-invalid-many-words + .raml-console-multi-errors {
   .raml-console-vbs-validation-many-words-error {
     @include standartError();
@@ -52,5 +56,14 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors {
   .raml-console-vbs-validation-required {
     @include standartError();
     display: block!important;
+  }
+}
+
+.raml-console-bootstrap-error.raml-console-field-validation-error {
+  margin-bottom: 15px;
+
+  &::after {
+    margin-top: -2px !important;
+    left: 0;
   }
 }

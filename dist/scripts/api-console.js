@@ -1710,7 +1710,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    <div class=\"col-sm-8\">\n" +
     "      <input class=\"form-control\" type=\"text\" placeholder=\"Name\" name=\"groupName\" required=\"true\" maxlength=\"64\"\n" +
     "             ng-model=\"keywordGroup.name\">\n" +
-    "      <span class=\"raml-console-field-validation-error\"></span>\n" +
+    "      <span class=\"raml-console-bootstrap-error raml-console-field-validation-error col-sm-12\"></span>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"form-group\">\n" +
@@ -1731,7 +1731,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "            <input class=\"form-control\" type=\"text\" placeholder=\"Word/Phrase\" name=\"keyword\" maxlength=\"64\" required=\"true\"\n" +
     "                   ng-model=\"keywordGroup.keywords[$index]\"\n" +
     "                   input-max-word-validate>\n" +
-    "            <span class=\"raml-console-multi-errors\">\n" +
+    "            <span class=\"raml-console-multi-errors col-sm-12\">\n" +
     "              <span class=\"raml-console-vbs-validation-error raml-console-vbs-validation-required\">Required</span>\n" +
     "              <span class=\"raml-console-vbs-validation-error raml-console-vbs-validation-many-words-error\">Maximum 10 words</span>\n" +
     "            </span>\n" +
@@ -1773,7 +1773,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    <div class=\"raml-console-vbs-popup-body\">\n" +
     "      <div class=\"panel panel-default raml-console-panel\">\n" +
     "        <!--Toolbar-->\n" +
-    "        <div class=\"list-group\" ng-if=\"keywordWidgetCtrl.isLogin\">\n" +
+    "        <div class=\"list-group raml-console-keyword-group-toolbar\" ng-if=\"keywordWidgetCtrl.isLogin\">\n" +
     "          <a class=\"list-group-item raml-console-add-group\"\n" +
     "             ng-click=\"keywordWidgetCtrl.startCreateGroup()\"\n" +
     "             ng-show=\"!keywordWidgetCtrl.createLoading\">\n" +
@@ -1807,6 +1807,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "               ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup)\"\n" +
     "               ng-show=\"!keywordGroup.startDelete && !keywordGroup.startEdit\">\n" +
     "            </i>\n" +
+    "\n" +
     "            <css-spinner ng-if=\"keywordGroup.startDelete || keywordGroup.startEdit\"></css-spinner>\n" +
     "          </a>\n" +
     "        </div>\n" +

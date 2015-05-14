@@ -14,7 +14,7 @@
     <div class="raml-console-vbs-popup-body">
       <div class="panel panel-default raml-console-panel">
         <!--Toolbar-->
-        <div class="list-group" ng-if="keywordWidgetCtrl.isLogin">
+        <div class="list-group raml-console-keyword-group-toolbar" ng-if="keywordWidgetCtrl.isLogin">
           <a class="list-group-item raml-console-add-group"
              ng-click="keywordWidgetCtrl.startCreateGroup()"
              ng-show="!keywordWidgetCtrl.createLoading">
@@ -48,6 +48,7 @@
                ng-click="keywordWidgetCtrl.removeGroup(keywordGroup)"
                ng-show="!keywordGroup.startDelete && !keywordGroup.startEdit">
             </i>
+
             <css-spinner ng-if="keywordGroup.startDelete || keywordGroup.startEdit"></css-spinner>
           </a>
         </div>

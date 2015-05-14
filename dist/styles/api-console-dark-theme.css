@@ -764,7 +764,7 @@ input.ng-dirty.ng-invalid-repeat + span.raml-console-field-validation-error::aft
 
 .pagination {
   display: inline-block;
-  padding-left: 0;
+  padding: 15px;
   margin: 0;
   border-radius: 4px;
 }
@@ -887,10 +887,14 @@ form.checkDirty.ng-dirty.ng-invalid-email .raml-console-vbs-validation-wrong-ema
   display: block !important;
 }
 
+.raml-console-multi-errors {
+  padding: 0;
+}
+
 input.ng-dirty.ng-invalid-many-words + .raml-console-multi-errors .raml-console-vbs-validation-many-words-error {
   color: #FFF;
   position: absolute;
-  margin-top: -20px;
+  margin-top: -2px;
   font-size: 13px;
   background-color: #F00;
   width: 100%;
@@ -901,12 +905,20 @@ input.ng-dirty.ng-invalid-many-words + .raml-console-multi-errors .raml-console-
 input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vbs-validation-required {
   color: #FFF;
   position: absolute;
-  margin-top: -20px;
+  margin-top: -2px;
   font-size: 13px;
   background-color: #F00;
   width: 100%;
   text-align: center;
   display: block !important;
+}
+
+.raml-console-bootstrap-error.raml-console-field-validation-error {
+  margin-bottom: 15px;
+}
+.raml-console-bootstrap-error.raml-console-field-validation-error::after {
+  margin-top: -2px !important;
+  left: 0;
 }
 
 @charset "UTF-8";
@@ -4873,14 +4885,23 @@ span.raml-console-side-bar-required-field {
   cursor: pointer;
 }
 
+.raml-console-vbs-keyword-group-widget-container .raml-console-keyword-group-toolbar .raml-console-spinner {
+  width: auto;
+  height: 46px;
+  margin: 5px;
+}
+
 .raml-console-keywords-group-list .raml-console-keywords-group-list-item {
   cursor: pointer;
 }
 
 .raml-console-keywords-group-list .raml-console-keywords-group-list-item .raml-console-spinner {
+  position: absolute;
+  right: 0;
+  top: 50%;
   width: auto;
   height: 19px;
-  margin: 5px;
+  margin: -15px 5px 5px;
 }
 
 .raml-console-keywords-group-list .raml-console-keywords-group-list-item .raml-console-keywords-group-remove {
@@ -4908,10 +4929,6 @@ span.raml-console-side-bar-required-field {
   clear: both;
 }
 
-.raml-console-popup-body-toolbar {
-  float: right;
-}
-
 .raml-console-keywords-list-container {
   max-height: 180px;
   overflow-y: auto;
@@ -4922,15 +4939,7 @@ span.raml-console-side-bar-required-field {
   clear: both;
 }
 
-.raml-console-keywords-group-list-item-toolbar .raml-console-spinner,
-.raml-console-popup-body-toolbar .raml-console-spinner {
-  width: auto;
-  height: 19px;
-  margin: 5px;
-}
-
 .raml-console-keywords-group-name,
-.raml-console-popup-body-toolbar a,
 a.raml-console-icon {
   text-decoration: none;
 }
@@ -4947,6 +4956,7 @@ a.raml-console-icon {
 
 .raml-console-input-group {
   margin-bottom: 15px;
+  padding-top: 5px;
 }
 
 .raml-console-input-group button {

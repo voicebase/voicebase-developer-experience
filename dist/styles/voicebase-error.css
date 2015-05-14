@@ -27,10 +27,14 @@ form.checkDirty.ng-dirty.ng-invalid-email .raml-console-vbs-validation-wrong-ema
   display: block !important;
 }
 
+.raml-console-multi-errors {
+  padding: 0;
+}
+
 input.ng-dirty.ng-invalid-many-words + .raml-console-multi-errors .raml-console-vbs-validation-many-words-error {
   color: #FFF;
   position: absolute;
-  margin-top: -20px;
+  margin-top: -2px;
   font-size: 13px;
   background-color: #F00;
   width: 100%;
@@ -41,10 +45,18 @@ input.ng-dirty.ng-invalid-many-words + .raml-console-multi-errors .raml-console-
 input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vbs-validation-required {
   color: #FFF;
   position: absolute;
-  margin-top: -20px;
+  margin-top: -2px;
   font-size: 13px;
   background-color: #F00;
   width: 100%;
   text-align: center;
   display: block !important;
+}
+
+.raml-console-bootstrap-error.raml-console-field-validation-error {
+  margin-bottom: 15px;
+}
+.raml-console-bootstrap-error.raml-console-field-validation-error::after {
+  margin-top: -2px !important;
+  left: 0;
 }
