@@ -26,21 +26,18 @@
       <div class="raml-console-keywords-list-container" data-scroll-to-bottom='keywordGroup.keywords.length'>
         <div ng-repeat="keyword in keywordGroup.keywords track by $index">
           <ng-form name="keywordForm" class="input-group raml-console-input-group">
-            <input class="form-control" type="text" placeholder="Word/Phrase" name="keyword" maxlength="64"
-                   required="true">
-          <span class="raml-console-multi-errors">
-            <span class="raml-console-vbs-validation-error raml-console-vbs-validation-required">Required</span>
-            <span
-              class="raml-console-vbs-validation-error raml-console-vbs-validation-many-words-error">Maximum 10 words</span>
-          </span>
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="button"
-                    title="Remove word/phrase" ng-click="removeKeyword($index)"
-                    ng-if="keywordGroup.keywords.length > 1">
-              <i class="fa fa-times-circle"></i>
-            </button>
-          </span>
-
+            <input class="form-control" type="text" placeholder="Word/Phrase" name="keyword" maxlength="64" required="true"
+                   ng-model="keywordGroup.keywords[$index]"
+                   input-max-word-validate>
+            <span class="raml-console-multi-errors">
+              <span class="raml-console-vbs-validation-error raml-console-vbs-validation-required">Required</span>
+              <span class="raml-console-vbs-validation-error raml-console-vbs-validation-many-words-error">Maximum 10 words</span>
+            </span>
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" title="Remove word/phrase" ng-click="removeKeyword($index)" ng-if="keywordGroup.keywords.length > 1">
+                <i class="fa fa-times-circle"></i>
+              </button>
+            </span>
           </ng-form>
         </div>
 

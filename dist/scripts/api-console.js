@@ -666,7 +666,6 @@ RAML.Decorators = (function (Decorators) {
         me.keywordGroups = null;
         me.newGroup = {};
         me.editedGroup = {};
-        me.showCreateForm = false;
         me.groupsPerPage = 5;
         me.currentPage = 1;
 
@@ -692,69 +691,59 @@ RAML.Decorators = (function (Decorators) {
             keywords: ['']
           };
           ModalService.showModal({
-            templateUrl: 'createModal.html',
+            templateUrl: 'editKeywordGroupModal.html',
             controller: 'ModalController',
             inputs: {
-              keywordGroup: me.newGroup
+              keywordGroup: me.newGroup,
+              groupCallback: function(group) {
+                me.newGroup = group;
+                me.createGroup(group);
+              }
             }
           }).then(function(modal) {
             modal.element.modal();
-            modal.close.then(function(result) {
-              console.log(123);
-            });
           });
-
-          //me.showCreateForm = true;
-          //me.createKeywordGroupForm.$setPristine();
         };
 
         me.createLoading = false;
         me.createGroup = function() {
-          var form = me.createKeywordGroupForm;
-          formValidate.validateAndDirtyForm(form);
-          if(!form.$invalid) {
-            me.createLoading = true;
-            me.showCreateForm = false;
-            keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
-              me.keywordGroups.groups.push(me.newGroup);
-              me.createLoading = false;
-              me.currentPage = Math.floor(me.keywordGroups.groups.length / me.groupsPerPage) + 1;
-            }, function() {
-              me.showCreateForm = false;
-              me.createLoading = false;
-              me.errorMessage = 'Something going wrong!';
-            });
-          }
-          return false;
+          me.createLoading = true;
+          keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
+            me.keywordGroups.groups.push(me.newGroup);
+            me.createLoading = false;
+            me.currentPage = Math.floor(me.keywordGroups.groups.length / me.groupsPerPage) + 1;
+          }, function() {
+            me.createLoading = false;
+            me.errorMessage = 'Something going wrong!';
+          });
+        };
+
+        me.startEditGroup = function(group) {
+          ModalService.showModal({
+            templateUrl: 'editKeywordGroupModal.html',
+            controller: 'ModalController',
+            inputs: {
+              keywordGroup: group,
+              groupCallback: function(_group) {
+                angular.copy(_group, me.editedGroup);
+                me.editGroup(group);
+              }
+            }
+          }).then(function(modal) {
+            modal.element.modal();
+          });
+
         };
 
         me.editGroup = function(oldGroup) {
-          var form = me.editKeywordGroupForm;
-          formValidate.validateAndDirtyForm(form);
-          if(!form.$invalid) {
-            oldGroup.startEdit = true;
-            oldGroup.expanded = false;
-            me.editedGroup.expanded = false;
-            keywordGroupApi.createKeywordGroup(tokenData.token, me.editedGroup).then(function() {
-              oldGroup.startEdit = false;
-              angular.copy(me.editedGroup, oldGroup);
-            }, function() {
-              oldGroup.expanded = false;
-              oldGroup.startEdit = false;
-              me.errorMessage = 'Something going wrong!';
-            });
-          }
-        };
-
-        me.toggleGroupForm = function(group) {
-          var expandTemp = group.expanded;
-          me.keywordGroups.groups.forEach(function(_group) {
-            _group.expanded = false;
+          oldGroup.startEdit = true;
+          keywordGroupApi.createKeywordGroup(tokenData.token, me.editedGroup).then(function() {
+            oldGroup.startEdit = false;
+            angular.copy(me.editedGroup, oldGroup);
+          }, function() {
+            oldGroup.startEdit = false;
+            me.errorMessage = 'Something going wrong!';
           });
-          group.expanded = !expandTemp;
-          if(group.expanded) {
-            angular.copy(group, me.editedGroup);
-          }
         };
 
         me.toggleWidget = function() {
@@ -775,7 +764,6 @@ RAML.Decorators = (function (Decorators) {
               me.isLoaded = false;
               me.keywordGroups = data;
               me.keywordGroups.groups.forEach(function(group) {
-                group.expanded = false;
                 group.startDelete = false;
                 group.startEdit = false;
               });
@@ -798,7 +786,6 @@ RAML.Decorators = (function (Decorators) {
           me.isLoaded = true;
           me.errorMessage = '';
           me.keywordGroups = null;
-          me.showCreateForm = false;
           me.createLoading = false;
           me.currentPage = 1;
         };
@@ -806,11 +793,22 @@ RAML.Decorators = (function (Decorators) {
     };
   };
 
-  angular.module('vbsKeywordGroupWidget').controller('ModalController', function($scope, keywordGroup, close) {
+  angular.module('vbsKeywordGroupWidget').controller('ModalController', function($scope, $element, formValidate, keywordGroup, groupCallback) {
 
     $scope.keywordGroup = keywordGroup;
-    $scope.close = function(result) {
-      close(result, 500); // close, but give 500ms for bootstrap to animate
+
+    if($scope['keywordGroupForm']) {
+      $scope['keywordGroupForm'].$setPristine();
+    }
+
+    $scope.groupSave = function() {
+      var form = $scope['keywordGroupForm'];
+      formValidate.validateAndDirtyForm(form);
+      if(!form.$invalid) {
+        groupCallback($scope.keywordGroup);
+        $element.modal('hide');
+      }
+      return false;
     };
 
   });
@@ -1730,21 +1728,18 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <div class=\"raml-console-keywords-list-container\" data-scroll-to-bottom='keywordGroup.keywords.length'>\n" +
     "        <div ng-repeat=\"keyword in keywordGroup.keywords track by $index\">\n" +
     "          <ng-form name=\"keywordForm\" class=\"input-group raml-console-input-group\">\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"Word/Phrase\" name=\"keyword\" maxlength=\"64\"\n" +
-    "                   required=\"true\">\n" +
-    "          <span class=\"raml-console-multi-errors\">\n" +
-    "            <span class=\"raml-console-vbs-validation-error raml-console-vbs-validation-required\">Required</span>\n" +
-    "            <span\n" +
-    "              class=\"raml-console-vbs-validation-error raml-console-vbs-validation-many-words-error\">Maximum 10 words</span>\n" +
-    "          </span>\n" +
-    "          <span class=\"input-group-btn\">\n" +
-    "            <button class=\"btn btn-default\" type=\"button\"\n" +
-    "                    title=\"Remove word/phrase\" ng-click=\"removeKeyword($index)\"\n" +
-    "                    ng-if=\"keywordGroup.keywords.length > 1\">\n" +
-    "              <i class=\"fa fa-times-circle\"></i>\n" +
-    "            </button>\n" +
-    "          </span>\n" +
-    "\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"Word/Phrase\" name=\"keyword\" maxlength=\"64\" required=\"true\"\n" +
+    "                   ng-model=\"keywordGroup.keywords[$index]\"\n" +
+    "                   input-max-word-validate>\n" +
+    "            <span class=\"raml-console-multi-errors\">\n" +
+    "              <span class=\"raml-console-vbs-validation-error raml-console-vbs-validation-required\">Required</span>\n" +
+    "              <span class=\"raml-console-vbs-validation-error raml-console-vbs-validation-many-words-error\">Maximum 10 words</span>\n" +
+    "            </span>\n" +
+    "            <span class=\"input-group-btn\">\n" +
+    "              <button class=\"btn btn-default\" type=\"button\" title=\"Remove word/phrase\" ng-click=\"removeKeyword($index)\" ng-if=\"keywordGroup.keywords.length > 1\">\n" +
+    "                <i class=\"fa fa-times-circle\"></i>\n" +
+    "              </button>\n" +
+    "            </span>\n" +
     "          </ng-form>\n" +
     "        </div>\n" +
     "\n" +
@@ -1801,8 +1796,10 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        </div>\n" +
     "\n" +
     "        <div class=\"list-group raml-console-keywords-group-list\">\n" +
-    "          <a class=\"list-group-item raml-console-keywords-group-list-item\" data-toggle=\"modal\" data-target=\"#editGroup\"\n" +
-    "             dir-paginate=\"keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage\" current-page=\"keywordWidgetCtrl.currentPage\">\n" +
+    "          <a class=\"list-group-item raml-console-keywords-group-list-item\"\n" +
+    "             dir-paginate=\"keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage\"\n" +
+    "             current-page=\"keywordWidgetCtrl.currentPage\"\n" +
+    "             ng-click=\"keywordWidgetCtrl.startEditGroup(keywordGroup)\">\n" +
     "\n" +
     "            <h4 class=\"list-group-item-heading raml-console-keywords-group-name\">{{ keywordGroup.name }}</h4>\n" +
     "            <small class=\"list-group-item-text\">{{ keywordGroup.keywords | keywordsFilter }}</small>\n" +
@@ -1825,7 +1822,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
-    "  <script type=\"text/ng-template\" id=\"createModal.html\">\n" +
+    "  <script type=\"text/ng-template\" id=\"editKeywordGroupModal.html\">\n" +
     "    <div class=\"modal fade\">\n" +
     "      <div class=\"modal-dialog\">\n" +
     "        <div class=\"modal-content raml-console-modal\">\n" +
@@ -1834,12 +1831,12 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "            <h4 class=\"modal-title raml-console-modal-title\">Add Keyword Spotting Group</h4>\n" +
     "          </div>\n" +
     "          <div class=\"modal-body\">\n" +
-    "            <form class=\"form-horizontal\" name=\"keywordWidgetCtrl.createKeywordGroupForm\" novalidate focus-form ng-submit=\"keywordWidgetCtrl.createGroup($event)\">\n" +
+    "            <form class=\"form-horizontal\" name=\"keywordGroupForm\" novalidate focus-form>\n" +
     "              <keyword-group-form keyword-group=\"keywordGroup\"></keyword-group-form>\n" +
     "            </form>\n" +
     "          </div>\n" +
     "          <div class=\"modal-footer raml-console-modal-footer\">\n" +
-    "            <button type=\"submit\" class=\"btn btn-success\" data-dismiss=\"modal\">\n" +
+    "            <button type=\"button\" class=\"btn btn-success\" ng-click=\"groupSave()\">\n" +
     "              <i class=\"fa fa-check\"></i>\n" +
     "              Save\n" +
     "            </button>\n" +

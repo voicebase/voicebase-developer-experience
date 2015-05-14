@@ -15,7 +15,6 @@
         me.keywordGroups = null;
         me.newGroup = {};
         me.editedGroup = {};
-        me.showCreateForm = false;
         me.groupsPerPage = 5;
         me.currentPage = 1;
 
@@ -41,69 +40,59 @@
             keywords: ['']
           };
           ModalService.showModal({
-            templateUrl: 'createModal.html',
+            templateUrl: 'editKeywordGroupModal.html',
             controller: 'ModalController',
             inputs: {
-              keywordGroup: me.newGroup
+              keywordGroup: me.newGroup,
+              groupCallback: function(group) {
+                me.newGroup = group;
+                me.createGroup(group);
+              }
             }
           }).then(function(modal) {
             modal.element.modal();
-            modal.close.then(function(result) {
-              console.log(123);
-            });
           });
-
-          //me.showCreateForm = true;
-          //me.createKeywordGroupForm.$setPristine();
         };
 
         me.createLoading = false;
         me.createGroup = function() {
-          var form = me.createKeywordGroupForm;
-          formValidate.validateAndDirtyForm(form);
-          if(!form.$invalid) {
-            me.createLoading = true;
-            me.showCreateForm = false;
-            keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
-              me.keywordGroups.groups.push(me.newGroup);
-              me.createLoading = false;
-              me.currentPage = Math.floor(me.keywordGroups.groups.length / me.groupsPerPage) + 1;
-            }, function() {
-              me.showCreateForm = false;
-              me.createLoading = false;
-              me.errorMessage = 'Something going wrong!';
-            });
-          }
-          return false;
+          me.createLoading = true;
+          keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
+            me.keywordGroups.groups.push(me.newGroup);
+            me.createLoading = false;
+            me.currentPage = Math.floor(me.keywordGroups.groups.length / me.groupsPerPage) + 1;
+          }, function() {
+            me.createLoading = false;
+            me.errorMessage = 'Something going wrong!';
+          });
+        };
+
+        me.startEditGroup = function(group) {
+          ModalService.showModal({
+            templateUrl: 'editKeywordGroupModal.html',
+            controller: 'ModalController',
+            inputs: {
+              keywordGroup: group,
+              groupCallback: function(_group) {
+                angular.copy(_group, me.editedGroup);
+                me.editGroup(group);
+              }
+            }
+          }).then(function(modal) {
+            modal.element.modal();
+          });
+
         };
 
         me.editGroup = function(oldGroup) {
-          var form = me.editKeywordGroupForm;
-          formValidate.validateAndDirtyForm(form);
-          if(!form.$invalid) {
-            oldGroup.startEdit = true;
-            oldGroup.expanded = false;
-            me.editedGroup.expanded = false;
-            keywordGroupApi.createKeywordGroup(tokenData.token, me.editedGroup).then(function() {
-              oldGroup.startEdit = false;
-              angular.copy(me.editedGroup, oldGroup);
-            }, function() {
-              oldGroup.expanded = false;
-              oldGroup.startEdit = false;
-              me.errorMessage = 'Something going wrong!';
-            });
-          }
-        };
-
-        me.toggleGroupForm = function(group) {
-          var expandTemp = group.expanded;
-          me.keywordGroups.groups.forEach(function(_group) {
-            _group.expanded = false;
+          oldGroup.startEdit = true;
+          keywordGroupApi.createKeywordGroup(tokenData.token, me.editedGroup).then(function() {
+            oldGroup.startEdit = false;
+            angular.copy(me.editedGroup, oldGroup);
+          }, function() {
+            oldGroup.startEdit = false;
+            me.errorMessage = 'Something going wrong!';
           });
-          group.expanded = !expandTemp;
-          if(group.expanded) {
-            angular.copy(group, me.editedGroup);
-          }
         };
 
         me.toggleWidget = function() {
@@ -124,7 +113,6 @@
               me.isLoaded = false;
               me.keywordGroups = data;
               me.keywordGroups.groups.forEach(function(group) {
-                group.expanded = false;
                 group.startDelete = false;
                 group.startEdit = false;
               });
@@ -147,7 +135,6 @@
           me.isLoaded = true;
           me.errorMessage = '';
           me.keywordGroups = null;
-          me.showCreateForm = false;
           me.createLoading = false;
           me.currentPage = 1;
         };
@@ -155,11 +142,22 @@
     };
   };
 
-  angular.module('vbsKeywordGroupWidget').controller('ModalController', function($scope, keywordGroup, close) {
+  angular.module('vbsKeywordGroupWidget').controller('ModalController', function($scope, $element, formValidate, keywordGroup, groupCallback) {
 
     $scope.keywordGroup = keywordGroup;
-    $scope.close = function(result) {
-      close(result, 500); // close, but give 500ms for bootstrap to animate
+
+    if($scope['keywordGroupForm']) {
+      $scope['keywordGroupForm'].$setPristine();
+    }
+
+    $scope.groupSave = function() {
+      var form = $scope['keywordGroupForm'];
+      formValidate.validateAndDirtyForm(form);
+      if(!form.$invalid) {
+        groupCallback($scope.keywordGroup);
+        $element.modal('hide');
+      }
+      return false;
     };
 
   });

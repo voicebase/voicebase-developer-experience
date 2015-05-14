@@ -37,8 +37,10 @@
         </div>
 
         <div class="list-group raml-console-keywords-group-list">
-          <a class="list-group-item raml-console-keywords-group-list-item" data-toggle="modal" data-target="#editGroup"
-             dir-paginate="keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage" current-page="keywordWidgetCtrl.currentPage">
+          <a class="list-group-item raml-console-keywords-group-list-item"
+             dir-paginate="keywordGroup in keywordWidgetCtrl.keywordGroups.groups | itemsPerPage: keywordWidgetCtrl.groupsPerPage"
+             current-page="keywordWidgetCtrl.currentPage"
+             ng-click="keywordWidgetCtrl.startEditGroup(keywordGroup)">
 
             <h4 class="list-group-item-heading raml-console-keywords-group-name">{{ keywordGroup.name }}</h4>
             <small class="list-group-item-text">{{ keywordGroup.keywords | keywordsFilter }}</small>
@@ -61,7 +63,7 @@
     </div>
   </div>
 
-  <script type="text/ng-template" id="createModal.html">
+  <script type="text/ng-template" id="editKeywordGroupModal.html">
     <div class="modal fade">
       <div class="modal-dialog">
         <div class="modal-content raml-console-modal">
@@ -70,12 +72,12 @@
             <h4 class="modal-title raml-console-modal-title">Add Keyword Spotting Group</h4>
           </div>
           <div class="modal-body">
-            <form class="form-horizontal" name="keywordWidgetCtrl.createKeywordGroupForm" novalidate focus-form ng-submit="keywordWidgetCtrl.createGroup($event)">
+            <form class="form-horizontal" name="keywordGroupForm" novalidate focus-form>
               <keyword-group-form keyword-group="keywordGroup"></keyword-group-form>
             </form>
           </div>
           <div class="modal-footer raml-console-modal-footer">
-            <button type="submit" class="btn btn-success" data-dismiss="modal">
+            <button type="button" class="btn btn-success" ng-click="groupSave()">
               <i class="fa fa-check"></i>
               Save
             </button>
