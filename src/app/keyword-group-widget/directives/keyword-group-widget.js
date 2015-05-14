@@ -146,12 +146,12 @@
 
     $scope.keywordGroup = keywordGroup;
 
-    if($scope['keywordGroupForm']) {
-      $scope['keywordGroupForm'].$setPristine();
+    if($scope.keywordGroupForm) {
+      $scope.keywordGroupForm.$setPristine();
     }
 
     $scope.groupSave = function() {
-      var form = $scope['keywordGroupForm'];
+      var form = $scope.keywordGroupForm;
       formValidate.validateAndDirtyForm(form);
       if(!form.$invalid) {
         groupCallback($scope.keywordGroup);
