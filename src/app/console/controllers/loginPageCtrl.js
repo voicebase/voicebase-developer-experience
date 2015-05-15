@@ -9,7 +9,7 @@
         event.preventDefault();
         $scope.isSkipping = true;
         $timeout(function() {
-          $location.path('/console');
+          $location.path('/portal');
         }, 100);
       };
     }]);

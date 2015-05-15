@@ -31,7 +31,7 @@
           else {
             $scope.isLoaded = true;
             voicebaseTokensApi.getToken(url, $scope.credentials).then(function() {
-              $scope.loadConsole();
+              $scope.loadPortal();
             }, function(error){
               $scope.isLoaded = false;
               $scope.formError = error;
@@ -40,8 +40,8 @@
           return false;
         };
 
-        $scope.loadConsole = function() {
-          $location.path('/console');
+        $scope.loadPortal = function() {
+          $location.path('/portal');
         };
 
 
@@ -50,7 +50,7 @@
         $timeout(function() {
           var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
           if(tokenFromStorage) {
-            $scope.loadConsole();
+            $scope.loadPortal();
           }
           else {
             $scope.isInit = false;

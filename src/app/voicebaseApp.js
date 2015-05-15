@@ -37,8 +37,16 @@
         templateUrl: 'pages/loginPage.html',
         reloadOnSearch: false
       })
+      .when('/portal', {
+        templateUrl: 'pages/portalPage.html',
+        reloadOnSearch: false
+      })
       .when('/console', {
         templateUrl: 'pages/consolePage.html',
+        reloadOnSearch: false
+      })
+      .when('/keywords-groups', {
+        templateUrl: 'pages/keywordsGroups.html',
         reloadOnSearch: false
       })
       .when('/wait', {

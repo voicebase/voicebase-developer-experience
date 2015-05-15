@@ -192,6 +192,7 @@ module.exports = function (grunt) {
           '<%= distdir %>/styles/toggle-button.css',
           '<%= distdir %>/styles/pagination.css',
           '<%= distdir %>/styles/voicebase-error.css',
+          '<%= distdir %>/styles/voicebase-portal.css',
           '<%= distdir %>/styles/api-console-dark-theme.css',
           'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-dark.css'
         ]
@@ -212,6 +213,7 @@ module.exports = function (grunt) {
           '<%= distdir %>/styles/toggle-button.css',
           '<%= distdir %>/styles/pagination.css',
           '<%= distdir %>/styles/voicebase-error.css',
+          '<%= distdir %>/styles/voicebase-portal.css',
           '<%= distdir %>/styles/api-console-light-theme.css',
           'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-light.css'
         ]
@@ -266,6 +268,7 @@ module.exports = function (grunt) {
           '<%= distdir %>/styles/pagination.css': 'src/scss/pagination.scss',
           '<%= distdir %>/styles/toggle-button.css': 'src/scss/toggle-button.scss',
           '<%= distdir %>/styles/voicebase-error.css': 'src/scss/voicebase-error.scss',
+          '<%= distdir %>/styles/voicebase-portal.css': 'src/scss/voicebase-portal.scss',
           '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',
           '<%= distdir %>/styles/api-console-dark-theme.css': 'src/scss/dark-theme.scss'
         }
@@ -281,6 +284,7 @@ module.exports = function (grunt) {
           '<%= distdir %>/styles/pagination.css': 'src/scss/pagination.scss',
           '<%= distdir %>/styles/toggle-button.css': 'src/scss/toggle-button.scss',
           '<%= distdir %>/styles/voicebase-error.css': 'src/scss/voicebase-error.scss',
+          '<%= distdir %>/styles/voicebase-portal.css': 'src/scss/voicebase-portal.scss',
           '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',
           '<%= distdir %>/styles/api-console-dark-theme.css': 'src/scss/dark-theme.scss'
         }
