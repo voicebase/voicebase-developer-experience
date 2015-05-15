@@ -16,8 +16,8 @@ RAML.Decorators = (function (Decorators) {
               var el = $compile('<voicebase-sign></voicebase-sign>')($scope);
               $container.append(el);
 
-              el = $compile('<keyword-group-widget></keyword-group-widget>')($scope);
-              $container.append(el);
+              //el = $compile('<keyword-group-widget is-popup="true"></keyword-group-widget>')($scope);
+              //$container.append(el);
             }, 0);
           }
         });

@@ -6,8 +6,11 @@
       restrict: 'E',
       templateUrl: 'keyword-group-widget/directives/keyword-group-widget.tpl.html',
       replace: true,
+      scope: {
+        isPopup: '@'
+      },
       controllerAs: 'keywordWidgetCtrl',
-      controller: function(voicebaseTokensApi, formValidate, keywordGroupApi, ModalService) {
+      controller: function($scope, voicebaseTokensApi, formValidate, keywordGroupApi, ModalService) {
         var me = this;
         me.isShowWidget = false;
         me.isLoaded = true;
@@ -17,7 +20,9 @@
         me.editedGroup = {};
         me.groupsPerPage = 5;
         me.currentPage = 1;
+        me.isPopup = ($scope.isPopup === 'true');
 
+        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
 
@@ -138,6 +143,12 @@
           me.createLoading = false;
           me.currentPage = 1;
         };
+
+        if(!me.isPopup) {
+          me.isShowWidget = true;
+          me.showWidget();
+        }
+
       }
     };
   };

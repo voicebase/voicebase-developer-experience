@@ -1,11 +1,10 @@
 .dashboard-page {
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.42857143;
   color: #333;
 
   padding-top: 80px;
-  background: #f5f5f5;
 
   a {
     color: #0079c0;
@@ -33,6 +32,11 @@
     line-height: 1.1;
     color: inherit;
   }
+
+  small {
+    font-size: 85%;
+  }
+
   .text-muted {
     color: #777;
   }
@@ -131,3 +135,56 @@
   }
 }
 
+
+.keyword-config-page {
+  .raml-console-vbs-keyword-group-widget-container {
+    float: none;
+
+    .raml-console-vbs-popup {
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      position: relative;
+      top: 0;
+      left: 0;
+      width: 100%;
+
+      .raml-console-vbs-popup-body {
+        padding: 0;
+      }
+    }
+
+    h4 {
+      font-size: 18px;
+      margin-top: 5px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+  }
+
+  .panel {
+    border: 1px solid #DDD;
+
+    &:hover {
+      border: 1px solid #DDD;
+      box-shadow: none;
+    }
+
+    a {
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: none;
+      }
+
+      small {
+        color: #555;
+      }
+    }
+
+  }
+
+}

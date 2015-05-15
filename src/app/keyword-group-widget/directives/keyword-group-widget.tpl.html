@@ -1,10 +1,10 @@
 <div class="raml-console-vbs-keyword-group-widget-container">
-  <a class="raml-console-meta-button" ng-click="keywordWidgetCtrl.toggleWidget()">
+  <a class="raml-console-meta-button" ng-click="keywordWidgetCtrl.toggleWidget()" ng-if="keywordWidgetCtrl.isPopup">
     <span>Keywords spotting widget</span>
   </a>
 
-  <div class="raml-console-vbs-popup tw-bs" ng-show="keywordWidgetCtrl.isShowWidget">
-    <div class="raml-console-vbs-popup-header">
+  <div class="raml-console-vbs-popup" ng-show="keywordWidgetCtrl.isShowWidget">
+    <div class="raml-console-vbs-popup-header" ng-if="keywordWidgetCtrl.isPopup">
       <h3 class="raml-console-vbs-popup-title">Keyword Spotting Groups</h3>
       <div class="raml-console-vbs-popup-close" ng-click="keywordWidgetCtrl.hideWidget()">
         <i class="fa fa-remove"></i>
