@@ -37,8 +37,16 @@
         templateUrl: 'pages/loginPage.html',
         reloadOnSearch: false
       })
+      .when('/portal', {
+        templateUrl: 'pages/portalPage.html',
+        reloadOnSearch: false
+      })
       .when('/console', {
         templateUrl: 'pages/consolePage.html',
+        reloadOnSearch: false
+      })
+      .when('/keywords-groups', {
+        templateUrl: 'pages/keywordsGroups.html',
         reloadOnSearch: false
       })
       .when('/wait', {
@@ -61,9 +69,31 @@
         event.preventDefault();
         $scope.isSkipping = true;
         $timeout(function() {
-          $location.path('/console');
+          $location.path('/portal');
         }, 100);
       };
+    }]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ramlVoicebaseConsoleApp')
+    .controller('portalPageCtrl', ['$scope', '$timeout', '$location', 'voicebaseTokensApi', function($scope, $timeout, $location, voicebaseTokensApi) {
+      $scope.isSkipping = false;
+
+      var tokenData = voicebaseTokensApi.getCurrentToken();
+      $scope.isLogin = (tokenData) ? true : false;
+
+
+      $scope.loadPortal = function() {
+        $location.path('/console');
+      };
+
+      $scope.loadKeywordsGroupApp = function() {
+        $location.path('/keywords-groups');
+      };
+
     }]);
 })();
 
@@ -133,8 +163,8 @@ RAML.Decorators = (function (Decorators) {
               var el = $compile('<voicebase-sign></voicebase-sign>')($scope);
               $container.append(el);
 
-              el = $compile('<keyword-group-widget></keyword-group-widget>')($scope);
-              $container.append(el);
+              //el = $compile('<keyword-group-widget is-popup="true"></keyword-group-widget>')($scope);
+              //$container.append(el);
             }, 0);
           }
         });
@@ -327,7 +357,7 @@ RAML.Decorators = (function (Decorators) {
           else {
             $scope.isLoaded = true;
             voicebaseTokensApi.getToken(url, $scope.credentials).then(function() {
-              $scope.loadConsole();
+              $scope.loadPortal();
             }, function(error){
               $scope.isLoaded = false;
               $scope.formError = error;
@@ -336,8 +366,8 @@ RAML.Decorators = (function (Decorators) {
           return false;
         };
 
-        $scope.loadConsole = function() {
-          $location.path('/console');
+        $scope.loadPortal = function() {
+          $location.path('/portal');
         };
 
 
@@ -346,7 +376,7 @@ RAML.Decorators = (function (Decorators) {
         $timeout(function() {
           var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
           if(tokenFromStorage) {
-            $scope.loadConsole();
+            $scope.loadPortal();
           }
           else {
             $scope.isInit = false;
@@ -657,8 +687,11 @@ RAML.Decorators = (function (Decorators) {
       restrict: 'E',
       templateUrl: 'keyword-group-widget/directives/keyword-group-widget.tpl.html',
       replace: true,
+      scope: {
+        isPopup: '@'
+      },
       controllerAs: 'keywordWidgetCtrl',
-      controller: function(voicebaseTokensApi, formValidate, keywordGroupApi, ModalService) {
+      controller: function($scope, voicebaseTokensApi, formValidate, keywordGroupApi, ModalService) {
         var me = this;
         me.isShowWidget = false;
         me.isLoaded = true;
@@ -668,7 +701,9 @@ RAML.Decorators = (function (Decorators) {
         me.editedGroup = {};
         me.groupsPerPage = 5;
         me.currentPage = 1;
+        me.isPopup = ($scope.isPopup === 'true');
 
+        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
 
@@ -789,6 +824,12 @@ RAML.Decorators = (function (Decorators) {
           me.createLoading = false;
           me.currentPage = 1;
         };
+
+        if(!me.isPopup) {
+          me.isShowWidget = true;
+          me.showWidget();
+        }
+
       }
     };
   };
@@ -1721,6 +1762,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "                ng-model=\"keywordGroup.description\"></textarea>\n" +
     "    </div>\n" +
     "  </div>\n" +
+    "  <hr/>\n" +
     "  <div class=\"form-group\">\n" +
     "    <label class=\"control-label col-sm-4 raml-console-keyword-label\">Words/Phrases to detect</label>\n" +
     "\n" +
@@ -1758,12 +1800,12 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
   $templateCache.put('keyword-group-widget/directives/keyword-group-widget.tpl.html',
     "<div class=\"raml-console-vbs-keyword-group-widget-container\">\n" +
-    "  <a class=\"raml-console-meta-button\" ng-click=\"keywordWidgetCtrl.toggleWidget()\">\n" +
+    "  <a class=\"raml-console-meta-button\" ng-click=\"keywordWidgetCtrl.toggleWidget()\" ng-if=\"keywordWidgetCtrl.isPopup\">\n" +
     "    <span>Keywords spotting widget</span>\n" +
     "  </a>\n" +
     "\n" +
-    "  <div class=\"raml-console-vbs-popup tw-bs\" ng-show=\"keywordWidgetCtrl.isShowWidget\">\n" +
-    "    <div class=\"raml-console-vbs-popup-header\">\n" +
+    "  <div class=\"raml-console-vbs-popup\" ng-show=\"keywordWidgetCtrl.isShowWidget\">\n" +
+    "    <div class=\"raml-console-vbs-popup-header\" ng-if=\"keywordWidgetCtrl.isPopup\">\n" +
     "      <h3 class=\"raml-console-vbs-popup-title\">Keyword Spotting Groups</h3>\n" +
     "      <div class=\"raml-console-vbs-popup-close\" ng-click=\"keywordWidgetCtrl.hideWidget()\">\n" +
     "        <i class=\"fa fa-remove\"></i>\n" +
