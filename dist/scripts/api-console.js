@@ -1721,6 +1721,36 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
   );
 
 
+  $templateCache.put('console/templates/portal-navbar.tpl.html',
+    "<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n" +
+    "  <div class=\"container\">\n" +
+    "    <!-- Brand and toggle get grouped for better mobile display -->\n" +
+    "    <div class=\"navbar-header\">\n" +
+    "      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\".navbar-collapse\">\n" +
+    "        <span class=\"sr-only\">Toggle navigation</span>\n" +
+    "        <span class=\"icon-bar\"></span>\n" +
+    "        <span class=\"icon-bar\"></span>\n" +
+    "        <span class=\"icon-bar\"></span>\n" +
+    "      </button>\n" +
+    "      <a class=\"navbar-brand\" href=\"#\">\n" +
+    "        <img alt=\"VoiceBase Developer Portal\" src=\"img/logo-portal.png\">\n" +
+    "      </a>\n" +
+    "    </div>\n" +
+    "    <div class=\"collapse navbar-collapse\">\n" +
+    "      <button type=\"button\" class=\"btn btn-danger navbar-btn navbar-right\">\n" +
+    "        Logout\n" +
+    "      </button>\n" +
+    "      <ul class=\"nav navbar-nav navbar-right\">\n" +
+    "        <li><a href=\"#\">Lorem</a></li>\n" +
+    "        <li><a href=\"#\">Ipsum</a></li>\n" +
+    "        <li><a href=\"#\">Dolor Est</a></li>\n" +
+    "      </ul>\n" +
+    "    </div><!-- /.navbar-collapse -->\n" +
+    "  </div><!-- /.container -->\n" +
+    "</nav>\n"
+  );
+
+
   $templateCache.put('console/templates/skip-toolbar.tpl.html',
     "<a href=\"#\" class=\"raml-console-login-header-btn raml-console-skip-console-btn\" ng-click=\"skip($event);\">\n" +
     "  <span ng-hide=\"isSkipping\">Explore the API</span>\n" +
