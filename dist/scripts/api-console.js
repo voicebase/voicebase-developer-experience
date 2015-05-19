@@ -1299,6 +1299,8 @@ var ToggleableButton = (function() {
         if(!tokenFromLocation) {
           voicebaseTokensApi.getTokenFromStorage();
         }
+
+        $scope.consoleView = ($location.$$path !== '/console');
       }
     };
   };
@@ -1737,9 +1739,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      </a>\n" +
     "    </div>\n" +
     "    <div class=\"collapse navbar-collapse\">\n" +
-    "      <button type=\"button\" class=\"btn btn-danger navbar-btn navbar-right\">\n" +
-    "        Logout\n" +
-    "      </button>\n" +
+    "      <voicebase-sign></voicebase-sign>\n" +
     "      <ul class=\"nav navbar-nav navbar-right\">\n" +
     "        <li><a href=\"#\">Lorem</a></li>\n" +
     "        <li><a href=\"#\">Ipsum</a></li>\n" +
@@ -1994,13 +1994,25 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
   $templateCache.put('voicebase-tokens/directives/voicebase-sign.tpl.html',
     "<div class=\"raml-console-vbs-sign-container\">\n" +
-    "  <a class=\"raml-console-meta-button\" ng-if=\"!signed\" ng-click=\"signIn()\">\n" +
-    "    <span ng-show=\"!isLoaded\">Sign In</span>\n" +
-    "    <span ng-show=\"isLoaded\">Signing In...</span>\n" +
-    "  </a>\n" +
-    "  <a class=\"raml-console-meta-button\" ng-if=\"signed\" ng-click=\"signOut()\">\n" +
-    "    Sign Out\n" +
-    "  </a>\n" +
+    "  <div ng-if=\"!consoleView\">\n" +
+    "    <a class=\"raml-console-meta-button\" ng-if=\"!signed\" ng-click=\"signIn()\">\n" +
+    "      <span ng-show=\"!isLoaded\">Sign In</span>\n" +
+    "      <span ng-show=\"isLoaded\">Signing In...</span>\n" +
+    "    </a>\n" +
+    "    <a class=\"raml-console-meta-button\" ng-if=\"signed\" ng-click=\"signOut()\">\n" +
+    "      Sign Out\n" +
+    "    </a>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div ng-if=\"consoleView\">\n" +
+    "    <button type=\"button\" class=\"btn btn-danger navbar-btn navbar-right\" ng-if=\"!signed\" ng-click=\"signIn()\">\n" +
+    "      <span ng-show=\"!isLoaded\">Sign In</span>\n" +
+    "      <span ng-show=\"isLoaded\">Signing In...</span>\n" +
+    "    </button>\n" +
+    "    <button type=\"button\" class=\"btn btn-danger navbar-btn navbar-right\" ng-if=\"signed\" ng-click=\"signOut()\">\n" +
+    "      Sign Out\n" +
+    "    </button>\n" +
+    "  </div>\n" +
     "\n" +
     "  <voicebase-auth-form></voicebase-auth-form>\n" +
     "</div>\n"

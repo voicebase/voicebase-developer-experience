@@ -93,6 +93,16 @@
 
   }
 
+  .raml-console-vbs-sign-container {
+    float: none;
+
+    .raml-console-vbs-token-auth-form {
+      right: 15px;
+      left: inherit;
+      top: 95px;
+    }
+  }
+
 }
 
 @media (min-width: 768px) {

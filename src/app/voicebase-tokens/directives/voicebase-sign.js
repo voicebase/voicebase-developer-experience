@@ -32,6 +32,8 @@
         if(!tokenFromLocation) {
           voicebaseTokensApi.getTokenFromStorage();
         }
+
+        $scope.consoleView = ($location.$$path !== '/console');
       }
     };
   };
