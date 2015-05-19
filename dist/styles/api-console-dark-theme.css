@@ -1056,6 +1056,10 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 .keyword-config-page .raml-console-vbs-keyword-group-widget-container h3 {
   font-size: 16px;
 }
+.keyword-config-page .raml-console-vbs-keyword-group-widget-container .raml-console-error-message {
+  font-size: 18px;
+  padding: 15px;
+}
 .keyword-config-page .panel {
   border: 1px solid #DDD;
 }
@@ -5085,6 +5089,12 @@ span.raml-console-side-bar-required-field {
   max-height: 180px;
   overflow-y: auto;
   padding-right: 15px;
+}
+
+.raml-console-keywords-list-container .raml-console-keyword-remove i {
+  font-size: 16px;
+  line-height: 19px;
+  color: #D9534F;
 }
 
 .raml-console-clearfix {

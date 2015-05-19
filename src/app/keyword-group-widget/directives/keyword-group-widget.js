@@ -26,7 +26,7 @@
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
 
-        me.removeGroup = function(group) {
+        me.removeGroup = function(group, event) {
           group.startDelete = true;
           keywordGroupApi.removeKeywordGroup(tokenData.token, group.name).then(function() {
             me.keywordGroups.groups = me.keywordGroups.groups.filter(function(_group) {
@@ -36,6 +36,9 @@
             group.startDelete = false;
             me.errorMessage = 'Something going wrong!';
           });
+
+          event.stopPropagation();
+          event.preventDefault();
         };
 
         me.startCreateGroup = function() {
@@ -48,7 +51,8 @@
             templateUrl: 'editKeywordGroupModal.html',
             controller: 'ModalController',
             inputs: {
-              keywordGroup: me.newGroup,
+              $keywordGroup: me.newGroup,
+              mode: 'create',
               groupCallback: function(group) {
                 me.newGroup = group;
                 me.createGroup(group);
@@ -77,7 +81,8 @@
             templateUrl: 'editKeywordGroupModal.html',
             controller: 'ModalController',
             inputs: {
-              keywordGroup: group,
+              $keywordGroup: group,
+              mode: 'edit',
               groupCallback: function(_group) {
                 angular.copy(_group, me.editedGroup);
                 me.editGroup(group);
@@ -153,9 +158,11 @@
     };
   };
 
-  angular.module('vbsKeywordGroupWidget').controller('ModalController', function($scope, $element, formValidate, keywordGroup, groupCallback) {
+  angular.module('vbsKeywordGroupWidget').controller('ModalController', function($scope, $element, formValidate, $keywordGroup, mode, groupCallback) {
 
-    $scope.keywordGroup = keywordGroup;
+    $scope.mode = mode;
+
+    $scope.keywordGroup = jQuery.extend(true, {}, $keywordGroup);
 
     if($scope.keywordGroupForm) {
       $scope.keywordGroupForm.$setPristine();
