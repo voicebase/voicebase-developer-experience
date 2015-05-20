@@ -153,3 +153,7 @@
 .keyword-config-page .panel a small {
   color: #555;
 }
+
+.tooltip {
+  font-size: 13px;
+}

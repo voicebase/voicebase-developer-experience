@@ -1077,6 +1077,10 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   color: #555;
 }
 
+.tooltip {
+  font-size: 13px;
+}
+
 @charset "UTF-8";
 
 
@@ -4838,6 +4842,20 @@ span.raml-console-side-bar-required-field {
   margin-top: -116px;
 }
 
+.raml-console-login-page-container main-login {
+  display: table;
+  margin-bottom: 30px;
+}
+
+.raml-console-login-page-container .raml-console-create-account-link {
+  padding: 5px;
+  border-bottom: 1px solid #fff;
+}
+
+.raml-console-login-page-container .raml-console-create-account-link:hover {
+  text-decoration: none !important;
+}
+
 .raml-console-margin-content {
   margin: 0 16px;
 }
@@ -5062,14 +5080,12 @@ span.raml-console-side-bar-required-field {
 
 .raml-console-keywords-group-list .raml-console-keywords-group-list-item .raml-console-keywords-group-remove {
   position: absolute;
-  right: 0;
-  top: 50%;
+  right: 25px;
+  top: 25px;
   display: block;
   font-size: 20px;
   line-height: 20px;
-  margin-top: -30px;
   color: #BBB;
-  padding: 20px;
   transition: color 0.3s ease;
 }
 

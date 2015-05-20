@@ -324,6 +324,26 @@ RAML.Decorators = (function (Decorators) {
 
 })(RAML.Decorators || {});
 
+(function() {
+  "use strict";
+
+  angular.module('ramlVoicebaseConsoleApp').directive('toggle', function () {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs){
+        if (attrs.toggle=="tooltip"){
+          jQuery(element).tooltip();
+        }
+        if (attrs.toggle=="popover"){
+          jQuery(element).popover();
+        }
+      }
+    };
+
+  });
+
+})();
+
 (function () {
   'use strict';
 
@@ -863,6 +883,28 @@ RAML.Decorators = (function (Decorators) {
 
   angular.module('vbsKeywordGroupWidget')
     .directive('keywordGroupWidget', keywordGroupWidget);
+
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('vbsKeywordGroupWidget').directive('placeholder', function () {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs){
+        element.focus(function(){
+          jQuery(this).data('placeholder',jQuery(this).attr('placeholder'));
+          jQuery(this).attr('placeholder','');
+        });
+        element.blur(function(){
+          jQuery(this).attr('placeholder',jQuery(this).data('placeholder'));
+        });
+      }
+    };
+
+  });
+
 
 })();
 
@@ -1581,7 +1623,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        </div>\n" +
     "        <div>\n" +
     "          <label class=\"raml-console-login-label\">\n" +
-    "            Remember me\n" +
+    "            Remember Me\n" +
     "          </label>\n" +
     "        </div>\n" +
     "      </div>\n" +
@@ -1725,7 +1767,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  <img src=\"img/logo.png\"/>\n" +
     "</div>\n" +
     "<div class=\"raml-console-brand-label\">\n" +
-    "  DEVELOPER CONSOLE\n" +
+    "  DEVELOPER PORTAL\n" +
     "</div>\n"
   );
 
@@ -1748,9 +1790,6 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    <div class=\"collapse navbar-collapse\">\n" +
     "      <voicebase-sign></voicebase-sign>\n" +
     "      <ul class=\"nav navbar-nav navbar-right\">\n" +
-    "        <li><a href=\"#\">Lorem</a></li>\n" +
-    "        <li><a href=\"#\">Ipsum</a></li>\n" +
-    "        <li><a href=\"#\">Dolor Est</a></li>\n" +
     "      </ul>\n" +
     "    </div><!-- /.navbar-collapse -->\n" +
     "  </div><!-- /.container -->\n" +
@@ -1759,7 +1798,8 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
 
   $templateCache.put('console/templates/skip-toolbar.tpl.html',
-    "<a href=\"#\" class=\"raml-console-login-header-btn raml-console-skip-console-btn\" ng-click=\"skip($event);\">\n" +
+    "<a href=\"#\" class=\"raml-console-login-header-btn raml-console-skip-console-btn\" ng-click=\"skip($event);\"\n" +
+    "   data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Explore a subnet of the Voicebase API prior to creating your developer account\">\n" +
     "  <span ng-hide=\"isSkipping\">Explore the API</span>\n" +
     "  <css-spinner ng-show=\"isSkipping\"></css-spinner>\n" +
     "</a>\n"
@@ -1781,7 +1821,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "<div>\n" +
     "  <div class=\"form-group\">\n" +
     "    <label class=\"control-label col-sm-4 raml-console-keyword-label\">\n" +
-    "      Detection Group Name\n" +
+    "      Group Name\n" +
     "      <span class=\"raml-console-side-bar-required-field\">*</span>\n" +
     "    </label>\n" +
     "\n" +
@@ -1792,7 +1832,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"form-group\">\n" +
-    "    <label class=\"control-label col-sm-4 raml-console-keyword-label\">Detection Group Description</label>\n" +
+    "    <label class=\"control-label col-sm-4 raml-console-keyword-label\">Description</label>\n" +
     "\n" +
     "    <div class=\"col-sm-8\">\n" +
     "      <textarea class=\"form-control\" placeholder=\"Description\" name=\"description\" maxlength=\"1000\"\n" +
@@ -1801,7 +1841,10 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  </div>\n" +
     "  <hr/>\n" +
     "  <div class=\"form-group\">\n" +
-    "    <label class=\"control-label col-sm-4 raml-console-keyword-label\">Words/Phrases to detect</label>\n" +
+    "    <label class=\"control-label col-sm-4 raml-console-keyword-label\">\n" +
+    "      Word/Phase to Detect\n" +
+    "      <span class=\"raml-console-side-bar-required-field\">*</span>\n" +
+    "    </label>\n" +
     "\n" +
     "    <div class=\"col-sm-6\">\n" +
     "      <div class=\"raml-console-keywords-list-container\" data-scroll-to-bottom='keywordGroup.keywords.length'>\n" +
@@ -1815,7 +1858,9 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "              <span class=\"raml-console-vbs-validation-error raml-console-vbs-validation-many-words-error\">Maximum 10 words</span>\n" +
     "            </span>\n" +
     "            <span class=\"input-group-btn\">\n" +
-    "              <button class=\"btn btn-default raml-console-keyword-remove\" type=\"button\" title=\"Remove word/phrase\" ng-click=\"removeKeyword($index)\" ng-if=\"keywordGroup.keywords.length > 1\">\n" +
+    "              <button class=\"btn btn-default raml-console-keyword-remove\" type=\"button\"\n" +
+    "                      title=\"Remove word/phrase\"\n" +
+    "                      ng-click=\"removeKeyword($index)\" ng-if=\"keywordGroup.keywords.length > 1\">\n" +
     "                <i class=\"fa fa-times-circle\"></i>\n" +
     "              </button>\n" +
     "            </span>\n" +
@@ -1854,6 +1899,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <!--Toolbar-->\n" +
     "        <div class=\"list-group raml-console-keyword-group-toolbar\" ng-if=\"keywordWidgetCtrl.isLogin\">\n" +
     "          <a class=\"list-group-item raml-console-add-group\"\n" +
+    "             data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Add Keyword Spotting Group\"\n" +
     "             ng-click=\"keywordWidgetCtrl.startCreateGroup()\"\n" +
     "             ng-show=\"!keywordWidgetCtrl.createLoading\">\n" +
     "\n" +
@@ -1882,7 +1928,8 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "            <h4 class=\"list-group-item-heading raml-console-keywords-group-name\">{{ keywordGroup.name }}</h4>\n" +
     "            <small class=\"list-group-item-text\">{{ keywordGroup.keywords | keywordsFilter }}</small>\n" +
-    "            <i class=\"fa fa-times-circle raml-console-keywords-group-remove\" title=\"Delete group\"\n" +
+    "            <i class=\"fa fa-times-circle raml-console-keywords-group-remove\"\n" +
+    "               data-toggle=\"tooltip\" data-placement=\"top\" title=\"Delete group\"\n" +
     "               ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup, $event)\"\n" +
     "               ng-show=\"!keywordGroup.startDelete && !keywordGroup.startEdit\">\n" +
     "            </i>\n" +
@@ -1903,7 +1950,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  </div>\n" +
     "\n" +
     "  <script type=\"text/ng-template\" id=\"editKeywordGroupModal.html\">\n" +
-    "    <div class=\"modal fade\">\n" +
+    "    <div class=\"modal fade\" data-backdrop=\"static\">\n" +
     "      <div class=\"modal-dialog\">\n" +
     "        <div class=\"modal-content raml-console-modal\">\n" +
     "          <div class=\"modal-header raml-console-modal-header\">\n" +
