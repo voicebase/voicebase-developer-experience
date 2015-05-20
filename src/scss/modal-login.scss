@@ -142,6 +142,21 @@
     margin-top: -116px;
 
   }
+
+  main-login {
+    display: table;
+    margin-bottom: 30px;
+  }
+
+  .create-account-link {
+    padding: 5px;
+    border-bottom: 1px solid #fff;
+
+    &:hover {
+      text-decoration: none!important;
+    }
+  }
+
 }
 
 .margin-content {
