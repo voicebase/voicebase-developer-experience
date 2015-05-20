@@ -60,14 +60,12 @@
 
     .keywords-group-remove {
       position: absolute;
-      right: 0;
-      top: 50%;
+      right: 25px;
+      top: 25px;
       display: block;
       font-size: 20px;
       line-height: 20px;
-      margin-top: -30px;
       color: #BBB;
-      padding: 20px;
       transition: color 0.3s ease;
 
       &:hover {

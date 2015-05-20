@@ -16,6 +16,7 @@
         <!--Toolbar-->
         <div class="list-group raml-console-keyword-group-toolbar" ng-if="keywordWidgetCtrl.isLogin">
           <a class="list-group-item raml-console-add-group"
+             data-toggle="tooltip" data-placement="bottom" title="Add Keyword Spotting Group"
              ng-click="keywordWidgetCtrl.startCreateGroup()"
              ng-show="!keywordWidgetCtrl.createLoading">
 
@@ -44,7 +45,8 @@
 
             <h4 class="list-group-item-heading raml-console-keywords-group-name">{{ keywordGroup.name }}</h4>
             <small class="list-group-item-text">{{ keywordGroup.keywords | keywordsFilter }}</small>
-            <i class="fa fa-times-circle raml-console-keywords-group-remove" title="Delete group"
+            <i class="fa fa-times-circle raml-console-keywords-group-remove"
+               data-toggle="tooltip" data-placement="top" title="Delete group"
                ng-click="keywordWidgetCtrl.removeGroup(keywordGroup, $event)"
                ng-show="!keywordGroup.startDelete && !keywordGroup.startEdit">
             </i>
