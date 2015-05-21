@@ -325,16 +325,16 @@ RAML.Decorators = (function (Decorators) {
 })(RAML.Decorators || {});
 
 (function() {
-  "use strict";
+  'use strict';
 
   angular.module('ramlVoicebaseConsoleApp').directive('toggle', function () {
     return {
       restrict: 'A',
       link: function(scope, element, attrs){
-        if (attrs.toggle=="tooltip"){
+        if (attrs.toggle === 'tooltip'){
           jQuery(element).tooltip();
         }
-        if (attrs.toggle=="popover"){
+        if (attrs.toggle === 'popover'){
           jQuery(element).popover();
         }
       }
@@ -727,7 +727,24 @@ RAML.Decorators = (function (Decorators) {
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
 
-        me.removeGroup = function(group, event) {
+        me.startRemovingGroup = function(group, event) {
+          event.stopPropagation();
+          event.preventDefault();
+          ModalService.showModal({
+            templateUrl: 'removeKeywordGroupModal.html',
+            controller: 'removeModalController',
+            inputs: {
+              removeCallback: function() {
+                me.removeGroup(group);
+              }
+            }
+          }).then(function(modal) {
+            modal.element.modal();
+          });
+
+        };
+
+        me.removeGroup = function(group) {
           group.startDelete = true;
           keywordGroupApi.removeKeywordGroup(tokenData.token, group.name).then(function() {
             me.keywordGroups.groups = me.keywordGroups.groups.filter(function(_group) {
@@ -737,9 +754,6 @@ RAML.Decorators = (function (Decorators) {
             group.startDelete = false;
             me.errorMessage = 'Something going wrong!';
           });
-
-          event.stopPropagation();
-          event.preventDefault();
         };
 
         me.startCreateGroup = function() {
@@ -876,6 +890,16 @@ RAML.Decorators = (function (Decorators) {
         groupCallback($scope.keywordGroup);
         $element.modal('hide');
       }
+      return false;
+    };
+
+  });
+
+  angular.module('vbsKeywordGroupWidget').controller('removeModalController', function($scope, $element, removeCallback) {
+
+    $scope.removeGroup = function() {
+      $element.modal('hide');
+      removeCallback();
       return false;
     };
 
@@ -1930,7 +1954,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "            <small class=\"list-group-item-text\">{{ keywordGroup.keywords | keywordsFilter }}</small>\n" +
     "            <i class=\"fa fa-times-circle raml-console-keywords-group-remove\"\n" +
     "               data-toggle=\"tooltip\" data-placement=\"top\" title=\"Delete group\"\n" +
-    "               ng-click=\"keywordWidgetCtrl.removeGroup(keywordGroup, $event)\"\n" +
+    "               ng-click=\"keywordWidgetCtrl.startRemovingGroup(keywordGroup, $event)\"\n" +
     "               ng-show=\"!keywordGroup.startDelete && !keywordGroup.startEdit\">\n" +
     "            </i>\n" +
     "\n" +
@@ -1966,6 +1990,32 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "            <button type=\"button\" class=\"btn btn-success\" ng-click=\"groupSave()\">\n" +
     "              <i class=\"fa fa-check\"></i>\n" +
     "              Save\n" +
+    "            </button>\n" +
+    "            <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\">\n" +
+    "              <i class=\"fa fa-times\"></i>\n" +
+    "              Cancel\n" +
+    "            </button>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </script>\n" +
+    "\n" +
+    "  <script type=\"text/ng-template\" id=\"removeKeywordGroupModal.html\">\n" +
+    "    <div class=\"modal fade\" data-backdrop=\"static\">\n" +
+    "      <div class=\"modal-dialog\">\n" +
+    "        <div class=\"modal-content raml-console-modal\">\n" +
+    "          <div class=\"modal-header raml-console-modal-header\">\n" +
+    "            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\"><i class=\"fa fa-times\"></i></button>\n" +
+    "            <h4 class=\"modal-title raml-console-modal-title\">Remove Keyword Spotting Group</h4>\n" +
+    "          </div>\n" +
+    "          <div class=\"modal-body\">\n" +
+    "            <p class=\"raml-console-confirmation-message\">Are you sure you want to delete keyword group?</p>\n" +
+    "          </div>\n" +
+    "          <div class=\"modal-footer raml-console-modal-footer\">\n" +
+    "            <button type=\"button\" class=\"btn btn-success\" ng-click=\"removeGroup()\">\n" +
+    "              <i class=\"fa fa-check\"></i>\n" +
+    "              Remove\n" +
     "            </button>\n" +
     "            <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\">\n" +
     "              <i class=\"fa fa-times\"></i>\n" +

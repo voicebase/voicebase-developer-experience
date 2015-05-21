@@ -5166,6 +5166,10 @@ a.raml-console-icon {
   margin: 15px -15px;
 }
 
+.raml-console-modal .raml-console-confirmation-message {
+  color: #333;
+}
+
 /*
 
 Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmail.com>

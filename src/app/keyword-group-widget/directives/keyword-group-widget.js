@@ -26,7 +26,24 @@
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
 
-        me.removeGroup = function(group, event) {
+        me.startRemovingGroup = function(group, event) {
+          event.stopPropagation();
+          event.preventDefault();
+          ModalService.showModal({
+            templateUrl: 'removeKeywordGroupModal.html',
+            controller: 'removeModalController',
+            inputs: {
+              removeCallback: function() {
+                me.removeGroup(group);
+              }
+            }
+          }).then(function(modal) {
+            modal.element.modal();
+          });
+
+        };
+
+        me.removeGroup = function(group) {
           group.startDelete = true;
           keywordGroupApi.removeKeywordGroup(tokenData.token, group.name).then(function() {
             me.keywordGroups.groups = me.keywordGroups.groups.filter(function(_group) {
@@ -36,9 +53,6 @@
             group.startDelete = false;
             me.errorMessage = 'Something going wrong!';
           });
-
-          event.stopPropagation();
-          event.preventDefault();
         };
 
         me.startCreateGroup = function() {
@@ -175,6 +189,16 @@
         groupCallback($scope.keywordGroup);
         $element.modal('hide');
       }
+      return false;
+    };
+
+  });
+
+  angular.module('vbsKeywordGroupWidget').controller('removeModalController', function($scope, $element, removeCallback) {
+
+    $scope.removeGroup = function() {
+      $element.modal('hide');
+      removeCallback();
       return false;
     };
 

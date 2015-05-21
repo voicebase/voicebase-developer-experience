@@ -47,7 +47,7 @@
             <small class="list-group-item-text">{{ keywordGroup.keywords | keywordsFilter }}</small>
             <i class="fa fa-times-circle raml-console-keywords-group-remove"
                data-toggle="tooltip" data-placement="top" title="Delete group"
-               ng-click="keywordWidgetCtrl.removeGroup(keywordGroup, $event)"
+               ng-click="keywordWidgetCtrl.startRemovingGroup(keywordGroup, $event)"
                ng-show="!keywordGroup.startDelete && !keywordGroup.startEdit">
             </i>
 
@@ -83,6 +83,32 @@
             <button type="button" class="btn btn-success" ng-click="groupSave()">
               <i class="fa fa-check"></i>
               Save
+            </button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">
+              <i class="fa fa-times"></i>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="removeKeywordGroupModal.html">
+    <div class="modal fade" data-backdrop="static">
+      <div class="modal-dialog">
+        <div class="modal-content raml-console-modal">
+          <div class="modal-header raml-console-modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+            <h4 class="modal-title raml-console-modal-title">Remove Keyword Spotting Group</h4>
+          </div>
+          <div class="modal-body">
+            <p class="raml-console-confirmation-message">Are you sure you want to delete keyword group?</p>
+          </div>
+          <div class="modal-footer raml-console-modal-footer">
+            <button type="button" class="btn btn-success" ng-click="removeGroup()">
+              <i class="fa fa-check"></i>
+              Remove
             </button>
             <button type="button" class="btn btn-danger" data-dismiss="modal">
               <i class="fa fa-times"></i>
