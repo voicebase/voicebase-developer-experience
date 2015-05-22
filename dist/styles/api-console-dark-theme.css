@@ -1026,12 +1026,22 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   }
 }
 @media (max-width: 767px) {
+  .dashboard-page .navbar-brand {
+    padding-right: 0 !important;
+  }
   .dashboard-page .navbar .navbar-brand img {
     width: 240px;
     height: auto;
   }
   .dashboard-page .panel {
     margin-bottom: 10px;
+  }
+}
+@media screen and (max-width: 980px) {
+  .dashboard-page .raml-console-vbs-sign-container .raml-console-vbs-token-auth-form {
+    left: 5px;
+    position: static;
+    box-shadow: none;
   }
 }
 .keyword-config-page .raml-console-vbs-keyword-group-widget-container {
@@ -1079,6 +1089,17 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 
 .tooltip {
   font-size: 13px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
 @charset "UTF-8";
@@ -4719,6 +4740,7 @@ span.raml-console-side-bar-required-field {
   top: 0;
   z-index: 9999;
   box-sizing: border-box;
+  overflow: auto;
 }
 
 .raml-console-login-page-container a {
@@ -4757,6 +4779,7 @@ span.raml-console-side-bar-required-field {
   font-size: 18px;
   font-weight: bold;
   width: 180px;
+  padding: 5px;
 }
 
 .raml-console-login-page-container .raml-console-login-header .raml-console-login-header-btn:hover {
@@ -4787,9 +4810,10 @@ span.raml-console-side-bar-required-field {
   text-align: center;
   position: absolute;
   top: 50%;
-  margin-top: -190px;
   left: 50%;
-  margin-left: -140px;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .raml-console-login-page-container .raml-console-login-content .raml-console-brand-label {
@@ -4838,10 +4862,6 @@ span.raml-console-side-bar-required-field {
   content: "";
 }
 
-.raml-console-login-page-container .raml-console-wait-list-page-content {
-  margin-top: -116px;
-}
-
 .raml-console-login-page-container main-login {
   display: table;
   margin-bottom: 30px;
@@ -4876,6 +4896,20 @@ span.raml-console-side-bar-required-field {
   display: table;
   margin: auto;
   margin-bottom: 5px;
+}
+
+@media screen and (max-width: 980px) {
+  .raml-console-login-page-container .raml-console-login-header .raml-console-login-header-btn {
+    width: 100px;
+  }
+
+  .raml-console-login-page-container .raml-console-login-content {
+    top: 100px;
+    left: 50%;
+    -webkit-transform: translate(-50%, 0);
+    -ms-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+  }
 }
 
 .raml-console-vbs-popup,
@@ -4953,6 +4987,23 @@ span.raml-console-side-bar-required-field {
 .raml-console-vbs-tokens-error .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-reset {
   width: 49%;
   float: right;
+}
+
+@media screen and (max-width: 980px) {
+  .raml-console-vbs-token-auth-form,
+  .raml-console-vbs-tokens-error {
+    width: 100%;
+  }
+
+  .raml-console-vbs-token-auth-form .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-get,
+  .raml-console-vbs-tokens-error .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-get {
+    width: 45%;
+  }
+
+  .raml-console-vbs-token-auth-form .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-reset,
+  .raml-console-vbs-tokens-error .raml-console-vbs-auth-form-btns .raml-console-sidebar-action-reset {
+    width: 45%;
+  }
 }
 
 .raml-console-vbs-tokens-error {

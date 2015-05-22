@@ -103,12 +103,22 @@
   }
 }
 @media (max-width: 767px) {
+  .dashboard-page .navbar-brand {
+    padding-right: 0 !important;
+  }
   .dashboard-page .navbar .navbar-brand img {
     width: 240px;
     height: auto;
   }
   .dashboard-page .panel {
     margin-bottom: 10px;
+  }
+}
+@media screen and (max-width: 980px) {
+  .dashboard-page .raml-console-vbs-sign-container .raml-console-vbs-token-auth-form {
+    left: 5px;
+    position: static;
+    box-shadow: none;
   }
 }
 .keyword-config-page .raml-console-vbs-keyword-group-widget-container {
@@ -156,4 +166,15 @@
 
 .tooltip {
   font-size: 13px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }

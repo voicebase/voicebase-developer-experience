@@ -67,6 +67,25 @@
   }
 }
 
+@media screen and (max-width: 980px) {
+  .vbs-token-auth-form, .vbs-tokens-error {
+    width: 100%;
+
+    .vbs-auth-form-btns {
+
+      .sidebar-action-get {
+        width: 45%;
+      }
+
+      .sidebar-action-reset {
+        width: 45%;
+      }
+    }
+
+  }
+
+}
+
 .vbs-tokens-error {
   padding: 15px;
   color: $color-console-tab-delete;
