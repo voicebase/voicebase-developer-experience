@@ -1037,7 +1037,7 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
     margin-bottom: 10px;
   }
 }
-@media screen and (max-width: 980px) {
+@media screen and (max-width: 767px) {
   .dashboard-page .raml-console-vbs-sign-container .raml-console-vbs-token-auth-form {
     left: 5px;
     position: static;
