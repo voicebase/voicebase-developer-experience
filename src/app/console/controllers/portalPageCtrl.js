@@ -9,7 +9,7 @@
       $scope.isLogin = (tokenData) ? true : false;
 
 
-      $scope.loadPortal = function() {
+      $scope.loadConsole = function() {
         $location.path('/console');
       };
 

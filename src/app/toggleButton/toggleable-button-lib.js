@@ -99,12 +99,12 @@ var ToggleableButton = (function() {
       buttonInner.classList.remove('toggleable-button-off');
       buttonInner.classList.add('toggleable-button-on');
       buttonInnerText.innerHTML = onStateValue;
-      inputCheckbox.checked=true;
+      inputCheckbox.click();
     } else {
       buttonInner.classList.remove('toggleable-button-on');
       buttonInner.classList.add('toggleable-button-off');
       buttonInnerText.innerHTML = offStateValue;
-      inputCheckbox.checked=false;
+      inputCheckbox.click();
     }
   };
 
