@@ -1,5 +1,5 @@
 <div class="raml-console-vbs-sign-container">
-  <div ng-if="!consoleView">
+  <div ng-if="consoleView">
     <a class="raml-console-meta-button" ng-if="!signed" ng-click="signIn()">
       <span ng-show="!isLoaded">Sign In</span>
       <span ng-show="isLoaded">Signing In...</span>
@@ -9,7 +9,7 @@
     </a>
   </div>
 
-  <div ng-if="consoleView">
+  <div ng-if="!consoleView">
     <button type="button" class="btn btn-danger navbar-btn navbar-right" ng-if="!signed" ng-click="signIn()">
       <span ng-show="!isLoaded">Sign In</span>
       <span ng-show="isLoaded">Signing In...</span>

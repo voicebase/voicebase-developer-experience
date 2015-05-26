@@ -24,7 +24,7 @@
     'voicebaseTokensModule',
     'vbsKeywordGroupWidget'
   ]).config(function ($provide, $routeProvider) {
-    RAML.Decorators.ramlConsole($provide);
+    //RAML.Decorators.ramlConsole($provide);
     RAML.Decorators.ramlSidebar($provide);
     RAML.Decorators.ramlField($provide);
     RAML.Decorators.namedParameters($provide); // custom headers can't be empty

@@ -41,10 +41,6 @@
     color: #777;
   }
 
-  .navbar {
-    background: #333;
-  }
-
   .sidebar {
     h3 {
       margin-top: 0;
@@ -93,37 +89,11 @@
 
   }
 
-  .raml-console-vbs-sign-container {
-    float: none;
-
-    .raml-console-vbs-token-auth-form {
-      right: 15px;
-      left: inherit;
-      top: 95px;
-    }
-  }
-
 }
 
 @media (min-width: 768px) {
   .dashboard-page {
     padding-top: 110px;
-  }
-
-  .navbar {
-    min-height: 80px;
-    padding-top: 15px;
-
-    .navbar-right {
-      margin-left: 15px;
-      margin-right: 0;
-    }
-
-    .navbar-brand img {
-      height: 34px;
-      width: auto;
-      margin-top: -4px;
-    }
   }
 
   .panel {
@@ -134,14 +104,6 @@
 
 @media (max-width: 767px) {
   .dashboard-page {
-    .navbar-brand {
-      padding-right: 0!important;
-    }
-
-    .navbar .navbar-brand img {
-      width: 240px;
-      height: auto;
-    }
 
     .panel {
       margin-bottom: 10px;
@@ -151,13 +113,7 @@
 
 @media screen and (max-width: 767px) {
 
-  .dashboard-page .raml-console-vbs-sign-container {
-    .raml-console-vbs-token-auth-form {
-      left: 5px;
-      position: static;
-      box-shadow: none;
-    }
-  }
+//  .dashboard-page
 
 }
 
@@ -231,4 +187,70 @@
   overflow: hidden;
   clip: rect(0,0,0,0);
   border: 0;
+}
+
+.vbs-portal-navbar.navbar {
+    background: #333;
+
+}
+
+@media (min-width: 768px) {
+  .vbs-portal-navbar.navbar {
+    min-height: 80px;
+    padding-top: 15px;
+
+    .navbar-right {
+      margin-left: 15px;
+      margin-right: 0;
+    }
+
+    .navbar-brand img {
+      height: 34px;
+      width: auto;
+      margin-top: -4px;
+    }
+
+    .raml-console-vbs-sign-container {
+      float: none;
+
+      .raml-console-vbs-token-auth-form {
+        right: 15px;
+        left: inherit;
+        top: 95px;
+      }
+    }
+
+  }
+
+}
+
+@media (max-width: 767px) {
+  .vbs-portal-navbar.navbar {
+    .navbar-brand {
+      padding-right: 0!important;
+
+      img {
+        width: 240px;
+        height: auto;
+      }
+    }
+
+    .raml-console-vbs-sign-container {
+      .raml-console-vbs-token-auth-form {
+        left: 5px;
+        position: static;
+        box-shadow: none;
+      }
+    }
+  }
+
+}
+
+.console-section {
+  position: relative;
+  top: 80px;
+}
+
+.raml-console-title {
+  padding-top: 30px;
 }

@@ -33,7 +33,7 @@
           voicebaseTokensApi.getTokenFromStorage();
         }
 
-        $scope.consoleView = ($location.$$path !== '/console');
+        $scope.consoleView = false;
       }
     };
   };
