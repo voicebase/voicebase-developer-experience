@@ -15,7 +15,9 @@ module.exports = function (grunt) {
         'bower_components/angular-modal-service/dst/angular-modal-service.js',
         'bower_components/angular-utils-pagination/dirPagination.js',
         'bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js',
-        'bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js',
+        'bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js'
+      ],
+      jsApiConsole: [
         'bower_components/api-console-voicebase/dist/scripts/api-console.js'
       ],
       html: ['src/index.html'],
@@ -153,8 +155,15 @@ module.exports = function (grunt) {
     },
 
     concat: {
-      app: {
+      apiConsole: {
         dest: '<%= distdir %>/scripts/api-console.js',
+        src: [
+          '<%= src.jsApiConsole %>'
+        ]
+      },
+
+      app: {
+        dest: '<%= distdir %>/scripts/voicebase-developer-experience.js',
         src: [
           '<%= src.js %>',
           '<%= ngtemplates.ramlConsole.dest %>'
@@ -429,6 +438,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build:scripts', [
     'ngtemplates',
+    'concat:apiConsole',
     'concat:app'
   ]);
 
