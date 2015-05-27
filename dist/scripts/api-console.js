@@ -24,7 +24,7 @@
     'voicebaseTokensModule',
     'vbsKeywordGroupWidget'
   ]).config(function ($provide, $routeProvider) {
-    RAML.Decorators.ramlConsole($provide);
+    //RAML.Decorators.ramlConsole($provide);
     RAML.Decorators.ramlSidebar($provide);
     RAML.Decorators.ramlField($provide);
     RAML.Decorators.namedParameters($provide); // custom headers can't be empty
@@ -86,7 +86,7 @@
       $scope.isLogin = (tokenData) ? true : false;
 
 
-      $scope.loadPortal = function() {
+      $scope.loadConsole = function() {
         $location.path('/console');
       };
 
@@ -1186,12 +1186,12 @@ var ToggleableButton = (function() {
       buttonInner.classList.remove('toggleable-button-off');
       buttonInner.classList.add('toggleable-button-on');
       buttonInnerText.innerHTML = onStateValue;
-      inputCheckbox.checked=true;
+      inputCheckbox.click();
     } else {
       buttonInner.classList.remove('toggleable-button-on');
       buttonInner.classList.add('toggleable-button-off');
       buttonInnerText.innerHTML = offStateValue;
-      inputCheckbox.checked=false;
+      inputCheckbox.click();
     }
   };
 
@@ -1373,7 +1373,7 @@ var ToggleableButton = (function() {
           voicebaseTokensApi.getTokenFromStorage();
         }
 
-        $scope.consoleView = ($location.$$path !== '/console');
+        $scope.consoleView = false;
       }
     };
   };
@@ -1797,7 +1797,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
 
   $templateCache.put('console/templates/portal-navbar.tpl.html',
-    "<nav class=\"navbar navbar-inverse navbar-fixed-top\">\n" +
+    "<nav class=\"navbar navbar-inverse navbar-fixed-top vbs-portal-navbar\">\n" +
     "  <div class=\"container\">\n" +
     "    <!-- Brand and toggle get grouped for better mobile display -->\n" +
     "    <div class=\"navbar-header\">\n" +
@@ -1807,7 +1807,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <span class=\"icon-bar\"></span>\n" +
     "        <span class=\"icon-bar\"></span>\n" +
     "      </button>\n" +
-    "      <a class=\"navbar-brand\" href=\"#\">\n" +
+    "      <a class=\"navbar-brand\" href=\"#/portal\" >\n" +
     "        <img alt=\"VoiceBase Developer Portal\" src=\"img/logo-portal.png\">\n" +
     "      </a>\n" +
     "    </div>\n" +
@@ -2098,7 +2098,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
   $templateCache.put('voicebase-tokens/directives/voicebase-sign.tpl.html',
     "<div class=\"raml-console-vbs-sign-container\">\n" +
-    "  <div ng-if=\"!consoleView\">\n" +
+    "  <div ng-if=\"consoleView\">\n" +
     "    <a class=\"raml-console-meta-button\" ng-if=\"!signed\" ng-click=\"signIn()\">\n" +
     "      <span ng-show=\"!isLoaded\">Sign In</span>\n" +
     "      <span ng-show=\"isLoaded\">Signing In...</span>\n" +
@@ -2108,7 +2108,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    </a>\n" +
     "  </div>\n" +
     "\n" +
-    "  <div ng-if=\"consoleView\">\n" +
+    "  <div ng-if=\"!consoleView\">\n" +
     "    <button type=\"button\" class=\"btn btn-danger navbar-btn navbar-right\" ng-if=\"!signed\" ng-click=\"signIn()\">\n" +
     "      <span ng-show=\"!isLoaded\">Sign In</span>\n" +
     "      <span ng-show=\"isLoaded\">Signing In...</span>\n" +

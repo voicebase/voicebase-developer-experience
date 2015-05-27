@@ -954,9 +954,6 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 .dashboard-page .text-muted {
   color: #777;
 }
-.dashboard-page .navbar {
-  background: #333;
-}
 .dashboard-page .sidebar h3 {
   margin-top: 0;
 }
@@ -993,32 +990,10 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   padding-left: 0;
   list-style: none;
 }
-.dashboard-page .raml-console-vbs-sign-container {
-  float: none;
-}
-.dashboard-page .raml-console-vbs-sign-container .raml-console-vbs-token-auth-form {
-  right: 15px;
-  left: inherit;
-  top: 95px;
-}
 
 @media (min-width: 768px) {
   .dashboard-page {
     padding-top: 110px;
-  }
-
-  .navbar {
-    min-height: 80px;
-    padding-top: 15px;
-  }
-  .navbar .navbar-right {
-    margin-left: 15px;
-    margin-right: 0;
-  }
-  .navbar .navbar-brand img {
-    height: 34px;
-    width: auto;
-    margin-top: -4px;
   }
 
   .panel {
@@ -1026,22 +1001,8 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   }
 }
 @media (max-width: 767px) {
-  .dashboard-page .navbar-brand {
-    padding-right: 0 !important;
-  }
-  .dashboard-page .navbar .navbar-brand img {
-    width: 240px;
-    height: auto;
-  }
   .dashboard-page .panel {
     margin-bottom: 10px;
-  }
-}
-@media screen and (max-width: 767px) {
-  .dashboard-page .raml-console-vbs-sign-container .raml-console-vbs-token-auth-form {
-    left: 5px;
-    position: static;
-    box-shadow: none;
   }
 }
 .keyword-config-page .raml-console-vbs-keyword-group-widget-container {
@@ -1100,6 +1061,56 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+.vbs-portal-navbar.navbar {
+  background: #333;
+}
+
+@media (min-width: 768px) {
+  .vbs-portal-navbar.navbar {
+    min-height: 80px;
+    padding-top: 15px;
+  }
+  .vbs-portal-navbar.navbar .navbar-right {
+    margin-left: 15px;
+    margin-right: 0;
+  }
+  .vbs-portal-navbar.navbar .navbar-brand img {
+    height: 34px;
+    width: auto;
+    margin-top: -4px;
+  }
+  .vbs-portal-navbar.navbar .raml-console-vbs-sign-container {
+    float: none;
+  }
+  .vbs-portal-navbar.navbar .raml-console-vbs-sign-container .raml-console-vbs-token-auth-form {
+    right: 15px;
+    left: inherit;
+    top: 95px;
+  }
+}
+@media (max-width: 767px) {
+  .vbs-portal-navbar.navbar .navbar-brand {
+    padding-right: 0 !important;
+  }
+  .vbs-portal-navbar.navbar .navbar-brand img {
+    width: 240px;
+    height: auto;
+  }
+  .vbs-portal-navbar.navbar .raml-console-vbs-sign-container .raml-console-vbs-token-auth-form {
+    left: 5px;
+    position: static;
+    box-shadow: none;
+  }
+}
+.console-section {
+  position: relative;
+  top: 80px;
+}
+
+.raml-console-title {
+  padding-top: 30px;
 }
 
 @charset "UTF-8";
