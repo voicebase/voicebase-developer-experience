@@ -14,6 +14,8 @@ module.exports = function (grunt) {
         'bower_components/angular-route/angular-route.js',
         'bower_components/angular-modal-service/dst/angular-modal-service.js',
         'bower_components/angular-utils-pagination/dirPagination.js',
+        'bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js',
+        'bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js',
         'bower_components/api-console-voicebase/dist/scripts/api-console.js'
       ],
       html: ['src/index.html'],
@@ -189,7 +191,7 @@ module.exports = function (grunt) {
           'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
           'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
           'bower_components/api-console-voicebase/src/assets/styles/error.css',
-          '<%= distdir %>/styles/toggle-button.css',
+          'bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css',
           '<%= distdir %>/styles/pagination.css',
           '<%= distdir %>/styles/voicebase-error.css',
           '<%= distdir %>/styles/voicebase-portal.css',
@@ -210,7 +212,7 @@ module.exports = function (grunt) {
           'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror.css',
           'bower_components/api-console-voicebase/src/assets/styles/fonts.css',
           'bower_components/api-console-voicebase/src/assets/styles/error.css',
-          '<%= distdir %>/styles/toggle-button.css',
+          'bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css',
           '<%= distdir %>/styles/pagination.css',
           '<%= distdir %>/styles/voicebase-error.css',
           '<%= distdir %>/styles/voicebase-portal.css',
@@ -266,7 +268,6 @@ module.exports = function (grunt) {
 
         files: {
           '<%= distdir %>/styles/pagination.css': 'src/scss/pagination.scss',
-          '<%= distdir %>/styles/toggle-button.css': 'src/scss/toggle-button.scss',
           '<%= distdir %>/styles/voicebase-error.css': 'src/scss/voicebase-error.scss',
           '<%= distdir %>/styles/voicebase-portal.css': 'src/scss/voicebase-portal.scss',
           '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',
@@ -282,7 +283,6 @@ module.exports = function (grunt) {
 
         files: {
           '<%= distdir %>/styles/pagination.css': 'src/scss/pagination.scss',
-          '<%= distdir %>/styles/toggle-button.css': 'src/scss/toggle-button.scss',
           '<%= distdir %>/styles/voicebase-error.css': 'src/scss/voicebase-error.scss',
           '<%= distdir %>/styles/voicebase-portal.css': 'src/scss/voicebase-portal.scss',
           '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',

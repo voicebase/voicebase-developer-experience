@@ -8,14 +8,19 @@
       replace: false,
       controller: function($scope, formValidate) {
         $scope.credentials = {};
-        $scope.isRemember = voicebaseTokensApi.getNeedRemember();
+        $scope.isRemember = Boolean(voicebaseTokensApi.getNeedRemember());
         $scope.formError = '';
         $scope.isInit = true;
         $scope.isLoaded = false;
         var url = 'https://apis.voicebase.com/v2-beta';
 
+        $scope.$watch('isRemember', function(newValue, oldValue) {
+          if(newValue !== oldValue) {
+            $scope.changeRemember();
+          }
+        });
+
         $scope.changeRemember = function() {
-          $scope.isRemember = !$scope.isRemember;
           voicebaseTokensApi.setNeedRemember($scope.isRemember);
         };
 

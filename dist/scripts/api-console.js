@@ -18,6 +18,7 @@
     'hc.marked',
     'ui.codemirror',
     'hljs',
+    'frapontillo.bootstrap-switch',
     'formValidateModule',
     'cssSpinnerModule',
     'ramlConsoleApp',
@@ -354,14 +355,19 @@ RAML.Decorators = (function (Decorators) {
       replace: false,
       controller: function($scope, formValidate) {
         $scope.credentials = {};
-        $scope.isRemember = voicebaseTokensApi.getNeedRemember();
+        $scope.isRemember = Boolean(voicebaseTokensApi.getNeedRemember());
         $scope.formError = '';
         $scope.isInit = true;
         $scope.isLoaded = false;
         var url = 'https://apis.voicebase.com/v2-beta';
 
+        $scope.$watch('isRemember', function(newValue, oldValue) {
+          if(newValue !== oldValue) {
+            $scope.changeRemember();
+          }
+        });
+
         $scope.changeRemember = function() {
-          $scope.isRemember = !$scope.isRemember;
           voicebaseTokensApi.setNeedRemember($scope.isRemember);
         };
 
@@ -1641,9 +1647,8 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <div>\n" +
     "        <div class=\"raml-console-remember-toggle\">\n" +
     "          <input type=\"checkbox\"\n" +
-    "                 toggle-button on-value=\"yes\" off-value=\"no\"\n" +
-    "                 ng-checked=\"isRemember\"\n" +
-    "                 ng-click=\"changeRemember()\"/>\n" +
+    "                 ng-model=\"isRemember\"\n" +
+    "                 bs-switch switch-on-text=\"Yes\" switch-off-text=\"No\">\n" +
     "        </div>\n" +
     "        <div>\n" +
     "          <label class=\"raml-console-login-label\">\n" +

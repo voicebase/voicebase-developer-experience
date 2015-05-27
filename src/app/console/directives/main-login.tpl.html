@@ -27,9 +27,8 @@
       <div>
         <div class="raml-console-remember-toggle">
           <input type="checkbox"
-                 toggle-button on-value="yes" off-value="no"
-                 ng-checked="isRemember"
-                 ng-click="changeRemember()"/>
+                 ng-model="isRemember"
+                 bs-switch switch-on-text="Yes" switch-off-text="No">
         </div>
         <div>
           <label class="raml-console-login-label">

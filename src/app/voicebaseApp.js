@@ -18,6 +18,7 @@
     'hc.marked',
     'ui.codemirror',
     'hljs',
+    'frapontillo.bootstrap-switch',
     'formValidateModule',
     'cssSpinnerModule',
     'ramlConsoleApp',
