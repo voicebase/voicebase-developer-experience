@@ -11,6 +11,7 @@ module.exports = function (grunt) {
       js: ['src/app/voicebaseApp.js', 'src/**/*.js'],
       jsVendor: [
         'bower_components/api-console-voicebase/dist/scripts/api-console-vendor.js',
+        'dist/bootstrap/javascripts/bootstrap.min.js',
         'bower_components/angular-route/angular-route.js',
         'bower_components/angular-modal-service/dst/angular-modal-service.js',
         'bower_components/angular-utils-pagination/dirPagination.js',
@@ -256,12 +257,6 @@ module.exports = function (grunt) {
         'build:styles'
       ],
 
-      customBootstrap: [
-        'copy:fontAwesome',
-        'copy:customBootstrap',
-        'sass:customBootstrap'
-      ],
-
       themes: [
         'concat:darkTheme',
         'concat:lightTheme'
@@ -432,9 +427,16 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'jshint',
     'clean',
-    'concurrent:customBootstrap',
+    'customBootstrap',
     'concurrent:build'
   ]);
+
+  grunt.registerTask('customBootstrap', [
+    'copy:fontAwesome',
+    'copy:customBootstrap',
+    'sass:customBootstrap'
+  ]);
+
 
   grunt.registerTask('build:scripts', [
     'ngtemplates',
