@@ -140,9 +140,19 @@
 }
 
 .sidebar-textarea {
-  @extend .sidebar-input;
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 18px;
+  border: 1px solid $color-input-border;
+  border-radius: 3px;
+
+  background-color: $color-input-bg;
+  color: $color-input-text;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
 
   height: 80px;
-  padding-left: 10px;
+  padding: 0 4px 0 10px;
 }
 

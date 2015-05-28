@@ -207,35 +207,37 @@ module.exports = function (grunt) {
         src: '<%= src.cssVendors %>'
       },
 
-      darkTheme: {
-        options: {
-          process: function process(value) {
-            return value.replace(/\.raml-console-CodeMirror/g, '.CodeMirror');
-          }
-        },
+      cssApiConsoleLight: {
+        dest: '<%= distdir %>/styles/api-console-light-theme.css',
+        src: [
+          'bower_components/api-console-voicebase/dist/styles/api-console-light-theme.css'
+        ]
+      },
 
+      cssApiConsoleDark: {
         dest: '<%= distdir %>/styles/api-console-dark-theme.css',
+        src: [
+          'bower_components/api-console-voicebase/dist/styles/api-console-dark-theme.css'
+        ]
+      },
+
+      darkTheme: {
+        dest: '<%= distdir %>/styles/voicebase-dark-theme.css',
         src: [
           '<%= distdir %>/styles/pagination.css',
           '<%= distdir %>/styles/voicebase-error.css',
           '<%= distdir %>/styles/voicebase-portal.css',
-          '<%= distdir %>/styles/api-console-dark-theme.css',
+          '<%= distdir %>/styles/voicebase-dark-theme.css'
         ]
       },
 
       lightTheme: {
-        options: {
-          process: function process(value) {
-            return value.replace(/\.raml-console-CodeMirror/g, '.CodeMirror');
-          }
-        },
-
-        dest: '<%= distdir %>/styles/api-console-light-theme.css',
+        dest: '<%= distdir %>/styles/voicebase-light-theme.css',
         src: [
           '<%= distdir %>/styles/pagination.css',
           '<%= distdir %>/styles/voicebase-error.css',
           '<%= distdir %>/styles/voicebase-portal.css',
-          '<%= distdir %>/styles/api-console-light-theme.css',
+          '<%= distdir %>/styles/voicebase-light-theme.css'
         ]
       },
 
@@ -266,6 +268,8 @@ module.exports = function (grunt) {
       ],
 
       themes: [
+        'concat:cssApiConsoleLight',
+        'concat:cssApiConsoleDark',
         'concat:darkTheme',
         'concat:lightTheme'
       ]
@@ -282,8 +286,8 @@ module.exports = function (grunt) {
           '<%= distdir %>/styles/pagination.css': 'src/scss/pagination.scss',
           '<%= distdir %>/styles/voicebase-error.css': 'src/scss/voicebase-error.scss',
           '<%= distdir %>/styles/voicebase-portal.css': 'src/scss/voicebase-portal.scss',
-          '<%= distdir %>/styles/api-console-light-theme.css': 'src/scss/light-theme.scss',
-          '<%= distdir %>/styles/api-console-dark-theme.css': 'src/scss/dark-theme.scss'
+          '<%= distdir %>/styles/voicebase-light-theme.css': 'src/scss/light-theme.scss',
+          '<%= distdir %>/styles/voicebase-dark-theme.css': 'src/scss/dark-theme.scss'
         }
       },
 
@@ -379,8 +383,8 @@ module.exports = function (grunt) {
         },
 
         files: {
-          '<%= distdir %>/styles/api-console-light-theme.css': '<%= distdir %>/styles/api-console-light-theme.css',
-          '<%= distdir %>/styles/api-console-dark-theme.css': '<%= distdir %>/styles/api-console-dark-theme.css'
+          '<%= distdir %>/styles/voicebase-light-theme.css': '<%= distdir %>/styles/voicebase-light-theme.css',
+          '<%= distdir %>/styles/voicebase-dark-theme.css': '<%= distdir %>/styles/voicebase-dark-theme.css'
         }
       }
     },
