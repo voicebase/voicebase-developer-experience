@@ -204,6 +204,7 @@ RAML.Decorators = (function (Decorators) {
             if(definitions.plain[key].selected === 'file') {
               for (var i = 0; i < definitions.plain[key].definitions.length; i++) {
                 var definition = definitions.plain[key].definitions[i];
+                definition.key = key;
                 if(definition.type === 'file' && typeof definition.example !== 'undefined') {
                   definition.example = '';
                   definitions.values[key] = [];
@@ -214,10 +215,30 @@ RAML.Decorators = (function (Decorators) {
 
         }
 
+        $scope.mediaSamples = [
+          {sample: '', name: '--Select media sample--'},
+          {sample: 'https://s3.amazonaws.com/voicebase-developer-test-content-dev/mpthreetest.mp3', name: 'https://s3.amazonaws.com/voicebase-developer-test-content-dev/mpthreetest.mp3'},
+          {sample: 'https://s3.amazonaws.com/voicebase-developer-test-content-dev/recording.mp3', name: 'https://s3.amazonaws.com/voicebase-developer-test-content-dev/recording.mp3'}
+        ];
+
+        $scope.selectedMediaSample = $scope.mediaSamples[0].sample;
+
+        $scope.selectMediaSample = function (mediaSample) {
+          $scope.model[0] = mediaSample;
+        };
+
+        $scope.getPlaceholder = function (definition) {
+            return ($scope.isMediaUrl(definition)) ? 'Enter media url' : '';
+        };
+
         $scope.parameter = context.plain[$scope.param.id];
 
         $scope.isFile = function (definition) {
           return definition.type === 'file';
+        };
+
+        $scope.isMediaUrl = function (definition) {
+          return (definition.key === 'media' && definition.type === 'string');
         };
 
         $scope.isDefault = function (definition) {
@@ -1574,7 +1595,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "      <span class=\"raml-console-vbs-param-type\" ng-if=\"parameter.definitions.length > 1\">\n" +
     "        as\n" +
-    "        <select class=\"form-control\" ng-model=\"parameter.selected\" ng-options=\"param.type as param.type for param in parameter.definitions\"></select>\n" +
+    "        <select class=\"\" ng-model=\"parameter.selected\" ng-options=\"param.type as param.type for param in parameter.definitions\"></select>\n" +
     "      </span>\n" +
     "    </label>\n" +
     "\n" +
@@ -1589,7 +1610,13 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <option ng-repeat=\"enum in unique(param.enum)\" value=\"{{enum}}\">{{enum}}</option>\n" +
     "    </select>\n" +
     "\n" +
-    "    <input id=\"{{param.id}}\" ng-if=\"isDefault(param)\" class=\"raml-console-sidebar-input\" ng-model=\"model[0]\" ng-class=\"{'raml-console-sidebar-field-no-default': !hasExampleValue(param)}\" validate=\"param\" dynamic-name=\"param.id\" ng-change=\"onChange()\"/>\n" +
+    "    <select id=\"samples_{{param.id}}\" ng-if=\"isMediaUrl(param)\" class=\"raml-console-sidebar-input\"\n" +
+    "            ng-model=\"selectedMediaSample\"\n" +
+    "            ng-options=\"mediaSample.sample as mediaSample.name for mediaSample in mediaSamples\"\n" +
+    "            ng-change=\"selectMediaSample(selectedMediaSample)\">\n" +
+    "    </select>\n" +
+    "\n" +
+    "    <input id=\"{{param.id}}\" ng-if=\"isDefault(param)\" class=\"raml-console-sidebar-input\" placeholder=\"{{getPlaceholder(param)}}\" ng-model=\"model[0]\" ng-class=\"{'raml-console-sidebar-field-no-default': !hasExampleValue(param)}\" validate=\"param\" dynamic-name=\"param.id\" ng-change=\"onChange()\"/>\n" +
     "\n" +
     "    <input id=\"checkbox_{{param.id}}\" ng-if=\"isBoolean(param)\" class=\"raml-console-sidebar-input\" type=\"checkbox\" ng-model=\"model[0]\" dynamic-name=\"param.id\" ng-change=\"onChange()\" />\n" +
     "\n" +

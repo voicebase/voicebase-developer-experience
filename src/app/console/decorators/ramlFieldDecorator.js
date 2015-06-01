@@ -22,6 +22,7 @@ RAML.Decorators = (function (Decorators) {
             if(definitions.plain[key].selected === 'file') {
               for (var i = 0; i < definitions.plain[key].definitions.length; i++) {
                 var definition = definitions.plain[key].definitions[i];
+                definition.key = key;
                 if(definition.type === 'file' && typeof definition.example !== 'undefined') {
                   definition.example = '';
                   definitions.values[key] = [];
@@ -32,10 +33,30 @@ RAML.Decorators = (function (Decorators) {
 
         }
 
+        $scope.mediaSamples = [
+          {sample: '', name: '--Select media sample--'},
+          {sample: 'https://s3.amazonaws.com/voicebase-developer-test-content-dev/mpthreetest.mp3', name: 'https://s3.amazonaws.com/voicebase-developer-test-content-dev/mpthreetest.mp3'},
+          {sample: 'https://s3.amazonaws.com/voicebase-developer-test-content-dev/recording.mp3', name: 'https://s3.amazonaws.com/voicebase-developer-test-content-dev/recording.mp3'}
+        ];
+
+        $scope.selectedMediaSample = $scope.mediaSamples[0].sample;
+
+        $scope.selectMediaSample = function (mediaSample) {
+          $scope.model[0] = mediaSample;
+        };
+
+        $scope.getPlaceholder = function (definition) {
+            return ($scope.isMediaUrl(definition)) ? 'Enter media url' : '';
+        };
+
         $scope.parameter = context.plain[$scope.param.id];
 
         $scope.isFile = function (definition) {
           return definition.type === 'file';
+        };
+
+        $scope.isMediaUrl = function (definition) {
+          return (definition.key === 'media' && definition.type === 'string');
         };
 
         $scope.isDefault = function (definition) {

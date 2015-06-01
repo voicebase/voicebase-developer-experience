@@ -7,7 +7,7 @@
 
       <span class="raml-console-vbs-param-type" ng-if="parameter.definitions.length > 1">
         as
-        <select class="form-control" ng-model="parameter.selected" ng-options="param.type as param.type for param in parameter.definitions"></select>
+        <select class="" ng-model="parameter.selected" ng-options="param.type as param.type for param in parameter.definitions"></select>
       </span>
     </label>
 
@@ -22,7 +22,13 @@
       <option ng-repeat="enum in unique(param.enum)" value="{{enum}}">{{enum}}</option>
     </select>
 
-    <input id="{{param.id}}" ng-if="isDefault(param)" class="raml-console-sidebar-input" ng-model="model[0]" ng-class="{'raml-console-sidebar-field-no-default': !hasExampleValue(param)}" validate="param" dynamic-name="param.id" ng-change="onChange()"/>
+    <select id="samples_{{param.id}}" ng-if="isMediaUrl(param)" class="raml-console-sidebar-input"
+            ng-model="selectedMediaSample"
+            ng-options="mediaSample.sample as mediaSample.name for mediaSample in mediaSamples"
+            ng-change="selectMediaSample(selectedMediaSample)">
+    </select>
+
+    <input id="{{param.id}}" ng-if="isDefault(param)" class="raml-console-sidebar-input" placeholder="{{getPlaceholder(param)}}" ng-model="model[0]" ng-class="{'raml-console-sidebar-field-no-default': !hasExampleValue(param)}" validate="param" dynamic-name="param.id" ng-change="onChange()"/>
 
     <input id="checkbox_{{param.id}}" ng-if="isBoolean(param)" class="raml-console-sidebar-input" type="checkbox" ng-model="model[0]" dynamic-name="param.id" ng-change="onChange()" />
 
