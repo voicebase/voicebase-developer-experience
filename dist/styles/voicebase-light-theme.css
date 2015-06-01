@@ -466,7 +466,7 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 
 .raml-console-login-page-container .raml-console-login-content .raml-console-login-label {
   color: #fff;
-  margin-top: 18px;
+  margin-top: 5px;
 }
 
 .raml-console-login-page-container .raml-console-login-content .raml-console-spinner {

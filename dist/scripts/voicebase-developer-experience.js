@@ -1494,12 +1494,12 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "               ng-model=\"credentials.password\"/>\n" +
     "      </div>\n" +
     "      <div>\n" +
-    "        <div class=\"raml-console-remember-toggle\">\n" +
+    "        <div class=\"raml-console-remember-toggle pull-right\">\n" +
     "          <input type=\"checkbox\"\n" +
     "                 ng-model=\"isRemember\"\n" +
     "                 bs-switch switch-on-text=\"Yes\" switch-off-text=\"No\">\n" +
     "        </div>\n" +
-    "        <div>\n" +
+    "        <div class=\"pull-left\">\n" +
     "          <label class=\"raml-console-login-label\">\n" +
     "            Remember Me\n" +
     "          </label>\n" +
