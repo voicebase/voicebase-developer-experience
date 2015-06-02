@@ -17,5 +17,9 @@
         $location.path('/keywords-groups');
       };
 
+      $scope.loadKeywordsSpottingApp = function() {
+        $location.path('/keywords-spotting');
+      };
+
     }]);
 })();

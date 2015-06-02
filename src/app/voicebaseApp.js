@@ -50,6 +50,10 @@
         templateUrl: 'pages/keywordsGroups.html',
         reloadOnSearch: false
       })
+      .when('/keywords-spotting', {
+        templateUrl: 'pages/keywordsSpottingPage.html',
+        reloadOnSearch: false
+      })
       .when('/wait', {
         templateUrl: 'pages/addToWaitListPage.html',
         reloadOnSearch: false
