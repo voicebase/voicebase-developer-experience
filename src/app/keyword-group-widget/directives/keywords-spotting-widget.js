@@ -15,6 +15,8 @@
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
+        me.isLoaded = false;
+        me.pingProcess = false;
 
         $scope.$watch(function () {
           return me.files;
@@ -24,24 +26,28 @@
 
         me.upload = function (files) {
             if(files && files.length) {
+              me.isLoaded = true;
               keywordsSpottingApi.postMedia(tokenData.token, files[0])
                 .then(function (mediaStatus) {
+                  me.isLoaded = false;
                   if(mediaStatus.mediaId) {
                     me.checkMediaFinish(mediaStatus.mediaId);
                   }
                 }, function () {
+                  me.isLoaded = false;
                   me.errorMessage = 'Can\'t upload media file!';
                 });
             }
         };
 
         me.checkMediaFinish = function (mediaId) {
+          me.pingProcess = true;
           var checker = $interval(function () {
             keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
               .then(function (data) {
                 if (data.media && data.media.status === 'finished') {
+                  me.pingProcess = false;
                   $interval.cancel(checker);
-                  alert('finished');
                 }
               }, function () {
                 me.errorMessage = 'Error of getting file!';

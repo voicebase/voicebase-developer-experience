@@ -141,10 +141,12 @@
       font-size: 16px;
     }
 
-    .raml-console-error-message {
-      font-size: 18px;
-      padding: 15px;
-    }
+  }
+
+  .raml-console-error-message {
+    font-size: 18px;
+    padding: 15px;
+    color: #D14956;
   }
 
   .panel {
@@ -263,6 +265,16 @@
 
   &.dragover {
     background-color: #F5F5F5;
+  }
+
+  .raml-console-spinner {
+    margin: 0;
+    float: left;
+    height: 35px;
+
+    &:after {
+      content: '';
+    }
   }
 }
 
