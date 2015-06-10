@@ -7,6 +7,7 @@
     'angularModalService',
     'formValidateModule',
     'cssSpinnerModule',
+    'ngFileUpload',
     'angularUtils.directives.dirPagination'
   ]);
 

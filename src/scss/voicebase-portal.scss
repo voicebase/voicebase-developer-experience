@@ -251,3 +251,33 @@
 .raml-console-title {
   padding-top: 30px;
 }
+
+.drop-box {
+  width: 100%;
+  height: 50px;
+  border: 1px dashed #CCC;
+  border-radius: 0;
+  padding: 7px;
+  background-color: #FFF;
+  transition: background-color .01s linear .01s;
+
+  &.dragover {
+    background-color: #F5F5F5;
+  }
+}
+
+.drop-box-text {
+  text-align: center;
+  display: table;
+  margin: auto;
+}
+
+.drop-box-text__icon {
+  padding: 3px;
+  float: left;
+}
+
+.drop-box-text__label {
+  padding: 7px;
+  float: left;
+}

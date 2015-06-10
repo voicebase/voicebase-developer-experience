@@ -16,7 +16,8 @@ module.exports = function (grunt) {
         'bower_components/angular-modal-service/dst/angular-modal-service.js',
         'bower_components/angular-utils-pagination/dirPagination.js',
         'bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js',
-        'bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js'
+        'bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js',
+        'bower_components/ng-file-upload/ng-file-upload.min.js'
       ],
       jsApiConsole: [
         'bower_components/api-console-voicebase/dist/scripts/api-console.js'
