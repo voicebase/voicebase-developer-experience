@@ -52,8 +52,22 @@
               }, function () {
                 me.errorMessage = 'Error of getting file!';
               });
-          }, 2000);
-        }
+          }, 5000);
+        };
+
+        me.isAudio = function () {
+          if(me.files && me.files.length) {
+            return me.files[0].type.indexOf('audio') > -1;
+          }
+          return false;
+        };
+
+        me.isVideo = function () {
+          if(me.files && me.files.length) {
+            return me.files[0].type.indexOf('video') > -1;
+          }
+          return false;
+        };
       }
     };
   };

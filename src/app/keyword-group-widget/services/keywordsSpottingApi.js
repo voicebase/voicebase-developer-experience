@@ -1,5 +1,5 @@
 (function () {
-  "use strict";
+  'use strict';
 
   var keywordsSpottingApi = function ($q) {
 
