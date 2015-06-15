@@ -9,7 +9,7 @@
       scope: {
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, voicebaseTokensApi, keywordsSpottingApi) {
+      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi) {
         var me = this;
 
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
@@ -18,26 +18,37 @@
         me.isLoaded = false;
         me.pingProcess = false;
 
-        $scope.$watch(function () {
-          return me.files;
-        }, function () {
-          me.upload(me.files);
-        });
+        me.detectGroups = [];
 
-        me.upload = function (files) {
-            if(files && files.length) {
-              me.isLoaded = true;
-              keywordsSpottingApi.postMedia(tokenData.token, files[0])
-                .then(function (mediaStatus) {
-                  me.isLoaded = false;
-                  if(mediaStatus.mediaId) {
-                    me.checkMediaFinish(mediaStatus.mediaId);
-                  }
-                }, function () {
-                  me.isLoaded = false;
-                  me.errorMessage = 'Can\'t upload media file!';
-                });
-            }
+        me.addDetectGroup = function () {
+          me.detectGroups.push('');
+        };
+
+        me.removeDetectGroup = function (index) {
+          me.detectGroups.splice(index, 1);
+        };
+
+        me.validBeforeUpload = function () {
+          var form = me.detectingGroupsForm;
+          formValidate.validateAndDirtyForm(form);
+          return !!(!form.$invalid && me.files && me.files.length);
+        };
+
+        me.upload = function () {
+          var isValid = me.validBeforeUpload();
+          if (isValid) {
+            me.isLoaded = true;
+            keywordsSpottingApi.postMedia(tokenData.token, me.files[0], me.detectGroups)
+              .then(function (mediaStatus) {
+                me.isLoaded = false;
+                if (mediaStatus.mediaId) {
+                  me.checkMediaFinish(mediaStatus.mediaId);
+                }
+              }, function () {
+                me.isLoaded = false;
+                me.errorMessage = 'Can\'t upload media file!';
+              });
+          }
         };
 
         me.checkMediaFinish = function (mediaId) {

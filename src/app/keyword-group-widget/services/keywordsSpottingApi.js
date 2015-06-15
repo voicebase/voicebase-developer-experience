@@ -5,11 +5,22 @@
 
     var url = 'https://apis.voicebase.com/v2-beta';
 
-    var postMedia = function (token, file) {
+    var postMedia = function (token, file, groups) {
       var deferred = $q.defer();
 
       var data = new FormData();
       data.append('media', file);
+
+      if(groups.length > 0) {
+        var groupsData = {
+          configuration:{
+            keywords: {
+              groups:groups
+            }
+          }
+        };
+        data.append('configuration', JSON.stringify(groupsData));
+      }
 
       jQuery.ajax({
         url: url + '/media',

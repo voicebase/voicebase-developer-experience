@@ -1,41 +1,75 @@
 <div class="panel panel-default raml-console-panel keywords-spotting">
-  <div class="drop-box"
-       ng-if="keywordsSpottingCtrl.isLogin"
-       ngf-drop ngf-select ng-model="keywordsSpottingCtrl.files"
-       ngf-drag-over-class="dragover" ngf-allow-dir="false"
-       ngf-accept="'.mp3,.mp4'">
+  <div ng-if="keywordsSpottingCtrl.isLogin">
+    <div class="drop-box form-group"
+         ngf-drop ngf-select ng-model="keywordsSpottingCtrl.files"
+         ngf-drag-over-class="dragover" ngf-allow-dir="false"
+         ngf-accept="'.mp3,.mp4'">
 
-    <div class="drop-box-text">
-      <div>
-        <i class="drop-box-text__icon fa fa-2x fa-cloud-upload"></i>
-        <div class="drop-box-text__label">Drop file here to upload, or browse</div>
+      <div class="drop-box-text">
+        <div>
+          <i class="drop-box-text__icon fa fa-2x fa-cloud-upload"></i>
+          <div class="drop-box-text__label">Drop file here to upload, or browse</div>
+        </div>
       </div>
+
+      <div class="drop-box-text">
+        <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isAudio()">
+          <audio controls class="media-preview"
+                 ngf-src="keywordsSpottingCtrl.files[0]"
+                 ngf-accept="'audio/*'">
+
+          </audio>
+        </div>
+        <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isVideo()">
+          <video controls class="media-preview"
+                 ngf-src="keywordsSpottingCtrl.files[0]"
+                 ngf-accept="'video/*'">
+          </video>
+        </div>
+      </div>
+
     </div>
 
-    <div class="drop-box-text">
-      <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isAudio()">
-        <audio controls class="media-preview"
-               ngf-src="keywordsSpottingCtrl.files[0]"
-               ngf-accept="'audio/*'">
+    <form class="" name="keywordsSpottingCtrl.detectingGroupsForm" novalidate focus-form>
+      <div class="keywords-group-detecting-list form-group">
+        <div class="raml-console-keywords-list-container" data-scroll-to-bottom='keywordsSpottingCtrl.detectGroups.length'>
+          <div ng-repeat="detectGroup in keywordsSpottingCtrl.detectGroups track by $index">
+            <ng-form name="detectGroupForm" class="input-group raml-console-input-group">
+              <input class="form-control" type="text" placeholder="Group Name" name="detectGroup" maxlength="64" required="true"
+                     ng-model="keywordsSpottingCtrl.detectGroups[$index]">
+            <span class="raml-console-multi-errors col-sm-12">
+              <span class="raml-console-vbs-validation-error raml-console-vbs-validation-required">Required</span>
+            </span>
+            <span class="input-group-btn">
+              <button class="btn btn-default raml-console-keyword-remove" type="button"
+                      title="Remove Group"
+                      ng-click="keywordsSpottingCtrl.removeDetectGroup($index)">
+                <i class="fa fa-times-circle"></i>
+              </button>
+            </span>
+            </ng-form>
+          </div>
 
-        </audio>
+        </div>
+        <button type="button" class="btn btn-link add-detect-group"
+                ng-click="keywordsSpottingCtrl.addDetectGroup()">
+          <i class="fa fa-plus-circle"></i>
+          Add detecting group
+        </button>
       </div>
-      <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isVideo()">
-        <video controls class="media-preview"
-               ngf-src="keywordsSpottingCtrl.files[0]"
-               ngf-accept="'video/*'">
-        </video>
-      </div>
+    </form>
+
+    <div ng-if="!keywordsSpottingCtrl.isLoaded && !keywordsSpottingCtrl.pingProcess" class="form-group">
+      <button type="button" class="btn btn-success" ng-click="keywordsSpottingCtrl.upload()">Upload</button>
     </div>
 
-  </div>
+    <div ng-if="keywordsSpottingCtrl.isLoaded" class="media-upload-loader">
+      <css-spinner></css-spinner>
+    </div>
 
-  <div ng-if="keywordsSpottingCtrl.isLoaded" class="media-upload-loader">
-    <css-spinner></css-spinner>
-  </div>
-
-  <div ng-if="keywordsSpottingCtrl.pingProcess"  class="media-processing-loader">
-    <css-spinner></css-spinner>
+    <div ng-if="keywordsSpottingCtrl.pingProcess"  class="media-processing-loader">
+      <css-spinner></css-spinner>
+    </div>
   </div>
 
   <div ng-if="!keywordsSpottingCtrl.isLogin" class="raml-console-error-message">Please sign in</div>
