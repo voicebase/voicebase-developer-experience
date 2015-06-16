@@ -263,9 +263,10 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 .keyword-config-page .raml-console-vbs-keyword-group-widget-container h3 {
   font-size: 16px;
 }
-.keyword-config-page .raml-console-vbs-keyword-group-widget-container .raml-console-error-message {
+.keyword-config-page .raml-console-error-message {
   font-size: 18px;
   padding: 15px;
+  color: #D14956;
 }
 .keyword-config-page .panel {
   border: 1px solid #DDD;
@@ -347,6 +348,59 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 
 .raml-console-title {
   padding-top: 30px;
+}
+
+.keywords-spotting {
+  padding: 15px;
+}
+.keywords-spotting .drop-box {
+  width: 100%;
+  min-height: 50px;
+  border: 1px dashed #CCC;
+  border-radius: 0;
+  padding: 7px;
+  background-color: #FFF;
+  transition: background-color .01s linear .01s;
+}
+.keywords-spotting .drop-box.dragover {
+  background-color: #F5F5F5;
+}
+.keywords-spotting .raml-console-spinner {
+  margin: 15px auto;
+  float: left;
+  height: 35px;
+}
+.keywords-spotting .media-upload-loader,
+.keywords-spotting .media-processing-loader {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+}
+.keywords-spotting .media-upload-loader .raml-console-spinner:after {
+  content: 'Uploading file';
+}
+.keywords-spotting .media-processing-loader .raml-console-spinner:after {
+  content: 'Processing file';
+}
+.keywords-spotting .drop-box-text {
+  text-align: center;
+  display: table;
+  margin: auto;
+}
+.keywords-spotting .drop-box-text__icon {
+  padding: 3px;
+  float: left;
+}
+.keywords-spotting .drop-box-text__label {
+  padding: 7px;
+  float: left;
+}
+.keywords-spotting .media-preview-container {
+  margin: 15px 0;
+}
+.keywords-spotting .media-preview {
+  max-width: 300px;
+  max-height: 150px;
 }
 
 .raml-console-login-page-container {

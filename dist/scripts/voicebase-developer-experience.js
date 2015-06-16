@@ -7,6 +7,7 @@
     'angularModalService',
     'formValidateModule',
     'cssSpinnerModule',
+    'ngFileUpload',
     'angularUtils.directives.dirPagination'
   ]);
 
@@ -48,6 +49,10 @@
       })
       .when('/keywords-groups', {
         templateUrl: 'pages/keywordsGroups.html',
+        reloadOnSearch: false
+      })
+      .when('/keywords-spotting', {
+        templateUrl: 'pages/keywordsSpottingPage.html',
         reloadOnSearch: false
       })
       .when('/wait', {
@@ -93,6 +98,10 @@
 
       $scope.loadKeywordsGroupApp = function() {
         $location.path('/keywords-groups');
+      };
+
+      $scope.loadKeywordsSpottingApp = function() {
+        $location.path('/keywords-spotting');
       };
 
     }]);
@@ -940,6 +949,98 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  var keywordsSpottingWidget = function () {
+    return {
+      restrict: 'E',
+      templateUrl: 'keyword-group-widget/directives/keywords-spotting-widget.tpl.html',
+      replace: true,
+      scope: {
+      },
+      controllerAs: 'keywordsSpottingCtrl',
+      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi) {
+        var me = this;
+
+        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
+        var tokenData = voicebaseTokensApi.getCurrentToken();
+        me.isLogin = (tokenData) ? true : false;
+        me.isLoaded = false;
+        me.pingProcess = false;
+        me.uploadedMedia = null;
+
+        me.detectGroups = [];
+
+        me.addDetectGroup = function () {
+          me.detectGroups.push('');
+        };
+
+        me.removeDetectGroup = function (index) {
+          me.detectGroups.splice(index, 1);
+        };
+
+        me.validBeforeUpload = function () {
+          var form = me.detectingGroupsForm;
+          formValidate.validateAndDirtyForm(form);
+          return !!(!form.$invalid && me.files && me.files.length);
+        };
+
+        me.upload = function () {
+          var isValid = me.validBeforeUpload();
+          if (isValid) {
+            me.isLoaded = true;
+            keywordsSpottingApi.postMedia(tokenData.token, me.files[0], me.detectGroups)
+              .then(function (mediaStatus) {
+                me.isLoaded = false;
+                if (mediaStatus.mediaId) {
+                  me.checkMediaFinish(mediaStatus.mediaId);
+                }
+              }, function () {
+                me.isLoaded = false;
+                me.errorMessage = 'Can\'t upload media file!';
+              });
+          }
+        };
+
+        me.checkMediaFinish = function (mediaId) {
+          me.pingProcess = true;
+          var checker = $interval(function () {
+            keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
+              .then(function (data) {
+                if (data.media && data.media.status === 'finished') {
+                  me.pingProcess = false;
+                  me.uploadedMedia = data.media;
+                  $interval.cancel(checker);
+                }
+              }, function () {
+                me.errorMessage = 'Error of getting file!';
+              });
+          }, 5000);
+        };
+
+        me.isAudio = function () {
+          if(me.files && me.files.length) {
+            return me.files[0].type.indexOf('audio') > -1;
+          }
+          return false;
+        };
+
+        me.isVideo = function () {
+          if(me.files && me.files.length) {
+            return me.files[0].type.indexOf('video') > -1;
+          }
+          return false;
+        };
+      }
+    };
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .directive('keywordsSpottingWidget', keywordsSpottingWidget);
+
+})();
+
+(function () {
+  'use strict';
+
   angular.module('vbsKeywordGroupWidget').directive('placeholder', function () {
     return {
       restrict: 'A',
@@ -1084,6 +1185,84 @@ RAML.Decorators = (function (Decorators) {
 
   angular.module('vbsKeywordGroupWidget')
     .service('keywordGroupApi', keywordGroupApi);
+
+})();
+
+(function () {
+  'use strict';
+
+  var keywordsSpottingApi = function ($q) {
+
+    var url = 'https://apis.voicebase.com/v2-beta';
+
+    var postMedia = function (token, file, groups) {
+      var deferred = $q.defer();
+
+      var data = new FormData();
+      data.append('media', file);
+
+      if(groups.length > 0) {
+        var groupsData = {
+          configuration:{
+            keywords: {
+              groups:groups
+            }
+          }
+        };
+        data.append('configuration', JSON.stringify(groupsData));
+      }
+
+      jQuery.ajax({
+        url: url + '/media',
+        type: 'POST',
+        contentType: false,
+        processData: false,
+        data: data,
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function (mediaStatus) {
+          deferred.resolve(mediaStatus);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
+    var checkMediaFinish = function (token, mediaId) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        type: 'GET',
+        url: url + '/media/' + mediaId,
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function (data) {
+          deferred.resolve(data);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
+
+    return {
+      postMedia: postMedia,
+      checkMediaFinish: checkMediaFinish
+    };
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .service('keywordsSpottingApi', keywordsSpottingApi);
 
 })();
 
@@ -1911,6 +2090,91 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "</div>\n" +
     "\n"
+  );
+
+
+  $templateCache.put('keyword-group-widget/directives/keywords-spotting-widget.tpl.html',
+    "<div class=\"panel panel-default raml-console-panel keywords-spotting\">\n" +
+    "  <div ng-if=\"keywordsSpottingCtrl.isLogin\">\n" +
+    "    <div class=\"drop-box form-group\"\n" +
+    "         ngf-drop ngf-select ng-model=\"keywordsSpottingCtrl.files\"\n" +
+    "         ngf-drag-over-class=\"dragover\" ngf-allow-dir=\"false\"\n" +
+    "         ngf-accept=\"'.mp3,.mp4'\">\n" +
+    "\n" +
+    "      <div class=\"drop-box-text\">\n" +
+    "        <div>\n" +
+    "          <i class=\"drop-box-text__icon fa fa-2x fa-cloud-upload\"></i>\n" +
+    "          <div class=\"drop-box-text__label\">Drop file here to upload, or browse</div>\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"drop-box-text\">\n" +
+    "        <div class=\"media-preview-container\" ng-if=\"keywordsSpottingCtrl.isAudio()\">\n" +
+    "          <audio controls class=\"media-preview\"\n" +
+    "                 ngf-src=\"keywordsSpottingCtrl.files[0]\"\n" +
+    "                 ngf-accept=\"'audio/*'\">\n" +
+    "\n" +
+    "          </audio>\n" +
+    "        </div>\n" +
+    "        <div class=\"media-preview-container\" ng-if=\"keywordsSpottingCtrl.isVideo()\">\n" +
+    "          <video controls class=\"media-preview\"\n" +
+    "                 ngf-src=\"keywordsSpottingCtrl.files[0]\"\n" +
+    "                 ngf-accept=\"'video/*'\">\n" +
+    "          </video>\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <form class=\"\" name=\"keywordsSpottingCtrl.detectingGroupsForm\" novalidate focus-form>\n" +
+    "      <div class=\"keywords-group-detecting-list form-group\">\n" +
+    "        <div class=\"raml-console-keywords-list-container\" data-scroll-to-bottom='keywordsSpottingCtrl.detectGroups.length'>\n" +
+    "          <div ng-repeat=\"detectGroup in keywordsSpottingCtrl.detectGroups track by $index\">\n" +
+    "            <ng-form name=\"detectGroupForm\" class=\"input-group raml-console-input-group\">\n" +
+    "              <input class=\"form-control\" type=\"text\" placeholder=\"Group Name\" name=\"detectGroup\" maxlength=\"64\" required=\"true\"\n" +
+    "                     ng-model=\"keywordsSpottingCtrl.detectGroups[$index]\">\n" +
+    "            <span class=\"raml-console-multi-errors col-sm-12\">\n" +
+    "              <span class=\"raml-console-vbs-validation-error raml-console-vbs-validation-required\">Required</span>\n" +
+    "            </span>\n" +
+    "            <span class=\"input-group-btn\">\n" +
+    "              <button class=\"btn btn-default raml-console-keyword-remove\" type=\"button\"\n" +
+    "                      title=\"Remove Group\"\n" +
+    "                      ng-click=\"keywordsSpottingCtrl.removeDetectGroup($index)\">\n" +
+    "                <i class=\"fa fa-times-circle\"></i>\n" +
+    "              </button>\n" +
+    "            </span>\n" +
+    "            </ng-form>\n" +
+    "          </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <button type=\"button\" class=\"btn btn-link add-detect-group\"\n" +
+    "                ng-click=\"keywordsSpottingCtrl.addDetectGroup()\">\n" +
+    "          <i class=\"fa fa-plus-circle\"></i>\n" +
+    "          Add detecting group\n" +
+    "        </button>\n" +
+    "      </div>\n" +
+    "    </form>\n" +
+    "\n" +
+    "    <div ng-if=\"!keywordsSpottingCtrl.isLoaded && !keywordsSpottingCtrl.pingProcess\" class=\"form-group\">\n" +
+    "      <button type=\"button\" class=\"btn btn-success\" ng-click=\"keywordsSpottingCtrl.upload()\">Upload</button>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"keywordsSpottingCtrl.isLoaded\" class=\"media-upload-loader\">\n" +
+    "      <css-spinner></css-spinner>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"keywordsSpottingCtrl.pingProcess\"  class=\"media-processing-loader\">\n" +
+    "      <css-spinner></css-spinner>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"keywordsSpottingCtrl.uploadedMedia\">\n" +
+    "      <div>Upload finished!</div>\n" +
+    "      <div>Media id: {{keywordsSpottingCtrl.uploadedMedia.mediaId}}</div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div ng-if=\"!keywordsSpottingCtrl.isLogin\" class=\"raml-console-error-message\">Please sign in</div>\n" +
+    "</div>\n"
   );
 
 
