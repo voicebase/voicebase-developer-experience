@@ -17,6 +17,7 @@
         me.isLogin = (tokenData) ? true : false;
         me.isLoaded = false;
         me.pingProcess = false;
+        me.uploadedMedia = null;
 
         me.detectGroups = [];
 
@@ -58,6 +59,7 @@
               .then(function (data) {
                 if (data.media && data.media.status === 'finished') {
                   me.pingProcess = false;
+                  me.uploadedMedia = data.media;
                   $interval.cancel(checker);
                 }
               }, function () {

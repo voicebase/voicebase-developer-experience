@@ -70,6 +70,11 @@
     <div ng-if="keywordsSpottingCtrl.pingProcess"  class="media-processing-loader">
       <css-spinner></css-spinner>
     </div>
+
+    <div ng-if="keywordsSpottingCtrl.uploadedMedia">
+      <div>Upload finished!</div>
+      <div>Media id: {{keywordsSpottingCtrl.uploadedMedia.mediaId}}</div>
+    </div>
   </div>
 
   <div ng-if="!keywordsSpottingCtrl.isLogin" class="raml-console-error-message">Please sign in</div>
