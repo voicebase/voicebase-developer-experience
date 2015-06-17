@@ -7,8 +7,10 @@
     'angularModalService',
     'formValidateModule',
     'cssSpinnerModule',
+    'angularUtils.directives.dirPagination',
     'ngFileUpload',
-    'angularUtils.directives.dirPagination'
+    'ui.select',
+    'ngSanitize'
   ]);
 
   angular.module('ramlVoicebaseConsoleApp', [
@@ -957,7 +959,7 @@ RAML.Decorators = (function (Decorators) {
       scope: {
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi) {
+      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi) {
         var me = this;
 
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
@@ -965,9 +967,25 @@ RAML.Decorators = (function (Decorators) {
         me.isLogin = (tokenData) ? true : false;
         me.isLoaded = false;
         me.pingProcess = false;
+        me.isLoadedGroups = true;
         me.uploadedMedia = null;
 
+        me.keywordGroups = [];
         me.detectGroups = [];
+
+        var getKeywordGroups = function() {
+          if(tokenData) {
+            me.isLoadedGroups = true;
+            keywordGroupApi.getKeywordGroups(tokenData.token).then(function(data) {
+              me.isLoadedGroups = false;
+              me.keywordGroups = data.groups;
+            }, function() {
+              me.isLoadedGroups = false;
+              me.errorMessage = 'Can\'t getting groups!';
+            });
+          }
+        };
+        getKeywordGroups();
 
         me.addDetectGroup = function () {
           me.detectGroups.push('');
@@ -978,9 +996,7 @@ RAML.Decorators = (function (Decorators) {
         };
 
         me.validBeforeUpload = function () {
-          var form = me.detectingGroupsForm;
-          formValidate.validateAndDirtyForm(form);
-          return !!(!form.$invalid && me.files && me.files.length);
+          return !!(me.files && me.files.length);
         };
 
         me.upload = function () {
@@ -1201,11 +1217,14 @@ RAML.Decorators = (function (Decorators) {
       var data = new FormData();
       data.append('media', file);
 
-      if(groups.length > 0) {
+      if (groups.length > 0) {
+        var groupNames = groups.map(function (group) {
+          return group.name;
+        });
         var groupsData = {
-          configuration:{
+          configuration: {
             keywords: {
-              groups:groups
+              groups: groupNames
             }
           }
         };
@@ -2126,34 +2145,18 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "    </div>\n" +
     "\n" +
-    "    <form class=\"\" name=\"keywordsSpottingCtrl.detectingGroupsForm\" novalidate focus-form>\n" +
-    "      <div class=\"keywords-group-detecting-list form-group\">\n" +
-    "        <div class=\"raml-console-keywords-list-container\" data-scroll-to-bottom='keywordsSpottingCtrl.detectGroups.length'>\n" +
-    "          <div ng-repeat=\"detectGroup in keywordsSpottingCtrl.detectGroups track by $index\">\n" +
-    "            <ng-form name=\"detectGroupForm\" class=\"input-group raml-console-input-group\">\n" +
-    "              <input class=\"form-control\" type=\"text\" placeholder=\"Group Name\" name=\"detectGroup\" maxlength=\"64\" required=\"true\"\n" +
-    "                     ng-model=\"keywordsSpottingCtrl.detectGroups[$index]\">\n" +
-    "            <span class=\"raml-console-multi-errors col-sm-12\">\n" +
-    "              <span class=\"raml-console-vbs-validation-error raml-console-vbs-validation-required\">Required</span>\n" +
-    "            </span>\n" +
-    "            <span class=\"input-group-btn\">\n" +
-    "              <button class=\"btn btn-default raml-console-keyword-remove\" type=\"button\"\n" +
-    "                      title=\"Remove Group\"\n" +
-    "                      ng-click=\"keywordsSpottingCtrl.removeDetectGroup($index)\">\n" +
-    "                <i class=\"fa fa-times-circle\"></i>\n" +
-    "              </button>\n" +
-    "            </span>\n" +
-    "            </ng-form>\n" +
-    "          </div>\n" +
+    "    <div ng-if=\"!keywordsSpottingCtrl.isLoadedGroups\" class=\"form-group\">\n" +
+    "      <ui-select multiple ng-model=\"keywordsSpottingCtrl.detectGroups\">\n" +
+    "        <ui-select-match placeholder=\"Select groups...\">{{ $item.name }}</ui-select-match>\n" +
+    "        <ui-select-choices repeat=\"group in keywordsSpottingCtrl.keywordGroups | filter:$select.search\">\n" +
+    "          {{ group.name }}\n" +
+    "        </ui-select-choices>\n" +
+    "      </ui-select>\n" +
+    "    </div>\n" +
+    "    <div ng-if=\"keywordsSpottingCtrl.isLoadedGroups\" class=\"groups-loader\">\n" +
+    "      <css-spinner></css-spinner>\n" +
+    "    </div>\n" +
     "\n" +
-    "        </div>\n" +
-    "        <button type=\"button\" class=\"btn btn-link add-detect-group\"\n" +
-    "                ng-click=\"keywordsSpottingCtrl.addDetectGroup()\">\n" +
-    "          <i class=\"fa fa-plus-circle\"></i>\n" +
-    "          Add detecting group\n" +
-    "        </button>\n" +
-    "      </div>\n" +
-    "    </form>\n" +
     "\n" +
     "    <div ng-if=\"!keywordsSpottingCtrl.isLoaded && !keywordsSpottingCtrl.pingProcess\" class=\"form-group\">\n" +
     "      <button type=\"button\" class=\"btn btn-success\" ng-click=\"keywordsSpottingCtrl.upload()\">Upload</button>\n" +

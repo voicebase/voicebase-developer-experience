@@ -352,6 +352,7 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 
 .keywords-spotting {
   padding: 15px;
+  cursor: default !important;
 }
 .keywords-spotting .drop-box {
   width: 100%;
@@ -370,6 +371,7 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   float: left;
   height: 35px;
 }
+.keywords-spotting .groups-loader,
 .keywords-spotting .media-upload-loader,
 .keywords-spotting .media-processing-loader {
   display: flex;
@@ -377,10 +379,13 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   margin: 15px 0;
 }
 .keywords-spotting .media-upload-loader .raml-console-spinner:after {
-  content: 'Uploading file';
+  content: 'Uploading file..';
 }
 .keywords-spotting .media-processing-loader .raml-console-spinner:after {
-  content: 'Processing file';
+  content: 'Processing file..';
+}
+.keywords-spotting .groups-loader .raml-console-spinner:after {
+  content: 'Loading groups..';
 }
 .keywords-spotting .drop-box-text {
   text-align: center;
