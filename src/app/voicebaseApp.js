@@ -7,8 +7,10 @@
     'angularModalService',
     'formValidateModule',
     'cssSpinnerModule',
+    'angularUtils.directives.dirPagination',
     'ngFileUpload',
-    'angularUtils.directives.dirPagination'
+    'ui.select',
+    'ngSanitize'
   ]);
 
   angular.module('ramlVoicebaseConsoleApp', [

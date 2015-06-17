@@ -9,7 +9,7 @@
       scope: {
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi) {
+      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi) {
         var me = this;
 
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
@@ -17,9 +17,25 @@
         me.isLogin = (tokenData) ? true : false;
         me.isLoaded = false;
         me.pingProcess = false;
+        me.isLoadedGroups = true;
         me.uploadedMedia = null;
 
+        me.keywordGroups = [];
         me.detectGroups = [];
+
+        var getKeywordGroups = function() {
+          if(tokenData) {
+            me.isLoadedGroups = true;
+            keywordGroupApi.getKeywordGroups(tokenData.token).then(function(data) {
+              me.isLoadedGroups = false;
+              me.keywordGroups = data.groups;
+            }, function() {
+              me.isLoadedGroups = false;
+              me.errorMessage = 'Can\'t getting groups!';
+            });
+          }
+        };
+        getKeywordGroups();
 
         me.addDetectGroup = function () {
           me.detectGroups.push('');
@@ -30,9 +46,7 @@
         };
 
         me.validBeforeUpload = function () {
-          var form = me.detectingGroupsForm;
-          formValidate.validateAndDirtyForm(form);
-          return !!(!form.$invalid && me.files && me.files.length);
+          return !!(me.files && me.files.length);
         };
 
         me.upload = function () {

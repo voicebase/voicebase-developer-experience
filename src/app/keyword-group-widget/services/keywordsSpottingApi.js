@@ -11,11 +11,14 @@
       var data = new FormData();
       data.append('media', file);
 
-      if(groups.length > 0) {
+      if (groups.length > 0) {
+        var groupNames = groups.map(function (group) {
+          return group.name;
+        });
         var groupsData = {
-          configuration:{
+          configuration: {
             keywords: {
-              groups:groups
+              groups: groupNames
             }
           }
         };

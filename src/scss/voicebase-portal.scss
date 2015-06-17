@@ -256,6 +256,7 @@
 
 .keywords-spotting {
   padding: 15px;
+  cursor: default !important;
 
   .drop-box {
     width: 100%;
@@ -278,6 +279,7 @@
     height: 35px;
   }
 
+  .groups-loader,
   .media-upload-loader,
   .media-processing-loader {
     display: flex;
@@ -286,11 +288,15 @@
   }
 
   .media-upload-loader .raml-console-spinner:after {
-    content: 'Uploading file';
+    content: 'Uploading file..';
   }
 
   .media-processing-loader .raml-console-spinner:after {
-    content: 'Processing file';
+    content: 'Processing file..';
+  }
+
+  .groups-loader .raml-console-spinner:after {
+    content: 'Loading groups..';
   }
 
   .drop-box-text {
