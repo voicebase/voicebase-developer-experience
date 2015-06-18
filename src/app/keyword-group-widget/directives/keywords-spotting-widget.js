@@ -19,6 +19,7 @@
         me.pingProcess = false;
         me.isLoadedGroups = true;
         me.uploadedMedia = null;
+        me.uploadedMediaGroups = null;
 
         me.keywordGroups = [];
         me.detectGroups = [];
@@ -74,6 +75,7 @@
                 if (data.media && data.media.status === 'finished') {
                   me.pingProcess = false;
                   me.uploadedMedia = data.media;
+                  me.uploadedMediaGroups = data.media.keywords.latest.groups;
                   $interval.cancel(checker);
                 }
               }, function () {

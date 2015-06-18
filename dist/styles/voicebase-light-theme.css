@@ -407,6 +407,18 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   max-width: 300px;
   max-height: 150px;
 }
+.keywords-spotting .spotting-results .panel {
+  margin-bottom: 15px;
+}
+.keywords-spotting .spotting-results .panel-body {
+  padding: 0;
+}
+.keywords-spotting .spotting-results .spotting-results_empty {
+  color: #D14956;
+}
+.keywords-spotting .spotting-results .spotting-results__group-title {
+  font-weight: bold;
+}
 
 .raml-console-login-page-container {
   background: #242f3e;

@@ -324,4 +324,22 @@
     max-height: 150px;
   }
 
+  .spotting-results {
+    .panel {
+      margin-bottom: 15px;
+    }
+
+    .panel-body {
+      padding: 0;
+    }
+
+    .spotting-results_empty {
+      color: #D14956;
+    }
+
+    .spotting-results__group-title {
+      font-weight: bold;
+    }
+  }
+
 }

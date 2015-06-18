@@ -969,6 +969,7 @@ RAML.Decorators = (function (Decorators) {
         me.pingProcess = false;
         me.isLoadedGroups = true;
         me.uploadedMedia = null;
+        me.uploadedMediaGroups = null;
 
         me.keywordGroups = [];
         me.detectGroups = [];
@@ -1024,6 +1025,7 @@ RAML.Decorators = (function (Decorators) {
                 if (data.media && data.media.status === 'finished') {
                   me.pingProcess = false;
                   me.uploadedMedia = data.media;
+                  me.uploadedMediaGroups = data.media.keywords.latest.groups;
                   $interval.cancel(checker);
                 }
               }, function () {
@@ -2170,9 +2172,28 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <css-spinner></css-spinner>\n" +
     "    </div>\n" +
     "\n" +
-    "    <div ng-if=\"keywordsSpottingCtrl.uploadedMedia\">\n" +
-    "      <div>Upload finished!</div>\n" +
-    "      <div>Media id: {{keywordsSpottingCtrl.uploadedMedia.mediaId}}</div>\n" +
+    "    <div class=\"panel-group spotting-results row\" ng-if=\"keywordsSpottingCtrl.uploadedMedia\">\n" +
+    "      <div class=\"container-fluid form-group\">\n" +
+    "        <div>Upload finished!</div>\n" +
+    "        <div>Media id: {{keywordsSpottingCtrl.uploadedMedia.mediaId}}</div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"col-md-6\" ng-repeat=\"group in keywordsSpottingCtrl.uploadedMediaGroups\">\n" +
+    "        <div class=\"panel panel-default\">\n" +
+    "          <div class=\"panel-heading spotting-results__group-title\" role=\"tab\">{{ group.name }}</div>\n" +
+    "          <div class=\"panel-body\"></div>\n" +
+    "          <ul class=\"list-group\" ng-if=\"group.keywords.length > 0\">\n" +
+    "            <li class=\"list-group-item\" ng-repeat=\"keyword in group.keywords\">\n" +
+    "              {{ keyword.name }}\n" +
+    "            </li>\n" +
+    "          </ul>\n" +
+    "          <ul class=\"list-group\" ng-if=\"group.keywords.length === 0\">\n" +
+    "            <li class=\"list-group-item spotting-results_empty\">\n" +
+    "              There aren't spotting keywords in group.\n" +
+    "            </li>\n" +
+    "          </ul>\n" +
+    "        </div>\n" +
+    "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "\n" +

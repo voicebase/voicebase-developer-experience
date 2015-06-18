@@ -55,9 +55,28 @@
       <css-spinner></css-spinner>
     </div>
 
-    <div ng-if="keywordsSpottingCtrl.uploadedMedia">
-      <div>Upload finished!</div>
-      <div>Media id: {{keywordsSpottingCtrl.uploadedMedia.mediaId}}</div>
+    <div class="panel-group spotting-results row" ng-if="keywordsSpottingCtrl.uploadedMedia">
+      <div class="container-fluid form-group">
+        <div>Upload finished!</div>
+        <div>Media id: {{keywordsSpottingCtrl.uploadedMedia.mediaId}}</div>
+      </div>
+
+      <div class="col-md-6" ng-repeat="group in keywordsSpottingCtrl.uploadedMediaGroups">
+        <div class="panel panel-default">
+          <div class="panel-heading spotting-results__group-title" role="tab">{{ group.name }}</div>
+          <div class="panel-body"></div>
+          <ul class="list-group" ng-if="group.keywords.length > 0">
+            <li class="list-group-item" ng-repeat="keyword in group.keywords">
+              {{ keyword.name }}
+            </li>
+          </ul>
+          <ul class="list-group" ng-if="group.keywords.length === 0">
+            <li class="list-group-item spotting-results_empty">
+              There aren't spotting keywords in group.
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 
