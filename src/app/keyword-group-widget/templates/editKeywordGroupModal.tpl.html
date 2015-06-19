@@ -1,0 +1,25 @@
+<div class="modal fade" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content raml-console-modal">
+      <div class="modal-header raml-console-modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+        <h4 class="modal-title raml-console-modal-title">{{ mode === 'create' ? 'Add' : 'Edit' }} Keyword Spotting Group</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" name="keywordGroupForm" novalidate focus-form>
+          <keyword-group-form keyword-group="keywordGroup"></keyword-group-form>
+        </form>
+      </div>
+      <div class="modal-footer raml-console-modal-footer">
+        <button type="button" class="btn btn-success" ng-click="groupSave()">
+          <i class="fa fa-check"></i>
+          Save
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          <i class="fa fa-times"></i>
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
