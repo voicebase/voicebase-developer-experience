@@ -371,6 +371,7 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   float: left;
   height: 35px;
 }
+.keywords-spotting .create-group-loader,
 .keywords-spotting .groups-loader,
 .keywords-spotting .media-upload-loader,
 .keywords-spotting .media-processing-loader {
@@ -386,6 +387,9 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 }
 .keywords-spotting .groups-loader .raml-console-spinner:after {
   content: 'Loading groups..';
+}
+.keywords-spotting .create-group-loader .raml-console-spinner:after {
+  content: 'Creating..';
 }
 .keywords-spotting .drop-box-text {
   text-align: center;

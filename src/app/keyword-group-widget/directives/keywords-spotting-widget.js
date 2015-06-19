@@ -9,7 +9,7 @@
       scope: {
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi) {
+      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, ModalService) {
         var me = this;
 
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
@@ -97,6 +97,20 @@
           }
           return false;
         };
+
+        me.createLoading = false;
+        me.createGroup = function(group) {
+          me.createLoading = true;
+          keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function() {
+            me.keywordGroups.push(group);
+            me.createLoading = false;
+          }, function() {
+            me.createLoading = false;
+            me.errorMessage = 'Can\'t create group!';
+          });
+        };
+
+
       }
     };
   };

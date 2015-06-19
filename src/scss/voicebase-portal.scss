@@ -279,6 +279,7 @@
     height: 35px;
   }
 
+  .create-group-loader,
   .groups-loader,
   .media-upload-loader,
   .media-processing-loader {
@@ -297,6 +298,10 @@
 
   .groups-loader .raml-console-spinner:after {
     content: 'Loading groups..';
+  }
+
+  .create-group-loader .raml-console-spinner:after {
+    content: 'Creating..';
   }
 
   .drop-box-text {

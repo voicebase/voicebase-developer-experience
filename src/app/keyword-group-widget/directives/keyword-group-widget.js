@@ -30,7 +30,7 @@
           event.stopPropagation();
           event.preventDefault();
           ModalService.showModal({
-            templateUrl: 'removeKeywordGroupModal.html',
+            templateUrl: 'keyword-group-widget/templates/removeKeywordGroupModal.tpl.html',
             controller: 'removeModalController',
             inputs: {
               removeCallback: function() {
@@ -55,33 +55,11 @@
           });
         };
 
-        me.startCreateGroup = function() {
-          me.newGroup = {
-            name: '',
-            description: '',
-            keywords: ['']
-          };
-          ModalService.showModal({
-            templateUrl: 'editKeywordGroupModal.html',
-            controller: 'ModalController',
-            inputs: {
-              $keywordGroup: me.newGroup,
-              mode: 'create',
-              groupCallback: function(group) {
-                me.newGroup = group;
-                me.createGroup(group);
-              }
-            }
-          }).then(function(modal) {
-            modal.element.modal();
-          });
-        };
-
         me.createLoading = false;
-        me.createGroup = function() {
+        me.createGroup = function(group) {
           me.createLoading = true;
-          keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
-            me.keywordGroups.groups.push(me.newGroup);
+          keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function() {
+            me.keywordGroups.groups.push(group);
             me.createLoading = false;
             me.currentPage = Math.floor(me.keywordGroups.groups.length / me.groupsPerPage) + 1;
           }, function() {
@@ -92,7 +70,7 @@
 
         me.startEditGroup = function(group) {
           ModalService.showModal({
-            templateUrl: 'editKeywordGroupModal.html',
+            templateUrl: 'keyword-group-widget/templates/editKeywordGroupModal.tpl.html',
             controller: 'ModalController',
             inputs: {
               $keywordGroup: group,
@@ -171,38 +149,6 @@
       }
     };
   };
-
-  angular.module('vbsKeywordGroupWidget').controller('ModalController', function($scope, $element, formValidate, $keywordGroup, mode, groupCallback) {
-
-    $scope.mode = mode;
-
-    $scope.keywordGroup = jQuery.extend(true, {}, $keywordGroup);
-
-    if($scope.keywordGroupForm) {
-      $scope.keywordGroupForm.$setPristine();
-    }
-
-    $scope.groupSave = function() {
-      var form = $scope.keywordGroupForm;
-      formValidate.validateAndDirtyForm(form);
-      if(!form.$invalid) {
-        groupCallback($scope.keywordGroup);
-        $element.modal('hide');
-      }
-      return false;
-    };
-
-  });
-
-  angular.module('vbsKeywordGroupWidget').controller('removeModalController', function($scope, $element, removeCallback) {
-
-    $scope.removeGroup = function() {
-      $element.modal('hide');
-      removeCallback();
-      return false;
-    };
-
-  });
 
   angular.module('vbsKeywordGroupWidget')
     .directive('keywordGroupWidget', keywordGroupWidget);

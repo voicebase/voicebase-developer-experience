@@ -671,6 +671,95 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  angular.module('vbsKeywordGroupWidget').controller('ModalController', function($scope, $element, formValidate, $keywordGroup, mode, groupCallback) {
+
+    $scope.mode = mode;
+
+    $scope.keywordGroup = jQuery.extend(true, {}, $keywordGroup);
+
+    if($scope.keywordGroupForm) {
+      $scope.keywordGroupForm.$setPristine();
+    }
+
+    $scope.groupSave = function() {
+      var form = $scope.keywordGroupForm;
+      formValidate.validateAndDirtyForm(form);
+      if(!form.$invalid) {
+        groupCallback($scope.keywordGroup);
+        $element.modal('hide');
+      }
+      return false;
+    };
+
+  });
+
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('vbsKeywordGroupWidget').controller('removeModalController', function ($scope, $element, removeCallback) {
+
+    $scope.removeGroup = function () {
+      $element.modal('hide');
+      removeCallback();
+      return false;
+    };
+
+  });
+
+})();
+
+(function () {
+  'use strict';
+
+  var changeKeywordGroup = function (ModalService) {
+    return {
+      restrict: 'A',
+      scope: {
+        modalKeywordGroupMode: '@',
+        changeGroupCallback: '='
+      },
+      link: function (scope, elem) {
+        var newGroup;
+
+        elem.click(function () {
+          scope.startChangeGroup();
+        });
+
+        scope.startChangeGroup = function() {
+          newGroup = {
+            name: '',
+            description: '',
+            keywords: ['']
+          };
+          ModalService.showModal({
+            templateUrl: 'keyword-group-widget/templates/editKeywordGroupModal.tpl.html',
+            controller: 'ModalController',
+            inputs: {
+              $keywordGroup: newGroup,
+              mode: scope.modalKeywordGroupMode,
+              groupCallback: function(group) {
+                newGroup = group;
+                scope.changeGroupCallback(group);
+              }
+            }
+          }).then(function(modal) {
+            modal.element.modal();
+          });
+        };
+      }
+    };
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .directive('changeKeywordGroup', changeKeywordGroup);
+
+})();
+
+(function () {
+  'use strict';
+
   var focusForm = function () {
     return {
       restrict: 'A',
@@ -769,7 +858,7 @@ RAML.Decorators = (function (Decorators) {
           event.stopPropagation();
           event.preventDefault();
           ModalService.showModal({
-            templateUrl: 'removeKeywordGroupModal.html',
+            templateUrl: 'keyword-group-widget/templates/removeKeywordGroupModal.tpl.html',
             controller: 'removeModalController',
             inputs: {
               removeCallback: function() {
@@ -794,33 +883,11 @@ RAML.Decorators = (function (Decorators) {
           });
         };
 
-        me.startCreateGroup = function() {
-          me.newGroup = {
-            name: '',
-            description: '',
-            keywords: ['']
-          };
-          ModalService.showModal({
-            templateUrl: 'editKeywordGroupModal.html',
-            controller: 'ModalController',
-            inputs: {
-              $keywordGroup: me.newGroup,
-              mode: 'create',
-              groupCallback: function(group) {
-                me.newGroup = group;
-                me.createGroup(group);
-              }
-            }
-          }).then(function(modal) {
-            modal.element.modal();
-          });
-        };
-
         me.createLoading = false;
-        me.createGroup = function() {
+        me.createGroup = function(group) {
           me.createLoading = true;
-          keywordGroupApi.createKeywordGroup(tokenData.token, me.newGroup).then(function() {
-            me.keywordGroups.groups.push(me.newGroup);
+          keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function() {
+            me.keywordGroups.groups.push(group);
             me.createLoading = false;
             me.currentPage = Math.floor(me.keywordGroups.groups.length / me.groupsPerPage) + 1;
           }, function() {
@@ -831,7 +898,7 @@ RAML.Decorators = (function (Decorators) {
 
         me.startEditGroup = function(group) {
           ModalService.showModal({
-            templateUrl: 'editKeywordGroupModal.html',
+            templateUrl: 'keyword-group-widget/templates/editKeywordGroupModal.tpl.html',
             controller: 'ModalController',
             inputs: {
               $keywordGroup: group,
@@ -911,38 +978,6 @@ RAML.Decorators = (function (Decorators) {
     };
   };
 
-  angular.module('vbsKeywordGroupWidget').controller('ModalController', function($scope, $element, formValidate, $keywordGroup, mode, groupCallback) {
-
-    $scope.mode = mode;
-
-    $scope.keywordGroup = jQuery.extend(true, {}, $keywordGroup);
-
-    if($scope.keywordGroupForm) {
-      $scope.keywordGroupForm.$setPristine();
-    }
-
-    $scope.groupSave = function() {
-      var form = $scope.keywordGroupForm;
-      formValidate.validateAndDirtyForm(form);
-      if(!form.$invalid) {
-        groupCallback($scope.keywordGroup);
-        $element.modal('hide');
-      }
-      return false;
-    };
-
-  });
-
-  angular.module('vbsKeywordGroupWidget').controller('removeModalController', function($scope, $element, removeCallback) {
-
-    $scope.removeGroup = function() {
-      $element.modal('hide');
-      removeCallback();
-      return false;
-    };
-
-  });
-
   angular.module('vbsKeywordGroupWidget')
     .directive('keywordGroupWidget', keywordGroupWidget);
 
@@ -959,7 +994,7 @@ RAML.Decorators = (function (Decorators) {
       scope: {
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi) {
+      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, ModalService) {
         var me = this;
 
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
@@ -1047,6 +1082,20 @@ RAML.Decorators = (function (Decorators) {
           }
           return false;
         };
+
+        me.createLoading = false;
+        me.createGroup = function(group) {
+          me.createLoading = true;
+          keywordGroupApi.createKeywordGroup(tokenData.token, group).then(function() {
+            me.keywordGroups.push(group);
+            me.createLoading = false;
+          }, function() {
+            me.createLoading = false;
+            me.errorMessage = 'Can\'t create group!';
+          });
+        };
+
+
       }
     };
   };
@@ -2005,7 +2054,9 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <div class=\"list-group raml-console-keyword-group-toolbar\" ng-if=\"keywordWidgetCtrl.isLogin\">\n" +
     "          <a class=\"list-group-item raml-console-add-group\"\n" +
     "             data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Add Keyword Spotting Group\"\n" +
-    "             ng-click=\"keywordWidgetCtrl.startCreateGroup()\"\n" +
+    "             change-keyword-group\n" +
+    "             modal-keyword-group-mode=\"create\"\n" +
+    "             change-group-callback=\"keywordWidgetCtrl.createGroup\"\n" +
     "             ng-show=\"!keywordWidgetCtrl.createLoading\">\n" +
     "\n" +
     "            <h4 class=\"list-group-item-heading raml-console-item-heading\">\n" +
@@ -2054,61 +2105,6 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    </div>\n" +
     "  </div>\n" +
     "\n" +
-    "  <script type=\"text/ng-template\" id=\"editKeywordGroupModal.html\">\n" +
-    "    <div class=\"modal fade\" data-backdrop=\"static\">\n" +
-    "      <div class=\"modal-dialog\">\n" +
-    "        <div class=\"modal-content raml-console-modal\">\n" +
-    "          <div class=\"modal-header raml-console-modal-header\">\n" +
-    "            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\"><i class=\"fa fa-times\"></i></button>\n" +
-    "            <h4 class=\"modal-title raml-console-modal-title\">{{ mode === 'create' ? 'Add' : 'Edit' }} Keyword Spotting Group</h4>\n" +
-    "          </div>\n" +
-    "          <div class=\"modal-body\">\n" +
-    "            <form class=\"form-horizontal\" name=\"keywordGroupForm\" novalidate focus-form>\n" +
-    "              <keyword-group-form keyword-group=\"keywordGroup\"></keyword-group-form>\n" +
-    "            </form>\n" +
-    "          </div>\n" +
-    "          <div class=\"modal-footer raml-console-modal-footer\">\n" +
-    "            <button type=\"button\" class=\"btn btn-success\" ng-click=\"groupSave()\">\n" +
-    "              <i class=\"fa fa-check\"></i>\n" +
-    "              Save\n" +
-    "            </button>\n" +
-    "            <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\">\n" +
-    "              <i class=\"fa fa-times\"></i>\n" +
-    "              Cancel\n" +
-    "            </button>\n" +
-    "          </div>\n" +
-    "        </div>\n" +
-    "      </div>\n" +
-    "    </div>\n" +
-    "  </script>\n" +
-    "\n" +
-    "  <script type=\"text/ng-template\" id=\"removeKeywordGroupModal.html\">\n" +
-    "    <div class=\"modal fade\" data-backdrop=\"static\">\n" +
-    "      <div class=\"modal-dialog\">\n" +
-    "        <div class=\"modal-content raml-console-modal\">\n" +
-    "          <div class=\"modal-header raml-console-modal-header\">\n" +
-    "            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\"><i class=\"fa fa-times\"></i></button>\n" +
-    "            <h4 class=\"modal-title raml-console-modal-title\">Remove Keyword Spotting Group</h4>\n" +
-    "          </div>\n" +
-    "          <div class=\"modal-body\">\n" +
-    "            <p class=\"raml-console-confirmation-message\">Are you sure you want to delete keyword group?</p>\n" +
-    "          </div>\n" +
-    "          <div class=\"modal-footer raml-console-modal-footer\">\n" +
-    "            <button type=\"button\" class=\"btn btn-success\" ng-click=\"removeGroup()\">\n" +
-    "              <i class=\"fa fa-check\"></i>\n" +
-    "              Remove\n" +
-    "            </button>\n" +
-    "            <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\">\n" +
-    "              <i class=\"fa fa-times\"></i>\n" +
-    "              Cancel\n" +
-    "            </button>\n" +
-    "          </div>\n" +
-    "        </div>\n" +
-    "      </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "  </script>\n" +
-    "\n" +
     "</div>\n" +
     "\n"
   );
@@ -2116,6 +2112,10 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
   $templateCache.put('keyword-group-widget/directives/keywords-spotting-widget.tpl.html',
     "<div class=\"panel panel-default raml-console-panel keywords-spotting\">\n" +
+    "  <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"keywordsSpottingCtrl.errorMessage\">\n" +
+    "    <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n" +
+    "    {{ keywordsSpottingCtrl.errorMessage }}\n" +
+    "  </div>\n" +
     "  <div ng-if=\"keywordsSpottingCtrl.isLogin\">\n" +
     "    <div class=\"drop-box form-group\"\n" +
     "         ngf-drop ngf-select ng-model=\"keywordsSpottingCtrl.files\"\n" +
@@ -2145,6 +2145,19 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        </div>\n" +
     "      </div>\n" +
     "\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\" ng-if=\"!keywordsSpottingCtrl.createLoading\">\n" +
+    "      <button type=\"button\" class=\"btn btn-link add-keyword\"\n" +
+    "              change-keyword-group\n" +
+    "              modal-keyword-group-mode=\"create\"\n" +
+    "              change-group-callback=\"keywordsSpottingCtrl.createGroup\">\n" +
+    "        <i class=\"fa fa-plus-circle\"></i>\n" +
+    "        Add Keyword Spotting Group\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "    <div ng-if=\"keywordsSpottingCtrl.createLoading\" class=\"create-group-loader\">\n" +
+    "      <css-spinner></css-spinner>\n" +
     "    </div>\n" +
     "\n" +
     "    <div ng-if=\"!keywordsSpottingCtrl.isLoadedGroups\" class=\"form-group\">\n" +
@@ -2198,6 +2211,62 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  </div>\n" +
     "\n" +
     "  <div ng-if=\"!keywordsSpottingCtrl.isLogin\" class=\"raml-console-error-message\">Please sign in</div>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('keyword-group-widget/templates/editKeywordGroupModal.tpl.html',
+    "<div class=\"modal fade\" data-backdrop=\"static\">\n" +
+    "  <div class=\"modal-dialog\">\n" +
+    "    <div class=\"modal-content raml-console-modal\">\n" +
+    "      <div class=\"modal-header raml-console-modal-header\">\n" +
+    "        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\"><i class=\"fa fa-times\"></i></button>\n" +
+    "        <h4 class=\"modal-title raml-console-modal-title\">{{ mode === 'create' ? 'Add' : 'Edit' }} Keyword Spotting Group</h4>\n" +
+    "      </div>\n" +
+    "      <div class=\"modal-body\">\n" +
+    "        <form class=\"form-horizontal\" name=\"keywordGroupForm\" novalidate focus-form>\n" +
+    "          <keyword-group-form keyword-group=\"keywordGroup\"></keyword-group-form>\n" +
+    "        </form>\n" +
+    "      </div>\n" +
+    "      <div class=\"modal-footer raml-console-modal-footer\">\n" +
+    "        <button type=\"button\" class=\"btn btn-success\" ng-click=\"groupSave()\">\n" +
+    "          <i class=\"fa fa-check\"></i>\n" +
+    "          Save\n" +
+    "        </button>\n" +
+    "        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\">\n" +
+    "          <i class=\"fa fa-times\"></i>\n" +
+    "          Cancel\n" +
+    "        </button>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('keyword-group-widget/templates/removeKeywordGroupModal.tpl.html',
+    "<div class=\"modal fade\" data-backdrop=\"static\">\n" +
+    "  <div class=\"modal-dialog\">\n" +
+    "    <div class=\"modal-content raml-console-modal\">\n" +
+    "      <div class=\"modal-header raml-console-modal-header\">\n" +
+    "        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\"><i class=\"fa fa-times\"></i></button>\n" +
+    "        <h4 class=\"modal-title raml-console-modal-title\">Remove Keyword Spotting Group</h4>\n" +
+    "      </div>\n" +
+    "      <div class=\"modal-body\">\n" +
+    "        <p class=\"raml-console-confirmation-message\">Are you sure you want to delete keyword group?</p>\n" +
+    "      </div>\n" +
+    "      <div class=\"modal-footer raml-console-modal-footer\">\n" +
+    "        <button type=\"button\" class=\"btn btn-success\" ng-click=\"removeGroup()\">\n" +
+    "          <i class=\"fa fa-check\"></i>\n" +
+    "          Remove\n" +
+    "        </button>\n" +
+    "        <button type=\"button\" class=\"btn btn-danger\" data-dismiss=\"modal\">\n" +
+    "          <i class=\"fa fa-times\"></i>\n" +
+    "          Cancel\n" +
+    "        </button>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
     "</div>\n"
   );
 

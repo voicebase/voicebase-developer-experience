@@ -17,7 +17,9 @@
         <div class="list-group raml-console-keyword-group-toolbar" ng-if="keywordWidgetCtrl.isLogin">
           <a class="list-group-item raml-console-add-group"
              data-toggle="tooltip" data-placement="bottom" title="Add Keyword Spotting Group"
-             ng-click="keywordWidgetCtrl.startCreateGroup()"
+             change-keyword-group
+             modal-keyword-group-mode="create"
+             change-group-callback="keywordWidgetCtrl.createGroup"
              ng-show="!keywordWidgetCtrl.createLoading">
 
             <h4 class="list-group-item-heading raml-console-item-heading">
@@ -65,61 +67,6 @@
 
     </div>
   </div>
-
-  <script type="text/ng-template" id="editKeywordGroupModal.html">
-    <div class="modal fade" data-backdrop="static">
-      <div class="modal-dialog">
-        <div class="modal-content raml-console-modal">
-          <div class="modal-header raml-console-modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-            <h4 class="modal-title raml-console-modal-title">{{ mode === 'create' ? 'Add' : 'Edit' }} Keyword Spotting Group</h4>
-          </div>
-          <div class="modal-body">
-            <form class="form-horizontal" name="keywordGroupForm" novalidate focus-form>
-              <keyword-group-form keyword-group="keywordGroup"></keyword-group-form>
-            </form>
-          </div>
-          <div class="modal-footer raml-console-modal-footer">
-            <button type="button" class="btn btn-success" ng-click="groupSave()">
-              <i class="fa fa-check"></i>
-              Save
-            </button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">
-              <i class="fa fa-times"></i>
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </script>
-
-  <script type="text/ng-template" id="removeKeywordGroupModal.html">
-    <div class="modal fade" data-backdrop="static">
-      <div class="modal-dialog">
-        <div class="modal-content raml-console-modal">
-          <div class="modal-header raml-console-modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-            <h4 class="modal-title raml-console-modal-title">Remove Keyword Spotting Group</h4>
-          </div>
-          <div class="modal-body">
-            <p class="raml-console-confirmation-message">Are you sure you want to delete keyword group?</p>
-          </div>
-          <div class="modal-footer raml-console-modal-footer">
-            <button type="button" class="btn btn-success" ng-click="removeGroup()">
-              <i class="fa fa-check"></i>
-              Remove
-            </button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">
-              <i class="fa fa-times"></i>
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </script>
 
 </div>
 
