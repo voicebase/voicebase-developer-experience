@@ -1,12 +1,13 @@
 <div class="panel panel-default raml-console-panel keywords-spotting">
   <div class="alert alert-danger" role="alert" ng-if="keywordsSpottingCtrl.errorMessage">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <button type="button" class="close" ng-click="keywordsSpottingCtrl.errorMessage = ''"><span aria-hidden="true">&times;</span></button>
     {{ keywordsSpottingCtrl.errorMessage }}
   </div>
   <div ng-if="keywordsSpottingCtrl.isLogin">
     <div class="drop-box form-group"
          ngf-drop ngf-select ng-model="keywordsSpottingCtrl.files"
-         ngf-drag-over-class="dragover" ngf-allow-dir="false">
+         ngf-drag-over-class="dragover" ngf-allow-dir="false"
+         ngf-accept="keywordsSpottingCtrl.validateFormat($file)">
 
       <div class="drop-box-text">
         <div>

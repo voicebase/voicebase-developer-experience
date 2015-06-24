@@ -20,6 +20,7 @@
         me.isLoadedGroups = true;
         me.uploadedMedia = null;
         me.uploadedMediaGroups = null;
+        me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
 
         me.keywordGroups = [];
         me.detectGroups = [];
@@ -44,6 +45,20 @@
 
         me.removeDetectGroup = function (index) {
           me.detectGroups.splice(index, 1);
+        };
+
+        me.validateFormat = function (file) {
+          var format = file.name.substring(file.name.lastIndexOf('.'));
+          var isFileAllow = me.acceptFileFormats.filter(function (_format) {
+            return _format === format;
+          });
+          if(isFileAllow.length === 0) {
+            me.errorMessage = 'Media in ' + format + ' format is not yet supported. Please try uploading media in one of these formats: \n' + me.acceptFileFormats.join(', ');
+          }
+          else {
+            me.errorMessage = '';
+          }
+          return me.acceptFileFormats.join(',');
         };
 
         me.validBeforeUpload = function () {
