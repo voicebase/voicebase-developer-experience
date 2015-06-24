@@ -2137,8 +2137,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  <div ng-if=\"keywordsSpottingCtrl.isLogin\">\n" +
     "    <div class=\"drop-box form-group\"\n" +
     "         ngf-drop ngf-select ng-model=\"keywordsSpottingCtrl.files\"\n" +
-    "         ngf-drag-over-class=\"dragover\" ngf-allow-dir=\"false\"\n" +
-    "         ngf-accept=\"'.mp3,.mp4'\">\n" +
+    "         ngf-drag-over-class=\"dragover\" ngf-allow-dir=\"false\">\n" +
     "\n" +
     "      <div class=\"drop-box-text\">\n" +
     "        <div>\n" +
