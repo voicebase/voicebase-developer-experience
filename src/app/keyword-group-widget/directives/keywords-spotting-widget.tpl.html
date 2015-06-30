@@ -72,13 +72,21 @@
       <css-spinner></css-spinner>
     </div>
 
-    <div class="panel-group spotting-results row" ng-if="keywordsSpottingCtrl.uploadedMedia">
+    <div ng-if="keywordsSpottingCtrl.finishedUpload">
+      <voicebase-media-player
+        token="{{keywordsSpottingCtrl.uploadedData.token}}"
+        media-id="{{keywordsSpottingCtrl.uploadedData.uploadedMedia.mediaId}}"
+        media-url="{{keywordsSpottingCtrl.uploadedData.mediaUrl}}">
+      </voicebase-media-player>
+    </div>
+
+    <div class="panel-group spotting-results row" ng-if="keywordsSpottingCtrl.uploadedData.uploadedMedia">
       <div class="container-fluid form-group">
         <div>Upload finished!</div>
-        <div>Media id: {{keywordsSpottingCtrl.uploadedMedia.mediaId}}</div>
+        <div>Media id: {{keywordsSpottingCtrl.uploadedData.uploadedMedia.mediaId}}</div>
       </div>
 
-      <div class="col-md-6" ng-repeat="group in keywordsSpottingCtrl.uploadedMediaGroups">
+      <div class="col-md-6" ng-repeat="group in keywordsSpottingCtrl.uploadedData.uploadedMediaGroups">
         <div class="panel panel-default">
           <div class="panel-heading spotting-results__group-title" role="tab">{{ group.name }}</div>
           <div class="panel-body"></div>

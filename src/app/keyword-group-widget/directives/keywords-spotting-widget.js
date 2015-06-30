@@ -21,6 +21,8 @@
         me.uploadedMedia = null;
         me.uploadedMediaGroups = null;
         me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
+        me.finishedUpload = false;
+        me.uploadedData = {};
 
         me.keywordGroups = [];
         me.detectGroups = [];
@@ -48,15 +50,17 @@
         };
 
         me.validateFormat = function (file) {
-          var format = file.name.substring(file.name.lastIndexOf('.'));
-          var isFileAllow = me.acceptFileFormats.filter(function (_format) {
-            return _format === format;
-          });
-          if(isFileAllow.length === 0) {
-            me.errorMessage = 'Media in ' + format + ' format is not yet supported. Please try uploading media in one of these formats: \n' + me.acceptFileFormats.join(', ');
-          }
-          else {
-            me.errorMessage = '';
+          if(Object.prototype.toString.call(file) === '[object File]') {
+            var format = file.name.substring(file.name.lastIndexOf('.'));
+            var isFileAllow = me.acceptFileFormats.filter(function (_format) {
+              return _format === format;
+            });
+            if(isFileAllow.length === 0) {
+              me.errorMessage = 'Media in ' + format + ' format is not yet supported. Please try uploading media in one of these formats: \n' + me.acceptFileFormats.join(', ');
+            }
+            else {
+              me.errorMessage = '';
+            }
           }
           return me.acceptFileFormats.join(',');
         };
@@ -89,9 +93,17 @@
               .then(function (data) {
                 if (data.media && data.media.status === 'finished') {
                   me.pingProcess = false;
-                  me.uploadedMedia = data.media;
-                  me.uploadedMediaGroups = data.media.keywords.latest.groups;
+                  me.finishedUpload = true;
+                  me.uploadedData.uploadedMedia = data.media;
+                  me.uploadedData.uploadedMediaGroups = data.media.keywords.latest.groups;
+                  me.uploadedData.token = tokenData.token;
+                  me.uploadedData.mediaUrl = window.URL.createObjectURL(me.files[0]);
                   $interval.cancel(checker);
+
+                  //keywordsSpottingApi.getMediaUrl(tokenData.token, mediaId)
+                  //  .then(function (url) {
+                  //      console.log(url);
+                  //  });
                 }
               }, function () {
                 me.errorMessage = 'Error of getting file!';

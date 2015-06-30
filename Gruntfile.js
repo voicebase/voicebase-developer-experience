@@ -8,7 +8,7 @@ module.exports = function (grunt) {
     distdir: 'dist',
     pkg: grunt.file.readJSON('package.json'),
     src: {
-      js: ['src/app/voicebaseApp.js', 'src/**/*.js'],
+      js: ['src/app/voicebaseApp.js', 'src/app/**/*.js'],
       jsVendor: [
         'bower_components/api-console-voicebase/dist/scripts/api-console-vendor.js',
         'dist/bootstrap/javascripts/bootstrap.min.js',
@@ -98,6 +98,17 @@ module.exports = function (grunt) {
           src: [
             '**',
             '!styles/**/*'
+          ]
+        }]
+      },
+
+      vendorFolder: {
+        files: [{
+          dest: '<%= distdir %>',
+          cwd: 'src/vendor/',
+          expand: true,
+          src: [
+            '**'
           ]
         }]
       },
@@ -258,6 +269,7 @@ module.exports = function (grunt) {
         'concat:vendor',
         'concat:index',
         'copy:assets',
+        'copy:vendorFolder',
         'copy:pages',
         'copy:images',
         'build:styles'
@@ -402,7 +414,8 @@ module.exports = function (grunt) {
       files: [
         'Gruntfile.js',
         '<%= src.js %>',
-        '<%= src.test %>'
+        '<%= src.test %>',
+        '!src/vendor/**'
       ]
     },
 

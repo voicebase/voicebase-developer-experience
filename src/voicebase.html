@@ -7,11 +7,26 @@
   <link href="styles/api-console-vendors.css" rel="stylesheet">
   <link href="styles/api-console-light-theme.css" rel="stylesheet" class="theme">
   <link href="styles/voicebase-light-theme.css" rel="stylesheet" class="theme">
+
+  <!--voicebase media player styles-->
+  <link href="voicebase-player-lib/css/jwplayer.vb-sdk-plugin.min.css" rel="stylesheet">
+  <link href="http://vjs.zencdn.net/4.8/video-js.css" rel="stylesheet">
+
 </head>
 <body ng-app="ramlVoicebaseConsoleApp" ng-cloak class="raml-console-body">
   <div ng-view></div>
   <script src="scripts/api-console-vendor.js"></script>
   <script src="scripts/api-console.js"></script>
+
+  <!--voicebase media player scripts-->
+  <!--<script src="https://stage.voicebase.com/js/jwplayer.js"></script>-->
+  <!--<script>jwplayer.key="vFLPC+H45WB60VUizftuSbSFKh7yYxlYh9xwnFu7WTU="</script>-->
+
+  <script src="http://vjs.zencdn.net/4.8/video.js"></script>
+
+  <script src="voicebase-player-lib/js/lib/fuse.min.js"></script>
+  <script src="voicebase-player-lib/js/jquery.voicebase.js"></script>
+
   <script src="scripts/voicebase-developer-experience.js"></script>
   <script>
     $.noConflict();

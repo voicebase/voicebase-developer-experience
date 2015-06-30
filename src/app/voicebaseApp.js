@@ -3,6 +3,8 @@
 
   angular.module('voicebaseTokensModule', []);
 
+  angular.module('voicebasePlayerModule', []);
+
   angular.module('vbsKeywordGroupWidget', [
     'angularModalService',
     'formValidateModule',
@@ -10,7 +12,8 @@
     'angularUtils.directives.dirPagination',
     'ngFileUpload',
     'ui.select',
-    'ngSanitize'
+    'ngSanitize',
+    'voicebasePlayerModule'
   ]);
 
   angular.module('ramlVoicebaseConsoleApp', [

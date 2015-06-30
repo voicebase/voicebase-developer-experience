@@ -67,10 +67,32 @@
       return deferred.promise;
     };
 
+    var getMediaUrl = function (token, mediaId) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        type: 'GET',
+        url: url + '/media/' + mediaId + '/streams/original?access_token=' + token,
+        //headers: {
+        //  'Authorization': 'Bearer ' + token
+        //},
+        success: function (data, textStatus, request) {
+          var mediaUrl = this.url;
+          deferred.resolve(mediaUrl);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
 
     return {
       postMedia: postMedia,
-      checkMediaFinish: checkMediaFinish
+      checkMediaFinish: checkMediaFinish,
+      getMediaUrl: getMediaUrl
     };
   };
 
