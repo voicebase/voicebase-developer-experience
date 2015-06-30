@@ -74,9 +74,10 @@
 
     <div ng-if="keywordsSpottingCtrl.finishedUpload">
       <voicebase-media-player
-        token="{{keywordsSpottingCtrl.uploadedData.token}}"
-        media-id="{{keywordsSpottingCtrl.uploadedData.uploadedMedia.mediaId}}"
-        media-url="{{keywordsSpottingCtrl.uploadedData.mediaUrl}}">
+        token="{{ keywordsSpottingCtrl.uploadedData.token }}"
+        media-id="{{ keywordsSpottingCtrl.uploadedData.uploadedMedia.mediaId }}"
+        media-url="{{ keywordsSpottingCtrl.uploadedData.mediaUrl }}"
+        media-type="{{ keywordsSpottingCtrl.uploadedData.mediaType }}">
       </voicebase-media-player>
     </div>
 

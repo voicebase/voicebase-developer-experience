@@ -98,6 +98,7 @@
                   me.uploadedData.uploadedMediaGroups = data.media.keywords.latest.groups;
                   me.uploadedData.token = tokenData.token;
                   me.uploadedData.mediaUrl = window.URL.createObjectURL(me.files[0]);
+                  me.uploadedData.mediaType = me.files[0].type;
                   $interval.cancel(checker);
 
                   //keywordsSpottingApi.getMediaUrl(tokenData.token, mediaId)

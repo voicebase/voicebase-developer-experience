@@ -6,10 +6,11 @@
       restrict: 'E',
       templateUrl: 'voicebase-media-player/directives/videojs.tpl.html',
       scope: {
-        mediaUrl: '@'
+        mediaUrl: '@',
+        mediaType: '@'
       },
       link: function link(scope, element) {
-        element.find('source').attr('src', scope.mediaUrl);
+        element.find('source').attr('src', scope.mediaUrl).attr('type', scope.mediaType);
       }
     };
   };

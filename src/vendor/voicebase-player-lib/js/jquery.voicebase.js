@@ -3602,7 +3602,7 @@ voiceBase = (function(VB, $) {
                 $('body').addClass('vbs-readermode');
                 var controlsBlock = $('#' + VB.settings.controlsBlock);
                 searcBarToFullScreen('full');
-                controlsBlock.append('<a href="#" class="vbs-reader-exit">Exit</a>').wrap('<div id="vbs-controls-placement"><div class="vbs-controls-wrapper"></div></div>').addClass('vbs-controls-box');
+                controlsBlock.append('<a href="javascript:void(0)" class="vbs-reader-exit">Exit</a>').wrap('<div id="vbs-controls-placement"><div class="vbs-controls-wrapper"></div></div>').addClass('vbs-controls-box');
                 VB.view.resizeTimelineElements();
                 var classes = VB.data.vclass;
                 if(VB.settings.localApp) {

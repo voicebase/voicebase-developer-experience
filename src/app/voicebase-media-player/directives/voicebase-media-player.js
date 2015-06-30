@@ -8,7 +8,8 @@
       scope: {
         token: '@',
         mediaId: '@',
-        mediaUrl: '@'
+        mediaUrl: '@',
+        mediaType: '@'
       },
       link: function (scope) {
 
