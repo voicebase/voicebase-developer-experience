@@ -3,6 +3,8 @@
 
   angular.module('voicebaseTokensModule', []);
 
+  angular.module('voicebasePlayerModule', []);
+
   angular.module('vbsKeywordGroupWidget', [
     'angularModalService',
     'formValidateModule',
@@ -10,7 +12,8 @@
     'angularUtils.directives.dirPagination',
     'ngFileUpload',
     'ui.select',
-    'ngSanitize'
+    'ngSanitize',
+    'voicebasePlayerModule'
   ]);
 
   angular.module('ramlVoicebaseConsoleApp', [
@@ -1021,9 +1024,9 @@ RAML.Decorators = (function (Decorators) {
         me.isLoaded = false;
         me.pingProcess = false;
         me.isLoadedGroups = true;
-        me.uploadedMedia = null;
-        me.uploadedMediaGroups = null;
         me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
+        me.finishedUpload = keywordsSpottingApi.getMediaReady();
+        me.uploadedData = {};
 
         me.keywordGroups = [];
         me.detectGroups = [];
@@ -1042,24 +1045,18 @@ RAML.Decorators = (function (Decorators) {
         };
         getKeywordGroups();
 
-        me.addDetectGroup = function () {
-          me.detectGroups.push('');
-        };
-
-        me.removeDetectGroup = function (index) {
-          me.detectGroups.splice(index, 1);
-        };
-
         me.validateFormat = function (file) {
-          var format = file.name.substring(file.name.lastIndexOf('.'));
-          var isFileAllow = me.acceptFileFormats.filter(function (_format) {
-            return _format === format;
-          });
-          if(isFileAllow.length === 0) {
-            me.errorMessage = 'Media in ' + format + ' format is not yet supported. Please try uploading media in one of these formats: \n' + me.acceptFileFormats.join(', ');
-          }
-          else {
-            me.errorMessage = '';
+          if(Object.prototype.toString.call(file) === '[object File]') {
+            var format = file.name.substring(file.name.lastIndexOf('.'));
+            var isFileAllow = me.acceptFileFormats.filter(function (_format) {
+              return _format === format;
+            });
+            if(isFileAllow.length === 0) {
+              me.errorMessage = 'Media in ' + format + ' format is not yet supported. Please try uploading media in one of these formats: \n' + me.acceptFileFormats.join(', ');
+            }
+            else {
+              me.errorMessage = '';
+            }
           }
           return me.acceptFileFormats.join(',');
         };
@@ -1072,6 +1069,10 @@ RAML.Decorators = (function (Decorators) {
           var isValid = me.validBeforeUpload();
           if (isValid) {
             me.isLoaded = true;
+
+            me.finishedUpload = false;
+            keywordsSpottingApi.setMediaReady(false);
+
             keywordsSpottingApi.postMedia(tokenData.token, me.files[0], me.detectGroups)
               .then(function (mediaStatus) {
                 me.isLoaded = false;
@@ -1092,9 +1093,19 @@ RAML.Decorators = (function (Decorators) {
               .then(function (data) {
                 if (data.media && data.media.status === 'finished') {
                   me.pingProcess = false;
-                  me.uploadedMedia = data.media;
-                  me.uploadedMediaGroups = data.media.keywords.latest.groups;
+                  me.finishedUpload = true;
+                  keywordsSpottingApi.setMediaReady(true);
+                  me.uploadedData.uploadedMedia = data.media;
+                  me.uploadedData.uploadedMediaGroups = data.media.keywords.latest.groups;
+                  me.uploadedData.token = tokenData.token;
+                  me.uploadedData.mediaUrl = window.URL.createObjectURL(me.files[0]);
+                  me.uploadedData.mediaType = me.files[0].type;
                   $interval.cancel(checker);
+
+                  //keywordsSpottingApi.getMediaUrl(tokenData.token, mediaId)
+                  //  .then(function (url) {
+                  //      console.log(url);
+                  //  });
                 }
               }, function () {
                 me.errorMessage = 'Error of getting file!';
@@ -1295,6 +1306,16 @@ RAML.Decorators = (function (Decorators) {
 
     var url = 'https://apis.voicebase.com/v2-beta';
 
+    var mediaReady = false;
+
+    var getMediaReady = function () {
+        return mediaReady;
+    };
+
+    var setMediaReady = function (_mediaReady) {
+        mediaReady = _mediaReady;
+    };
+
     var postMedia = function (token, file, groups) {
       var deferred = $q.defer();
 
@@ -1357,10 +1378,34 @@ RAML.Decorators = (function (Decorators) {
       return deferred.promise;
     };
 
+    var getMediaUrl = function (token, mediaId) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        type: 'GET',
+        url: url + '/media/' + mediaId + '/streams/original?access_token=' + token,
+        //headers: {
+        //  'Authorization': 'Bearer ' + token
+        //},
+        success: function (data, textStatus, request) {
+          var mediaUrl = this.url;
+          deferred.resolve(mediaUrl);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
 
     return {
       postMedia: postMedia,
-      checkMediaFinish: checkMediaFinish
+      checkMediaFinish: checkMediaFinish,
+      getMediaUrl: getMediaUrl,
+      getMediaReady: getMediaReady,
+      setMediaReady: setMediaReady
     };
   };
 
@@ -1368,6 +1413,103 @@ RAML.Decorators = (function (Decorators) {
     .service('keywordsSpottingApi', keywordsSpottingApi);
 
 })();
+
+(function () {
+  'use strict';
+
+  var videojsPlayer = function () {
+    return {
+      restrict: 'E',
+      templateUrl: 'voicebase-media-player/directives/videojs.tpl.html',
+      scope: {
+        mediaUrl: '@',
+        mediaType: '@'
+      },
+      link: function link(scope, element) {
+        element.find('source').attr('src', scope.mediaUrl).attr('type', scope.mediaType);
+      }
+    };
+  };
+
+  angular.module('voicebasePlayerModule')
+    .directive('videojs', videojsPlayer);
+
+})();
+
+
+(function () {
+  'use strict';
+
+  var voicebaseMediaPlayer = function ($timeout, $compile, keywordsSpottingApi) {
+    return {
+      restrict: 'E',
+      templateUrl: 'voicebase-media-player/directives/voicebase-media-player.tpl.html',
+      scope: {
+        token: '@',
+        mediaId: '@',
+        mediaUrl: '@',
+        mediaType: '@'
+      },
+      link: function (scope) {
+
+        scope.$watch(function () {
+          return keywordsSpottingApi.getMediaReady();
+        }, function (newValue, oldValue) {
+          if (newValue === true) {
+            initPlayer();
+          }
+          else {
+            destroyPlayer();
+          }
+        });
+
+        var initPlayer = function () {
+          destroyPlayer();
+          jQuery('.vbs-media-player').append('<div id="vbs-console-player-wrap"></div>');
+          var playerDir = $compile('<videojs media-url="{{ mediaUrl }}" media-type="{{ mediaType }}"></videojs>')(scope);
+          var $player = jQuery('#vbs-console-player-wrap');
+          $player.append(playerDir);
+
+          $player.voicebase({
+            playerId: 'player',
+            playerType: 'video_js',
+            apiUrl: 'https://apis.voicebase.com/v2-beta/',
+            mediaID: scope.mediaId,
+            token: scope.token,
+            apiVersion: '2.0',
+            localSearch: true,
+            localSearchHelperUrl: 'voicebase-player-lib/js/workers/',
+            keywordsGroups: true,
+
+            actionFlag: {
+              downloadMedia: false,
+              downloadTranscript: false
+            }
+          });
+
+          /*
+           jwplayer('jwplayer').setup({
+           file: '',
+           primary: 'html5',
+           width: '792',
+           height: '480'
+           });
+           */
+
+        };
+
+        var destroyPlayer = function () {
+          jQuery('#vbs-console-player-wrap').voicebase('destroy');
+        };
+      }
+    };
+  };
+
+  angular.module('voicebasePlayerModule')
+    .directive('voicebaseMediaPlayer', voicebaseMediaPlayer);
+
+})();
+
 
 (function () {
   'use strict';
@@ -2218,29 +2360,41 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <css-spinner></css-spinner>\n" +
     "    </div>\n" +
     "\n" +
-    "    <div class=\"panel-group spotting-results row\" ng-if=\"keywordsSpottingCtrl.uploadedMedia\">\n" +
+    "    <div class=\"panel-group spotting-results row\" ng-if=\"keywordsSpottingCtrl.finishedUpload\">\n" +
     "      <div class=\"container-fluid form-group\">\n" +
     "        <div>Upload finished!</div>\n" +
-    "        <div>Media id: {{keywordsSpottingCtrl.uploadedMedia.mediaId}}</div>\n" +
+    "        <div>Media id: {{keywordsSpottingCtrl.uploadedData.uploadedMedia.mediaId}}</div>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"col-md-6\" ng-repeat=\"group in keywordsSpottingCtrl.uploadedMediaGroups\">\n" +
-    "        <div class=\"panel panel-default\">\n" +
-    "          <div class=\"panel-heading spotting-results__group-title\" role=\"tab\">{{ group.name }}</div>\n" +
-    "          <div class=\"panel-body\"></div>\n" +
-    "          <ul class=\"list-group\" ng-if=\"group.keywords.length > 0\">\n" +
-    "            <li class=\"list-group-item\" ng-repeat=\"keyword in group.keywords\">\n" +
-    "              {{ keyword.name }}\n" +
-    "            </li>\n" +
-    "          </ul>\n" +
-    "          <ul class=\"list-group\" ng-if=\"group.keywords.length === 0\">\n" +
-    "            <li class=\"list-group-item spotting-results_empty\">\n" +
-    "              There aren't spotting keywords in group.\n" +
-    "            </li>\n" +
-    "          </ul>\n" +
-    "        </div>\n" +
-    "      </div>\n" +
+    "      <!--\n" +
+    "            <div class=\"col-md-6\" ng-repeat=\"group in keywordsSpottingCtrl.uploadedData.uploadedMediaGroups\">\n" +
+    "              <div class=\"panel panel-default\">\n" +
+    "                <div class=\"panel-heading spotting-results__group-title\" role=\"tab\">{{ group.name }}</div>\n" +
+    "                <div class=\"panel-body\"></div>\n" +
+    "                <ul class=\"list-group\" ng-if=\"group.keywords.length > 0\">\n" +
+    "                  <li class=\"list-group-item\" ng-repeat=\"keyword in group.keywords\">\n" +
+    "                    {{ keyword.name }}\n" +
+    "                  </li>\n" +
+    "                </ul>\n" +
+    "                <ul class=\"list-group\" ng-if=\"group.keywords.length === 0\">\n" +
+    "                  <li class=\"list-group-item spotting-results_empty\">\n" +
+    "                    There aren't spotting keywords in group.\n" +
+    "                  </li>\n" +
+    "                </ul>\n" +
+    "              </div>\n" +
+    "            </div>\n" +
+    "      -->\n" +
     "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <voicebase-media-player\n" +
+    "        token=\"{{ keywordsSpottingCtrl.uploadedData.token }}\"\n" +
+    "        media-id=\"{{ keywordsSpottingCtrl.uploadedData.uploadedMedia.mediaId }}\"\n" +
+    "        media-url=\"{{ keywordsSpottingCtrl.uploadedData.mediaUrl }}\"\n" +
+    "        media-type=\"{{ keywordsSpottingCtrl.uploadedData.mediaType }}\">\n" +
+    "      </voicebase-media-player>\n" +
+    "    </div>\n" +
+    "\n" +
     "  </div>\n" +
     "\n" +
     "  <div ng-if=\"!keywordsSpottingCtrl.isLogin\" class=\"raml-console-error-message\">Please sign in</div>\n" +
@@ -2323,6 +2477,26 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <a href=\"\" ng-click=\"setCurrent(pagination.last)\">&raquo;</a>\n" +
     "    </li>\n" +
     "</ul>\n"
+  );
+
+
+  $templateCache.put('voicebase-media-player/directives/videojs.tpl.html',
+    "<video id=\"player\" class=\"video-js vjs-default-skin vjs-big-play-centered\" controls preload=\"auto\" width=\"100%\" height=\"264\" data-setup=\"\">\n" +
+    "  <source src=\"\" type=\"\">\n" +
+    "  <p class=\"vjs-no-js\">\n" +
+    "    To view this video please enable JavaScript, and consider upgrading to a web browser that\n" +
+    "    <a href=\"http://videojs.com/html5-video-support/\" target=\"_blank\">supports HTML5 video</a>\n" +
+    "  </p>\n" +
+    "</video>\n"
+  );
+
+
+  $templateCache.put('voicebase-media-player/directives/voicebase-media-player.tpl.html',
+    "<div class=\"vbs-media-player\">\n" +
+    "  <div id=\"vbs-console-player-wrap\">\n" +
+    "    <videojs media-url=\"{{ mediaUrl }}\" media-type=\"{{ mediaType }}\"></videojs>\n" +
+    "  </div>\n" +
+    "</div>\n"
   );
 
 
