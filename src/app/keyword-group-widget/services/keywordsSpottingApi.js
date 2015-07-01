@@ -5,6 +5,16 @@
 
     var url = 'https://apis.voicebase.com/v2-beta';
 
+    var mediaReady = false;
+
+    var getMediaReady = function () {
+        return mediaReady;
+    };
+
+    var setMediaReady = function (_mediaReady) {
+        mediaReady = _mediaReady;
+    };
+
     var postMedia = function (token, file, groups) {
       var deferred = $q.defer();
 
@@ -92,7 +102,9 @@
     return {
       postMedia: postMedia,
       checkMediaFinish: checkMediaFinish,
-      getMediaUrl: getMediaUrl
+      getMediaUrl: getMediaUrl,
+      getMediaReady: getMediaReady,
+      setMediaReady: setMediaReady
     };
   };
 

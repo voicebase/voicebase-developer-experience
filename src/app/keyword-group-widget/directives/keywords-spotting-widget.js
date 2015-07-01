@@ -18,10 +18,8 @@
         me.isLoaded = false;
         me.pingProcess = false;
         me.isLoadedGroups = true;
-        me.uploadedMedia = null;
-        me.uploadedMediaGroups = null;
         me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
-        me.finishedUpload = false;
+        me.finishedUpload = keywordsSpottingApi.getMediaReady();
         me.uploadedData = {};
 
         me.keywordGroups = [];
@@ -40,14 +38,6 @@
           }
         };
         getKeywordGroups();
-
-        me.addDetectGroup = function () {
-          me.detectGroups.push('');
-        };
-
-        me.removeDetectGroup = function (index) {
-          me.detectGroups.splice(index, 1);
-        };
 
         me.validateFormat = function (file) {
           if(Object.prototype.toString.call(file) === '[object File]') {
@@ -73,6 +63,10 @@
           var isValid = me.validBeforeUpload();
           if (isValid) {
             me.isLoaded = true;
+
+            me.finishedUpload = false;
+            keywordsSpottingApi.setMediaReady(false);
+
             keywordsSpottingApi.postMedia(tokenData.token, me.files[0], me.detectGroups)
               .then(function (mediaStatus) {
                 me.isLoaded = false;
@@ -94,6 +88,7 @@
                 if (data.media && data.media.status === 'finished') {
                   me.pingProcess = false;
                   me.finishedUpload = true;
+                  keywordsSpottingApi.setMediaReady(true);
                   me.uploadedData.uploadedMedia = data.media;
                   me.uploadedData.uploadedMediaGroups = data.media.keywords.latest.groups;
                   me.uploadedData.token = tokenData.token;
