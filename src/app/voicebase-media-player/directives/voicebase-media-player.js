@@ -40,7 +40,12 @@
             apiVersion: '2.0',
             localSearch: true,
             localSearchHelperUrl: 'voicebase-player-lib/js/workers/',
-            keywordsGroups: true
+            keywordsGroups: true,
+
+            actionFlag: {
+              downloadMedia: false,
+              downloadTranscript: false
+            }
           });
 
           /*
