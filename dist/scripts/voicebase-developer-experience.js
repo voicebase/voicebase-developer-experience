@@ -1088,6 +1088,7 @@ RAML.Decorators = (function (Decorators) {
 
         me.checkMediaFinish = function (mediaId) {
           me.pingProcess = true;
+          var url = window.URL.createObjectURL(me.files[0]);
           var checker = $interval(function () {
             keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
               .then(function (data) {
@@ -1098,19 +1099,22 @@ RAML.Decorators = (function (Decorators) {
                   me.uploadedData.uploadedMedia = data.media;
                   me.uploadedData.uploadedMediaGroups = data.media.keywords.latest.groups;
                   me.uploadedData.token = tokenData.token;
-                  me.uploadedData.mediaUrl = window.URL.createObjectURL(me.files[0]);
+                  me.uploadedData.mediaUrl = url;
                   me.uploadedData.mediaType = me.files[0].type;
                   $interval.cancel(checker);
 
-                  //keywordsSpottingApi.getMediaUrl(tokenData.token, mediaId)
-                  //  .then(function (url) {
-                  //      console.log(url);
-                  //  });
                 }
               }, function () {
                 me.errorMessage = 'Error of getting file!';
               });
           }, 5000);
+
+          keywordsSpottingApi.getMediaUrl(tokenData.token, mediaId)
+            .then(function (_url) {
+              url = _url;
+            });
+
+
         };
 
         me.isAudio = function () {
@@ -1383,12 +1387,9 @@ RAML.Decorators = (function (Decorators) {
 
       jQuery.ajax({
         type: 'GET',
-        url: url + '/media/' + mediaId + '/streams/original?access_token=' + token,
-        //headers: {
-        //  'Authorization': 'Bearer ' + token
-        //},
+        url: url + '/media/' + mediaId + '/streams?access_token=' + token,
         success: function (data, textStatus, request) {
-          var mediaUrl = this.url;
+          var mediaUrl = data.streams.original;
           deferred.resolve(mediaUrl);
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -1448,7 +1449,8 @@ RAML.Decorators = (function (Decorators) {
         token: '@',
         mediaId: '@',
         mediaUrl: '@',
-        mediaType: '@'
+        mediaType: '@',
+        playerType: '@' // 'jwplayer' or 'video_js'
       },
       link: function (scope) {
 
@@ -1466,13 +1468,18 @@ RAML.Decorators = (function (Decorators) {
         var initPlayer = function () {
           destroyPlayer();
           jQuery('.vbs-media-player').append('<div id="vbs-console-player-wrap"></div>');
-          var playerDir = $compile('<videojs media-url="{{ mediaUrl }}" media-type="{{ mediaType }}"></videojs>')(scope);
+
           var $player = jQuery('#vbs-console-player-wrap');
-          $player.append(playerDir);
+          if(scope.playerType === 'video_js') {
+            createVideoJsPlayer();
+          }
+          else if(scope.playerType === 'jwplayer') {
+            createJwPlayer();
+          }
 
           $player.voicebase({
             playerId: 'player',
-            playerType: 'video_js',
+            playerType: scope.playerType,
             apiUrl: 'https://apis.voicebase.com/v2-beta/',
             mediaID: scope.mediaId,
             token: scope.token,
@@ -1486,16 +1493,22 @@ RAML.Decorators = (function (Decorators) {
               downloadTranscript: false
             }
           });
+        };
 
-          /*
-           jwplayer('jwplayer').setup({
-           file: '',
-           primary: 'html5',
-           width: '792',
-           height: '480'
-           });
-           */
+        var createVideoJsPlayer = function () {
+          var playerDir = $compile('<videojs media-url="{{ mediaUrl }}" media-type="{{ mediaType }}"></videojs>')(scope);
+          jQuery('#vbs-console-player-wrap').append(playerDir);
+        };
 
+        var createJwPlayer = function () {
+          jQuery('#vbs-console-player-wrap').append('<div id="player"></div>');
+
+          jwplayer('player').setup({
+            file: scope.mediaUrl,
+            primary: 'html5',
+            width: '100%',
+            height: '264'
+          });
         };
 
         var destroyPlayer = function () {
@@ -2389,6 +2402,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    <div class=\"form-group\">\n" +
     "      <voicebase-media-player\n" +
     "        token=\"{{ keywordsSpottingCtrl.uploadedData.token }}\"\n" +
+    "        player-type=\"jwplayer\"\n" +
     "        media-id=\"{{ keywordsSpottingCtrl.uploadedData.uploadedMedia.mediaId }}\"\n" +
     "        media-url=\"{{ keywordsSpottingCtrl.uploadedData.mediaUrl }}\"\n" +
     "        media-type=\"{{ keywordsSpottingCtrl.uploadedData.mediaType }}\">\n" +
