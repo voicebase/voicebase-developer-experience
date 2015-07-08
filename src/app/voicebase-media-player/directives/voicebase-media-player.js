@@ -9,7 +9,8 @@
         token: '@',
         mediaId: '@',
         mediaUrl: '@',
-        mediaType: '@'
+        mediaType: '@',
+        playerType: '@' // 'jwplayer' or 'video_js'
       },
       link: function (scope) {
 
@@ -27,13 +28,18 @@
         var initPlayer = function () {
           destroyPlayer();
           jQuery('.vbs-media-player').append('<div id="vbs-console-player-wrap"></div>');
-          var playerDir = $compile('<videojs media-url="{{ mediaUrl }}" media-type="{{ mediaType }}"></videojs>')(scope);
+
           var $player = jQuery('#vbs-console-player-wrap');
-          $player.append(playerDir);
+          if(scope.playerType === 'video_js') {
+            createVideoJsPlayer();
+          }
+          else if(scope.playerType === 'jwplayer') {
+            createJwPlayer();
+          }
 
           $player.voicebase({
             playerId: 'player',
-            playerType: 'video_js',
+            playerType: scope.playerType,
             apiUrl: 'https://apis.voicebase.com/v2-beta/',
             mediaID: scope.mediaId,
             token: scope.token,
@@ -47,16 +53,22 @@
               downloadTranscript: false
             }
           });
+        };
 
-          /*
-           jwplayer('jwplayer').setup({
-           file: '',
-           primary: 'html5',
-           width: '792',
-           height: '480'
-           });
-           */
+        var createVideoJsPlayer = function () {
+          var playerDir = $compile('<videojs media-url="{{ mediaUrl }}" media-type="{{ mediaType }}"></videojs>')(scope);
+          jQuery('#vbs-console-player-wrap').append(playerDir);
+        };
 
+        var createJwPlayer = function () {
+          jQuery('#vbs-console-player-wrap').append('<div id="player"></div>');
+
+          jwplayer('player').setup({
+            file: scope.mediaUrl,
+            primary: 'html5',
+            width: '100%',
+            height: '264'
+          });
         };
 
         var destroyPlayer = function () {

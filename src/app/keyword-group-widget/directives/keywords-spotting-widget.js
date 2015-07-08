@@ -82,6 +82,7 @@
 
         me.checkMediaFinish = function (mediaId) {
           me.pingProcess = true;
+          var url = window.URL.createObjectURL(me.files[0]);
           var checker = $interval(function () {
             keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
               .then(function (data) {
@@ -92,19 +93,22 @@
                   me.uploadedData.uploadedMedia = data.media;
                   me.uploadedData.uploadedMediaGroups = data.media.keywords.latest.groups;
                   me.uploadedData.token = tokenData.token;
-                  me.uploadedData.mediaUrl = window.URL.createObjectURL(me.files[0]);
+                  me.uploadedData.mediaUrl = url;
                   me.uploadedData.mediaType = me.files[0].type;
                   $interval.cancel(checker);
 
-                  //keywordsSpottingApi.getMediaUrl(tokenData.token, mediaId)
-                  //  .then(function (url) {
-                  //      console.log(url);
-                  //  });
                 }
               }, function () {
                 me.errorMessage = 'Error of getting file!';
               });
           }, 5000);
+
+          keywordsSpottingApi.getMediaUrl(tokenData.token, mediaId)
+            .then(function (_url) {
+              url = _url;
+            });
+
+
         };
 
         me.isAudio = function () {

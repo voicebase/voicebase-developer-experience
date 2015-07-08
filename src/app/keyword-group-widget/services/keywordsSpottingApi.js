@@ -82,12 +82,9 @@
 
       jQuery.ajax({
         type: 'GET',
-        url: url + '/media/' + mediaId + '/streams/original?access_token=' + token,
-        //headers: {
-        //  'Authorization': 'Bearer ' + token
-        //},
+        url: url + '/media/' + mediaId + '/streams?access_token=' + token,
         success: function (data, textStatus, request) {
-          var mediaUrl = this.url;
+          var mediaUrl = data.streams.original;
           deferred.resolve(mediaUrl);
         },
         error: function (jqXHR, textStatus, errorThrown) {
