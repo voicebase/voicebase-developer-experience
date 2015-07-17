@@ -16,7 +16,7 @@
 
         scope.$watch(function () {
           return keywordsSpottingApi.getMediaReady();
-        }, function (newValue, oldValue) {
+        }, function (newValue) {
           if (newValue === true) {
             initPlayer();
           }
@@ -47,7 +47,6 @@
             localSearch: true,
             localSearchHelperUrl: 'voicebase-player-lib/js/workers/',
             keywordsGroups: true,
-
             actionFlag: {
               downloadMedia: false,
               downloadTranscript: false

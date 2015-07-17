@@ -9,7 +9,7 @@
       scope: {
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, ModalService) {
+      controller: function($scope, $interval, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, ModalService) {
         var me = this;
 
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
@@ -20,7 +20,7 @@
         me.isLoadedGroups = true;
         me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
         me.finishedUpload = keywordsSpottingApi.getMediaReady();
-        me.uploadedData = {};
+        me.uploadedData = [];
 
         me.keywordGroups = [];
         me.detectGroups = [];
@@ -66,23 +66,31 @@
 
             me.finishedUpload = false;
             keywordsSpottingApi.setMediaReady(false);
-
-            keywordsSpottingApi.postMedia(tokenData.token, me.files[0], me.detectGroups)
-              .then(function (mediaStatus) {
-                me.isLoaded = false;
-                if (mediaStatus.mediaId) {
-                  me.checkMediaFinish(mediaStatus.mediaId);
-                }
-              }, function () {
-                me.isLoaded = false;
-                me.errorMessage = 'Can\'t upload media file!';
-              });
+            me.uploadedData = [];
+            for (var i = 0; i < me.files.length; i++) {
+              var file = me.files[i];
+              postMedia(file);
+            }
           }
         };
 
-        me.checkMediaFinish = function (mediaId) {
+        var postMedia = function (file) {
+          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups)
+            .then(function (mediaStatus) {
+              me.isLoaded = false;
+              if (mediaStatus.mediaId) {
+                me.checkMediaFinish(mediaStatus.mediaId, file);
+              }
+            }, function () {
+              me.isLoaded = false;
+              me.errorMessage = 'Can\'t upload media file!';
+            });
+
+        };
+
+        me.checkMediaFinish = function (mediaId, file) {
           me.pingProcess = true;
-          var url = window.URL.createObjectURL(me.files[0]);
+          var url = window.URL.createObjectURL(file);
           var checker = $interval(function () {
             keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
               .then(function (data) {
@@ -90,11 +98,15 @@
                   me.pingProcess = false;
                   me.finishedUpload = true;
                   keywordsSpottingApi.setMediaReady(true);
-                  me.uploadedData.uploadedMedia = data.media;
-                  me.uploadedData.uploadedMediaGroups = data.media.keywords.latest.groups;
-                  me.uploadedData.token = tokenData.token;
-                  me.uploadedData.mediaUrl = url;
-                  me.uploadedData.mediaType = me.files[0].type;
+                  me.uploadedData.push({
+                    uploadedMedia: data.media,
+                    uploadedMediaGroups: data.media.keywords.latest.groups,
+                    token: tokenData.token,
+                    mediaUrl: url,
+                    mediaType: file.type,
+                    mediaName: file.name,
+                    hasSpottedWords: getHasSpottedWords(data.media.keywords.latest.groups)
+                  });
                   $interval.cancel(checker);
 
                 }
@@ -107,20 +119,40 @@
             .then(function (_url) {
               url = _url;
             });
-
-
         };
 
-        me.isAudio = function () {
-          if(me.files && me.files.length) {
-            return me.files[0].type.indexOf('audio') > -1;
+        var getHasSpottedWords = function (groups) {
+          var hasSpotted = false;
+          if(groups && groups.length > 0) {
+            for (var i = 0; i < groups.length; i++) {
+              var group = groups[i];
+              if(group.keywords.length > 0) {
+                hasSpotted = true;
+                break;
+              }
+            }
+          }
+          return hasSpotted;
+        };
+
+        me.showHasSpottedWords = function (uploadedInfo) {
+          var res = '';
+          if(uploadedInfo.hasSpottedWords !== null) {
+            res = (uploadedInfo.hasSpottedWords) ? '(Keywords Spotted)' : '(No Keywords Spotted)';
+          }
+          return res;
+        };
+
+        me.isAudio = function (file) {
+          if(file) {
+            return file.type.indexOf('audio') > -1;
           }
           return false;
         };
 
-        me.isVideo = function () {
-          if(me.files && me.files.length) {
-            return me.files[0].type.indexOf('video') > -1;
+        me.isVideo = function (file) {
+          if(file) {
+            return file.type.indexOf('video') > -1;
           }
           return false;
         };
@@ -137,7 +169,30 @@
           });
         };
 
-
+        me.toggleAccordionPane = function (event) {
+          var $panel = jQuery(event.target).closest('.panel').find('.panel-collapse');
+          var index = parseInt(jQuery(event.target).attr('data-index'));
+          var isOpen = $panel.hasClass('in');
+          jQuery('#files-accordion').find('.panel-collapse').removeClass('in').find('.panel-body').empty();
+          keywordsSpottingApi.setMediaReady(false);
+          if(isOpen) {
+            $panel.removeClass('in');
+          }
+          else {
+            $panel.addClass('in');
+            setTimeout(function () {
+              var player = $compile('<voicebase-media-player ' +
+              'token="' + me.uploadedData[index].token + '"' +
+              'player-type="jwplayer"' +
+              'media-id="' + me.uploadedData[index].uploadedMedia.mediaId + '"' +
+              'media-url="' + me.uploadedData[index].mediaUrl + '"' +
+              'media-type="' + me.uploadedData[index].mediaType + '">' +
+              '</voicebase-media-player>')($scope);
+              $panel.find('.panel-body').append(player);
+              keywordsSpottingApi.setMediaReady(true);
+            }, 0);
+          }
+        };
       }
     };
   };

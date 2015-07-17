@@ -6,7 +6,9 @@
   <div ng-if="keywordsSpottingCtrl.isLogin">
     <div class="drop-box form-group"
          ngf-drop ngf-select ng-model="keywordsSpottingCtrl.files"
-         ngf-drag-over-class="dragover" ngf-allow-dir="false"
+         ngf-drag-over-class="dragover"
+         ngf-allow-dir="false"
+         ngf-multiple="true"
          ngf-accept="keywordsSpottingCtrl.validateFormat($file)">
 
       <div class="drop-box-text">
@@ -16,17 +18,17 @@
         </div>
       </div>
 
-      <div class="drop-box-text">
-        <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isAudio()">
+      <div class="drop-box-text" ng-repeat="_file in keywordsSpottingCtrl.files">
+        <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isAudio(_file)">
           <audio controls class="media-preview"
-                 ngf-src="keywordsSpottingCtrl.files[0]"
+                 ngf-src="_file"
                  ngf-accept="'audio/*'">
 
           </audio>
         </div>
-        <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isVideo()">
+        <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isVideo(_file)">
           <video controls class="media-preview"
-                 ngf-src="keywordsSpottingCtrl.files[0]"
+                 ngf-src="_file"
                  ngf-accept="'video/*'">
           </video>
         </div>
@@ -72,32 +74,26 @@
       <css-spinner></css-spinner>
     </div>
 
-    <div class="panel-group spotting-results row" ng-if="keywordsSpottingCtrl.finishedUpload">
-      <div class="container-fluid form-group">
-        <div>Upload finished!</div>
-        <div>Media id: {{keywordsSpottingCtrl.uploadedData.uploadedMedia.mediaId}}</div>
-      </div>
+    <div class="panel-group spotting-results" id="files-accordion" ng-if="keywordsSpottingCtrl.finishedUpload">
+      <div ng-repeat="uploadedInfo in keywordsSpottingCtrl.uploadedData track by $index">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" ng-attr-data-index="{{ $index }}" href="javascript:void(0)" ng-click="keywordsSpottingCtrl.toggleAccordionPane($event)">
+                {{ uploadedInfo.mediaName }}
+                {{ keywordsSpottingCtrl.showHasSpottedWords(uploadedInfo) }}
+              </a>
+            </h4>
+          </div>
+          <div class="panel-collapse collapse" role="tabpanel">
+            <div class="panel-body"></div>
+          </div>
+        </div>
 
-      <!--
-            <div class="col-md-6" ng-repeat="group in keywordsSpottingCtrl.uploadedData.uploadedMediaGroups">
-              <div class="panel panel-default">
-                <div class="panel-heading spotting-results__group-title" role="tab">{{ group.name }}</div>
-                <div class="panel-body"></div>
-                <ul class="list-group" ng-if="group.keywords.length > 0">
-                  <li class="list-group-item" ng-repeat="keyword in group.keywords">
-                    {{ keyword.name }}
-                  </li>
-                </ul>
-                <ul class="list-group" ng-if="group.keywords.length === 0">
-                  <li class="list-group-item spotting-results_empty">
-                    There aren't spotting keywords in group.
-                  </li>
-                </ul>
-              </div>
-            </div>
-      -->
+      </div>
     </div>
 
+<!--
     <div class="form-group">
       <voicebase-media-player
         token="{{ keywordsSpottingCtrl.uploadedData.token }}"
@@ -107,6 +103,7 @@
         media-type="{{ keywordsSpottingCtrl.uploadedData.mediaType }}">
       </voicebase-media-player>
     </div>
+-->
 
   </div>
 
