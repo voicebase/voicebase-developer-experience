@@ -9,7 +9,7 @@
       scope: {
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, ModalService) {
+      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, ModalService) {
         var me = this;
 
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
@@ -59,15 +59,17 @@
           return !!(me.files && me.files.length);
         };
 
+        var countUploadedFiles = 0;
         me.upload = function () {
           var isValid = me.validBeforeUpload();
           if (isValid) {
             me.isLoaded = true;
 
             me.finishedUpload = false;
+            countUploadedFiles = me.files.length;
             keywordsSpottingApi.setMediaReady(false);
             me.uploadedData = [];
-            for (var i = 0; i < me.files.length; i++) {
+            for (var i = 0; i < countUploadedFiles; i++) {
               var file = me.files[i];
               postMedia(file);
             }
@@ -95,7 +97,6 @@
             keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
               .then(function (data) {
                 if (data.media && data.media.status === 'finished') {
-                  me.pingProcess = false;
                   me.finishedUpload = true;
                   keywordsSpottingApi.setMediaReady(true);
                   me.uploadedData.push({
@@ -107,8 +108,10 @@
                     mediaName: file.name,
                     hasSpottedWords: getHasSpottedWords(data.media.keywords.latest.groups)
                   });
+                  if(me.uploadedData.length === countUploadedFiles) {
+                    me.pingProcess = false;
+                  }
                   $interval.cancel(checker);
-
                 }
               }, function () {
                 me.errorMessage = 'Error of getting file!';
@@ -169,29 +172,22 @@
           });
         };
 
-        me.toggleAccordionPane = function (event) {
-          var $panel = jQuery(event.target).closest('.panel').find('.panel-collapse');
-          var index = parseInt(jQuery(event.target).attr('data-index'));
-          var isOpen = $panel.hasClass('in');
-          jQuery('#files-accordion').find('.panel-collapse').removeClass('in').find('.panel-body').empty();
+        me.toggleAccordionPane = function (uploadedInfo) {
+          var isOpen = uploadedInfo.active;
           keywordsSpottingApi.setMediaReady(false);
-          if(isOpen) {
-            $panel.removeClass('in');
-          }
-          else {
-            $panel.addClass('in');
-            setTimeout(function () {
-              var player = $compile('<voicebase-media-player ' +
-              'token="' + me.uploadedData[index].token + '"' +
-              'player-type="jwplayer"' +
-              'media-id="' + me.uploadedData[index].uploadedMedia.mediaId + '"' +
-              'media-url="' + me.uploadedData[index].mediaUrl + '"' +
-              'media-type="' + me.uploadedData[index].mediaType + '">' +
-              '</voicebase-media-player>')($scope);
-              $panel.find('.panel-body').append(player);
-              keywordsSpottingApi.setMediaReady(true);
-            }, 0);
-          }
+          $timeout(function () {
+            me.uploadedData.forEach(function (_data) {
+              _data.active = false;
+            });
+
+            if(!isOpen) {
+              $timeout(function () {
+                uploadedInfo.active = true;
+                keywordsSpottingApi.setMediaReady(true);
+              }, 0);
+            }
+
+          }, 0);
         };
       }
     };

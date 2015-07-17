@@ -288,6 +288,10 @@
     margin: 15px 0;
   }
 
+  .media-processing-loader {
+    margin-bottom: 35px;
+  }
+
   .media-upload-loader .raml-console-spinner:after {
     content: 'Uploading file..';
   }

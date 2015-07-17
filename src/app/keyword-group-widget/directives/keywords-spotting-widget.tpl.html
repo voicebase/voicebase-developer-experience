@@ -79,31 +79,29 @@
         <div class="panel panel-default">
           <div class="panel-heading" role="tab">
             <h4 class="panel-title">
-              <a role="button" data-toggle="collapse" ng-attr-data-index="{{ $index }}" href="javascript:void(0)" ng-click="keywordsSpottingCtrl.toggleAccordionPane($event)">
+              <a role="button" data-toggle="collapse" ng-attr-data-index="{{ $index }}" href="javascript:void(0)" ng-click="keywordsSpottingCtrl.toggleAccordionPane(uploadedInfo)">
                 {{ uploadedInfo.mediaName }}
                 {{ keywordsSpottingCtrl.showHasSpottedWords(uploadedInfo) }}
               </a>
             </h4>
           </div>
-          <div class="panel-collapse collapse" role="tabpanel">
-            <div class="panel-body"></div>
+          <div class="panel-collapse collapse" ng-class="{'in': uploadedInfo.active === true}" role="tabpanel">
+            <div class="panel-body">
+              <div ng-if="uploadedInfo.active">
+                <voicebase-media-player
+                  token="{{ uploadedInfo.token }}"
+                  player-type="jwplayer"
+                  media-id="{{ uploadedInfo.uploadedMedia.mediaId }}"
+                  media-url="{{ uploadedInfo.mediaUrl }}"
+                  media-type="{{ uploadedInfo.mediaType }}">
+                </voicebase-media-player>
+              </div>
+            </div>
           </div>
         </div>
 
       </div>
     </div>
-
-<!--
-    <div class="form-group">
-      <voicebase-media-player
-        token="{{ keywordsSpottingCtrl.uploadedData.token }}"
-        player-type="jwplayer"
-        media-id="{{ keywordsSpottingCtrl.uploadedData.uploadedMedia.mediaId }}"
-        media-url="{{ keywordsSpottingCtrl.uploadedData.mediaUrl }}"
-        media-type="{{ keywordsSpottingCtrl.uploadedData.mediaType }}">
-      </voicebase-media-player>
-    </div>
--->
 
   </div>
 
