@@ -132,7 +132,9 @@ var voiceBase = (function($) {
         cssPathForPlayerFrame: 'css/vbs-kaltura-iframe.css',
         modalErrors: !1,
         modalSave: !1,
-        nativePlaylist: !0
+        nativePlaylist: !0,
+        restrictions: [],
+        ready: function () {}
     };
     VB.settings = {};
     /*** End Voicebase Plugin Settings ***/
@@ -368,6 +370,16 @@ var voiceBase = (function($) {
         setProperty(s, 'cssPathForPlayerFrame');
         setProperty(s, 'modalSave');
         setProperty(s, 'nativePlaylist');
+
+        // Restrictions of token
+        setProperty(s, 'restrictions');
+        if(VB.settings.restrictions.length > 0) {
+            VB.settings.vbsButtons.edit = VB.settings.restrictions.indexOf('updateTranscript') > -1;
+            VB.settings.editKeywords = VB.settings.restrictions.indexOf('manageKeywords') > -1;
+            VB.settings.vbsButtons.remove = VB.settings.restrictions.indexOf('deleteFile') > -1;
+            VB.settings.vbsButtons.share = VB.settings.restrictions.indexOf('manageShares') > -1;
+        }
+        setProperty(s, 'ready');
     };
 
     var setProperty = function(lowerProps, propertyName){
@@ -413,7 +425,8 @@ var voiceBase = (function($) {
         localData: {},
         isMobile: false,
         keywordClickEvent: null,
-        playlist_meta: null
+        playlist_meta: null,
+        highlightSnippets: null
     };
     VB.data = {};
 
@@ -501,12 +514,20 @@ voiceBase = (function(VB, $) {
                 _parameters.timeout = timeout;
                 delete _parameters.mediaid; // so we can send requests for many mediaIds with one token
                 delete _parameters.externalid;
+
+                // add server restrictions to token
+                if(VB.settings.restrictions && VB.settings.restrictions.length > 0) {
+                    _parameters.privs = VB.settings.restrictions.join(',');
+                }
                 VB.api.call(_parameters, VB.api.setToken);
             }
         },
         setToken: function(data) {
             if (data.requestStatus == 'SUCCESS') {
                 VB.settings.token = data.token;
+                VB.api.parameters.token = data.token;
+                delete VB.api.parameters.apikey;
+                delete VB.api.parameters.password;
                 VB.view.initWithToken();
             } else {
                 alert(data.statusMessage);
@@ -1048,6 +1069,12 @@ voiceBase = (function(VB, $) {
         },
         getSearch: function(terms, start) {
             var me = this;
+            var isValid = VB.api.validateSearch(terms);
+            if(!isValid) {
+                VB.helper.showMessage('Search phrase is invalid. Its length can be up to 255 characters.', 'error');
+                VB.helper.hideLoader();
+                return false;
+            }
             VB.data.clicker = true;
             if(!VB.data.keywordClickEvent) {
                 VB.helper.collapseNewsBlock();
@@ -1074,6 +1101,10 @@ voiceBase = (function(VB, $) {
                     VB.api.setSearch(json, args);
                 }, {start: start, terms: terms});
             }
+        },
+        validateSearch: function (terms) {
+            var termsString = terms.join(' ');
+            return (termsString.length < 255);
         },
         getLocalSearch: function(terms, start) {
             var me = this;
@@ -1203,7 +1234,7 @@ voiceBase = (function(VB, $) {
             if (data.requestStatus == 'SUCCESS') {
                 window.location = data.response.downloadMediaUrl;
             } else {
-                alert(data.statusMessage);
+                VB.helper.showMessage(data.statusMessage, 'error');
             }
         },
         favorite: function(param) {
@@ -1218,7 +1249,7 @@ voiceBase = (function(VB, $) {
         sendFavorite: function(data) {
             if (data.requestStatus != 'SUCCESS') {
                 VB.view.favoriteToggle();
-                alert(data.statusMessage);
+                VB.helper.showMessage(data.statusMessage, 'error');
             }
         },
         getAutoNotesHtmlURL: function() {
@@ -1256,7 +1287,7 @@ voiceBase = (function(VB, $) {
                     args.li.remove();
                 }
             } else {
-                alert(data.statusMessage);
+                VB.helper.showMessage(data.statusMessage, 'error');
             }
         },
         removeKeyword: function(keyword_name, category_name, elem) {
@@ -1281,7 +1312,7 @@ voiceBase = (function(VB, $) {
                 }
                 args.li.remove();
             } else {
-                alert(data.statusMessage);
+                VB.helper.showMessage(data.statusMessage, 'error');
             }
         },
         removeTopic: function(cat) {
@@ -1307,7 +1338,7 @@ voiceBase = (function(VB, $) {
                     VB.helper.keywordsAutoTopicsColumns();
                 }
             } else {
-                alert(data.statusMessage);
+                VB.helper.showMessage(data.statusMessage, 'error');
             }
         },
         addKeywords: function(keywords, times) {
@@ -1343,7 +1374,7 @@ voiceBase = (function(VB, $) {
                     VB.helper.keywordsAutoTopicsColumns();
                 }
             } else {
-                alert(data.statusMessage);
+                VB.helper.showMessage(data.statusMessage, 'error');
             }
         },
         saveTrancript: function(content) {
@@ -1385,7 +1416,7 @@ voiceBase = (function(VB, $) {
                 VB.helper.saveTranscriptError(data.statusMessage);
             }
             else {
-                alert(data.statusMessage);
+                VB.helper.showMessage(data.statusMessage, 'error');
             }
         },
         getNews: function(){
@@ -1762,7 +1793,7 @@ voiceBase = (function(VB, $) {
             if (data.requestStatus == 'SUCCESS') {
                 VB.comments.getComments(VB.helper.find('.vbs-comments-block .vbs-section-title').hasClass('vbs-hidden'), true);
             } else {
-                alert(data.statusMessage);
+                VB.helper.showMessage(data.statusMessage, 'error');
             }
         },
 
@@ -1800,7 +1831,7 @@ voiceBase = (function(VB, $) {
                 VB.comments.commentsTWidget();
             } else {
                 parent_div.find("textarea").attr('disabled', false);
-                alert(data.statusMessage);
+                VB.helper.showMessage(data.statusMessage, 'error');
             }
         },
 
@@ -2098,7 +2129,7 @@ voiceBase = (function(VB, $) {
         },
 
         updateTimeInPopup: function(position) {
-            var time = (position) ? position : VB.data.played;
+            var time = (position || position === 0) ? position : VB.data.played;
             VB.helper.find('.vbs-comments-add-popup #vbs-comment-timeline')
                 .html(VB.helper.parseTime(time))
                 .attr('vbct', time);
@@ -3438,11 +3469,18 @@ voiceBase = (function(VB, $) {
                 }
             });
 
+            window.addEventListener('storage', function (e) {
+                if(e.key === 'vbs-deleted-ids') {
+                    VB.helper.clearUiForDeletedIds();
+                }
+            }, false);
+
             // Delete media action
             VB.helper.find('.vbs-section-btns').on('touchstart click', '.vbs-red-btn', function(event) {
                 event.preventDefault();
                 VB.helper.find('.vbs-section-btns .vbs-del-btn').removeClass('vbs-active');
                 $(this).parents('.vbs-popup').fadeOut('fast');
+                VB.helper.setDeletedIdsInLocalStorage();
                 if (typeof VB.settings.webHooks.remove != 'undefined') {
                     VB.settings.webHooks.remove();
                     return false;
@@ -3862,13 +3900,14 @@ voiceBase = (function(VB, $) {
             // Order
             $('.vbs-transcript-block').on('touchstart click', '.vbs-order-human-trans a', function(event) {
                 if (typeof VB.settings.webHooks.orderTranscript != 'undefined') {
-                    var mediaLength = VB.data.duration / 60;
+                    var mediaLength = (VB.data.duration / 60).toFixed(2);
                     VB.settings.webHooks.orderTranscript({
                         apiUrl: VB.settings.apiUrl,
                         version: VB.settings.version,
                         apiKey: VB.settings.apiKey,
                         password: VB.settings.password,
                         mediaId: VB.settings.mediaId,
+                        mediaUrl: VB.api.response.metadata.response.streamUrl,
                         recordName: VB.api.response.metadata.response.title,
                         mediaLengthInMinutes: mediaLength
                     });
@@ -4444,6 +4483,7 @@ voiceBase = (function(VB, $) {
 
                 VB.view.checkEmptyHeadersForTabs();
                 VB.view.tooltips();
+                VB.methods.ready();
             }
             return false;
         },
@@ -4755,6 +4795,23 @@ voiceBase = (function(VB, $) {
                         scrollTop: spanhl.offset().top - transcripttext.offset().top + transcripttext.scrollTop() - (transcripttext.height() - 20) / 2
                     }, 500);
                 }
+            }
+        },
+        /*
+        * Set background for highlight snippets
+        * @param {Boolean} isShow - flag for showing or hiding background-xolor for snippets
+        * */
+        manageHighlightSnippets: function (isShow) {
+            var snippets = VB.data.highlightSnippets;
+            var $transcript_wrapper = VB.helper.find('.vbs-transcript-wrapper');
+
+            for (var i = 0; i < snippets.length; i++) {
+                var snippet = snippets[i];
+                var $words = $transcript_wrapper.find('.w:wordtime(' + snippet.startTime * 1000 + ',' + snippet.endTime  * 1000 + ')');
+                $words.each(function () {
+                    var color = (isShow) ? snippet.color : '';
+                    $(this).css('background-color', color);
+                });
             }
         },
         track: function(event, args){
@@ -5162,6 +5219,10 @@ voiceBase = (function(VB, $) {
             }
         },
 
+        /*
+        * @param {string} text - message text
+        * @param {string} mode - 'error' || 'info' || ' success'
+        * */
         showMessage: function(text, mode) {
             VB.helper.clearMessage();
             var errorMessage = VB.templates.parse('infoMessage', {
@@ -5188,8 +5249,44 @@ voiceBase = (function(VB, $) {
             else {
                 $transcriptBody.find('.ui-resizable-se,.ui-resizable-e').removeClass('vbs-no-scroll');
             }
-        }
+        },
 
+        setDeletedIdsInLocalStorage: function () {
+            var deletedIds = VB.helper.getDeletedIdsInLocalStorage();
+            deletedIds.push(VB.settings.mediaId);
+            localStorage.setItem('vbs-deleted-ids', JSON.stringify(deletedIds));
+        },
+
+        getDeletedIdsInLocalStorage: function () {
+            return JSON.parse(localStorage.getItem('vbs-deleted-ids')) || [];
+        },
+
+        clearUiForDeletedIds: function () {
+            var deletedIds = VB.helper.getDeletedIdsInLocalStorage();
+            var isDelete = deletedIds.filter(function (_id) {
+                return _id === VB.settings.mediaId;
+            });
+            if(isDelete.length > 0) {
+                $('.vbs-section-btns,.vbs-order-human-trans,.vbs-time').remove();
+                $('.vbs-record-player').hide();
+                VB.helper.showMessage('No such media file!', 'error');
+                VB.PlayerApi.destroy();
+            }
+        },
+
+        hasSpottedKeywordsInGroups: function () {
+            var keywordsData = voiceBase.api.response.keywords;
+            var groups = keywordsData.groups;
+            var hasSpotted = false;
+            for (var i = 0; i < groups.length; i++) {
+                var group = groups[i];
+                if(group.keywords.length > 0) {
+                    hasSpotted = true;
+                    break;
+                }
+            }
+            return hasSpotted;
+        }
     };
 
     return VB;
@@ -5205,6 +5302,9 @@ voiceBase = (function(VB, $) {
             VB.reSettings(options);
             VB.init(VB.settings.playerId);
             VB.view.init(this);
+        },
+        ready: function () {
+            VB.settings.ready.apply(this);
         },
         favorite: function(opt) {
             if (opt)
@@ -5276,6 +5376,30 @@ voiceBase = (function(VB, $) {
         prevCustomMarkers: function () {
             var $markersContainer = VB.helper.find('.vbs-custom-markers');
             VB.helper.moveToPrevMarker($markersContainer);
+        },
+
+        /*
+        * add highlighting to transcript snippets
+        *
+        * @param {Array of Objects} snippets - array of text snippets
+        *   contain: startTime {Number} - start time in seconds
+        *            endTime {Number} - end time in seconds
+        *            color {String} - hex or rgb color
+        * */
+        addHighlightTranscript: function (snippets) {
+            VB.data.highlightSnippets = snippets;
+        },
+
+        showHighlightTranscript: function () {
+            VB.helper.manageHighlightSnippets(true);
+        },
+
+        hideHighlightTranscript: function () {
+            VB.helper.manageHighlightSnippets(false);
+        },
+
+        hasSpottedKeywordsInGroups: function () {
+            return VB.helper.hasSpottedKeywordsInGroups();
         }
     };
 
@@ -5536,6 +5660,7 @@ voiceBase = (function(VB, $) {
 
                     };
                     me.destroy = function () {
+                        me.jw_player.remove();
                     };
                 };
 
@@ -6228,7 +6353,10 @@ voiceBase = (function(VB, $) {
                 var speakerName = VB.speakers.getSpeakerNameByKey(speakerKey);
                 if (typeof speakerName != 'undefined' && (VB.data.lspeaker != speakerName && speakerName.trim() != '>>')) {
                     VB.data.lspeaker = speakerName;
-                    var spblock = '<span class="' + speakerKey + '">' + speakerName + '</span> is speaking';
+                    var spblock = VB.templates.parse('speakerIsSpeaking', {
+                        speakerKey: speakerKey,
+                        speakerName: speakerName
+                    });
                     VB.helper.find('.vbs-voice-name').html(spblock);
                     VB.helper.adjustMediaTime();
                 }
@@ -6255,7 +6383,11 @@ voiceBase = (function(VB, $) {
                     } else {
                         spclass = VB.speakers.getSpeakerKeyByName(spitem.s);
                     }
-                    br += '<span class="vbs-clearfix"></span><span class="vbs-trans-info"><span class="vbs-human-trans-name ' + spclass + '" title="'+spitem.s+'">' + spitem.s + '</span><span class="vbs-human-trans-time">' + VB.helper.parseTime($this.attr('t') / 1000) + '</span></span>';
+                    br += VB.templates.parse('speakerTranscriptLabel', {
+                        spClass: spclass,
+                        speakerName: spitem.s,
+                        speakerTime: VB.helper.parseTime(spitem.t / 1000)
+                    });
                 }
                 jQuery(br).insertBefore(this);
             });
@@ -6355,7 +6487,7 @@ voiceBase = (function(VB, $) {
 
             var speakers_keys = VB.speakers.getSpeakersFromEditor();
 
-            var sem = '<li class="vbs-insert-new-speaker">Insert new speaker</li>';
+            var sem = VB.templates.get('firstSpeakerItem');
             for (var i = 0; i < speakers_keys.length; i++) {
                 var speaker_key = speakers_keys[i];
                 var speaker_name = VB.speakers.getSpeakerNameByKey(speaker_key);
@@ -6416,11 +6548,14 @@ voiceBase = (function(VB, $) {
                 speakerName = VB.speakers.getSpeakerNameByKey(speakerKey);
             }
             if(!selected.prev().hasClass('vbs-edit-speaker') && speakerKey){
-                var insertText = '<span class="w vbs-wd vbs-edit-speaker" m="' + speakerKey + '" t="' + stime + '"><br><br>' + speakerName + ':</span> ';
+                var insertText = VB.templates.parse('insertSpeakerText', {
+                    speakerKey: speakerKey,
+                    speakerTime: stime,
+                    speakerName: speakerName
+                });
                 selected.first().before(insertText);
             }
         },
-
 
         getSpeakersFromEditor: function(){
             var unique_speakers = [];
@@ -6452,7 +6587,6 @@ voiceBase = (function(VB, $) {
         /*
          * Rename speaker in editor
          * */
-
         createRenameSpeakerDialog: function($renameMenuItem){
             $('.vbs-rename-speaker-popup').remove();
             VB.speakers.enableRenameAllSpeakersInEditor();
@@ -6626,17 +6760,19 @@ voiceBase = (function(VB, $) {
                     </div>\n\
                 </div>';
                     tmpl += VB.settings.vbsButtons.share ? '<div class="vbs-share-btn-wrapper"><a href="#" class="vbs-share-btn vbs-popup-btn" data-title="Share"></a></div>' : '';
-                    tmpl += '<div class="vbs-volume-toolbar">\n\
-                    <a href="#" class="vbs-volume-btn" data-title="Volume"></a>\n\
-                    <div class="vbs-volume-toolbar-block" style="display: none;">\n\
-                        <div class="vbs-volume-slider">\n\
-                            <div class="vbs-volume-slider-bg"></div>\n\
-                            <div class="vbs-volume-slider-full"></div>\n\
-                            <div class="vbs-volume-slider-handler"></div>\n\
-                        </div>\n\
-                    </div>\n\
-                </div>\n\
-            </div>';
+                    if(!VB.helper.is_iDevice()) {
+                        tmpl += '<div class="vbs-volume-toolbar">\n\
+                            <a href="#" class="vbs-volume-btn" data-title="Volume"></a>\n\
+                            <div class="vbs-volume-toolbar-block" style="display: none;">\n\
+                                <div class="vbs-volume-slider">\n\
+                                    <div class="vbs-volume-slider-bg"></div>\n\
+                                    <div class="vbs-volume-slider-full"></div>\n\
+                                    <div class="vbs-volume-slider-handler"></div>\n\
+                                </div>\n\
+                            </div>\
+                        </div>';
+                    }
+            tmpl += '</div>';
                     return tmpl;
                 case('vbs-searchbar-outer'):
                     tmpl = '' +
@@ -7209,6 +7345,17 @@ voiceBase = (function(VB, $) {
                 case("speakersFilter"):
                     return '<div id="speakers-block" speakerlist="{{ speakerlist }}" style="{{ style }}"><div class="current-speaker"><h3 data-speaker="{{ curspeaker }}">{{ curspeaker }}</h3></div><div class="speakers-list">Click to drill down into what {{ speakers_links }} talked about, or see keywords for <a href="#all" data-speaker="all">All Speakers</a></div><div style="clear: both;"></div></div>';
 
+                case("speakerIsSpeaking"):
+                    return '<span class="{{ speakerKey }}">{{ speakerName }}</span> is speaking';
+
+                case("speakerTranscriptLabel"):
+                    return '' +
+                        '<span class="vbs-clearfix"></span>' +
+                        '<span class="vbs-trans-info">' +
+                        '   <span class="vbs-human-trans-name {{ spClass }}" title="{{ speakerName }}">{{ speakerName }}</span>' +
+                        '   <span class="vbs-human-trans-time">{{ speakerTime }}</span>' +
+                        '</span>';
+
                 case("deleteTopicPopup"):
                     tmpl = '<div class="vbs-comments-popup vbs-popup vbs-topic-delete-popup" data-topic="{{ topicname }}">\n\
                             <div class="vbs-arrow"></div>\n\
@@ -7335,9 +7482,18 @@ voiceBase = (function(VB, $) {
                         '<li data-lang-code="{{ lang_code }}">{{ lang_name }}</li>';
                     return tmpl;
 
+                case("firstSpeakerItem"):
+                    tmpl = '<li class="vbs-insert-new-speaker">Insert new speaker</li>';
+                    return tmpl;
+
                 case("speakerItem"):
                     tmpl = '' +
                         '<li data-speaker-key="{{ speaker_key }}">{{ speaker_name }}</li>';
+                    return tmpl;
+
+                case("insertSpeakerText"):
+                    tmpl = '' +
+                        '<span class="w vbs-wd vbs-edit-speaker" m="{{ speakerKey }}" t="{{ speakerTime }}"><br><br>{{ speakerName }}:</span>';
                     return tmpl;
 
                 case("savingMessage"):

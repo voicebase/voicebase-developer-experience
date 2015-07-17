@@ -1015,7 +1015,7 @@ RAML.Decorators = (function (Decorators) {
       scope: {
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, ModalService) {
+      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, ModalService) {
         var me = this;
 
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
@@ -1026,7 +1026,7 @@ RAML.Decorators = (function (Decorators) {
         me.isLoadedGroups = true;
         me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
         me.finishedUpload = keywordsSpottingApi.getMediaReady();
-        me.uploadedData = {};
+        me.uploadedData = [];
 
         me.keywordGroups = [];
         me.detectGroups = [];
@@ -1065,44 +1065,59 @@ RAML.Decorators = (function (Decorators) {
           return !!(me.files && me.files.length);
         };
 
+        var countUploadedFiles = 0;
         me.upload = function () {
           var isValid = me.validBeforeUpload();
           if (isValid) {
             me.isLoaded = true;
 
             me.finishedUpload = false;
+            countUploadedFiles = me.files.length;
             keywordsSpottingApi.setMediaReady(false);
-
-            keywordsSpottingApi.postMedia(tokenData.token, me.files[0], me.detectGroups)
-              .then(function (mediaStatus) {
-                me.isLoaded = false;
-                if (mediaStatus.mediaId) {
-                  me.checkMediaFinish(mediaStatus.mediaId);
-                }
-              }, function () {
-                me.isLoaded = false;
-                me.errorMessage = 'Can\'t upload media file!';
-              });
+            me.uploadedData = [];
+            for (var i = 0; i < countUploadedFiles; i++) {
+              var file = me.files[i];
+              postMedia(file);
+            }
           }
         };
 
-        me.checkMediaFinish = function (mediaId) {
+        var postMedia = function (file) {
+          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups)
+            .then(function (mediaStatus) {
+              me.isLoaded = false;
+              if (mediaStatus.mediaId) {
+                me.checkMediaFinish(mediaStatus.mediaId, file);
+              }
+            }, function () {
+              me.isLoaded = false;
+              me.errorMessage = 'Can\'t upload media file!';
+            });
+
+        };
+
+        me.checkMediaFinish = function (mediaId, file) {
           me.pingProcess = true;
-          var url = window.URL.createObjectURL(me.files[0]);
+          var url = window.URL.createObjectURL(file);
           var checker = $interval(function () {
             keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
               .then(function (data) {
                 if (data.media && data.media.status === 'finished') {
-                  me.pingProcess = false;
                   me.finishedUpload = true;
                   keywordsSpottingApi.setMediaReady(true);
-                  me.uploadedData.uploadedMedia = data.media;
-                  me.uploadedData.uploadedMediaGroups = data.media.keywords.latest.groups;
-                  me.uploadedData.token = tokenData.token;
-                  me.uploadedData.mediaUrl = url;
-                  me.uploadedData.mediaType = me.files[0].type;
+                  me.uploadedData.push({
+                    uploadedMedia: data.media,
+                    uploadedMediaGroups: data.media.keywords.latest.groups,
+                    token: tokenData.token,
+                    mediaUrl: url,
+                    mediaType: file.type,
+                    mediaName: file.name,
+                    hasSpottedWords: getHasSpottedWords(data.media.keywords.latest.groups)
+                  });
+                  if(me.uploadedData.length === countUploadedFiles) {
+                    me.pingProcess = false;
+                  }
                   $interval.cancel(checker);
-
                 }
               }, function () {
                 me.errorMessage = 'Error of getting file!';
@@ -1113,20 +1128,40 @@ RAML.Decorators = (function (Decorators) {
             .then(function (_url) {
               url = _url;
             });
-
-
         };
 
-        me.isAudio = function () {
-          if(me.files && me.files.length) {
-            return me.files[0].type.indexOf('audio') > -1;
+        var getHasSpottedWords = function (groups) {
+          var hasSpotted = false;
+          if(groups && groups.length > 0) {
+            for (var i = 0; i < groups.length; i++) {
+              var group = groups[i];
+              if(group.keywords.length > 0) {
+                hasSpotted = true;
+                break;
+              }
+            }
+          }
+          return hasSpotted;
+        };
+
+        me.showHasSpottedWords = function (uploadedInfo) {
+          var res = '';
+          if(uploadedInfo.hasSpottedWords !== null) {
+            res = (uploadedInfo.hasSpottedWords) ? '(Keywords Spotted)' : '(No Keywords Spotted)';
+          }
+          return res;
+        };
+
+        me.isAudio = function (file) {
+          if(file) {
+            return file.type.indexOf('audio') > -1;
           }
           return false;
         };
 
-        me.isVideo = function () {
-          if(me.files && me.files.length) {
-            return me.files[0].type.indexOf('video') > -1;
+        me.isVideo = function (file) {
+          if(file) {
+            return file.type.indexOf('video') > -1;
           }
           return false;
         };
@@ -1143,7 +1178,23 @@ RAML.Decorators = (function (Decorators) {
           });
         };
 
+        me.toggleAccordionPane = function (uploadedInfo) {
+          var isOpen = uploadedInfo.active;
+          keywordsSpottingApi.setMediaReady(false);
+          $timeout(function () {
+            me.uploadedData.forEach(function (_data) {
+              _data.active = false;
+            });
 
+            if(!isOpen) {
+              $timeout(function () {
+                uploadedInfo.active = true;
+                keywordsSpottingApi.setMediaReady(true);
+              }, 0);
+            }
+
+          }, 0);
+        };
       }
     };
   };
@@ -1456,7 +1507,7 @@ RAML.Decorators = (function (Decorators) {
 
         scope.$watch(function () {
           return keywordsSpottingApi.getMediaReady();
-        }, function (newValue, oldValue) {
+        }, function (newValue) {
           if (newValue === true) {
             initPlayer();
           }
@@ -1487,7 +1538,6 @@ RAML.Decorators = (function (Decorators) {
             localSearch: true,
             localSearchHelperUrl: 'voicebase-player-lib/js/workers/',
             keywordsGroups: true,
-
             actionFlag: {
               downloadMedia: false,
               downloadTranscript: false
@@ -2307,7 +2357,9 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  <div ng-if=\"keywordsSpottingCtrl.isLogin\">\n" +
     "    <div class=\"drop-box form-group\"\n" +
     "         ngf-drop ngf-select ng-model=\"keywordsSpottingCtrl.files\"\n" +
-    "         ngf-drag-over-class=\"dragover\" ngf-allow-dir=\"false\"\n" +
+    "         ngf-drag-over-class=\"dragover\"\n" +
+    "         ngf-allow-dir=\"false\"\n" +
+    "         ngf-multiple=\"true\"\n" +
     "         ngf-accept=\"keywordsSpottingCtrl.validateFormat($file)\">\n" +
     "\n" +
     "      <div class=\"drop-box-text\">\n" +
@@ -2317,17 +2369,17 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        </div>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"drop-box-text\">\n" +
-    "        <div class=\"media-preview-container\" ng-if=\"keywordsSpottingCtrl.isAudio()\">\n" +
+    "      <div class=\"drop-box-text\" ng-repeat=\"_file in keywordsSpottingCtrl.files\">\n" +
+    "        <div class=\"media-preview-container\" ng-if=\"keywordsSpottingCtrl.isAudio(_file)\">\n" +
     "          <audio controls class=\"media-preview\"\n" +
-    "                 ngf-src=\"keywordsSpottingCtrl.files[0]\"\n" +
+    "                 ngf-src=\"_file\"\n" +
     "                 ngf-accept=\"'audio/*'\">\n" +
     "\n" +
     "          </audio>\n" +
     "        </div>\n" +
-    "        <div class=\"media-preview-container\" ng-if=\"keywordsSpottingCtrl.isVideo()\">\n" +
+    "        <div class=\"media-preview-container\" ng-if=\"keywordsSpottingCtrl.isVideo(_file)\">\n" +
     "          <video controls class=\"media-preview\"\n" +
-    "                 ngf-src=\"keywordsSpottingCtrl.files[0]\"\n" +
+    "                 ngf-src=\"_file\"\n" +
     "                 ngf-accept=\"'video/*'\">\n" +
     "          </video>\n" +
     "        </div>\n" +
@@ -2373,40 +2425,33 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <css-spinner></css-spinner>\n" +
     "    </div>\n" +
     "\n" +
-    "    <div class=\"panel-group spotting-results row\" ng-if=\"keywordsSpottingCtrl.finishedUpload\">\n" +
-    "      <div class=\"container-fluid form-group\">\n" +
-    "        <div>Upload finished!</div>\n" +
-    "        <div>Media id: {{keywordsSpottingCtrl.uploadedData.uploadedMedia.mediaId}}</div>\n" +
-    "      </div>\n" +
-    "\n" +
-    "      <!--\n" +
-    "            <div class=\"col-md-6\" ng-repeat=\"group in keywordsSpottingCtrl.uploadedData.uploadedMediaGroups\">\n" +
-    "              <div class=\"panel panel-default\">\n" +
-    "                <div class=\"panel-heading spotting-results__group-title\" role=\"tab\">{{ group.name }}</div>\n" +
-    "                <div class=\"panel-body\"></div>\n" +
-    "                <ul class=\"list-group\" ng-if=\"group.keywords.length > 0\">\n" +
-    "                  <li class=\"list-group-item\" ng-repeat=\"keyword in group.keywords\">\n" +
-    "                    {{ keyword.name }}\n" +
-    "                  </li>\n" +
-    "                </ul>\n" +
-    "                <ul class=\"list-group\" ng-if=\"group.keywords.length === 0\">\n" +
-    "                  <li class=\"list-group-item spotting-results_empty\">\n" +
-    "                    There aren't spotting keywords in group.\n" +
-    "                  </li>\n" +
-    "                </ul>\n" +
+    "    <div class=\"panel-group spotting-results\" id=\"files-accordion\" ng-if=\"keywordsSpottingCtrl.finishedUpload\">\n" +
+    "      <div ng-repeat=\"uploadedInfo in keywordsSpottingCtrl.uploadedData track by $index\">\n" +
+    "        <div class=\"panel panel-default\">\n" +
+    "          <div class=\"panel-heading\" role=\"tab\">\n" +
+    "            <h4 class=\"panel-title\">\n" +
+    "              <a role=\"button\" data-toggle=\"collapse\" ng-attr-data-index=\"{{ $index }}\" href=\"javascript:void(0)\" ng-click=\"keywordsSpottingCtrl.toggleAccordionPane(uploadedInfo)\">\n" +
+    "                {{ uploadedInfo.mediaName }}\n" +
+    "                {{ keywordsSpottingCtrl.showHasSpottedWords(uploadedInfo) }}\n" +
+    "              </a>\n" +
+    "            </h4>\n" +
+    "          </div>\n" +
+    "          <div class=\"panel-collapse collapse\" ng-class=\"{'in': uploadedInfo.active === true}\" role=\"tabpanel\">\n" +
+    "            <div class=\"panel-body\">\n" +
+    "              <div ng-if=\"uploadedInfo.active\">\n" +
+    "                <voicebase-media-player\n" +
+    "                  token=\"{{ uploadedInfo.token }}\"\n" +
+    "                  player-type=\"jwplayer\"\n" +
+    "                  media-id=\"{{ uploadedInfo.uploadedMedia.mediaId }}\"\n" +
+    "                  media-url=\"{{ uploadedInfo.mediaUrl }}\"\n" +
+    "                  media-type=\"{{ uploadedInfo.mediaType }}\">\n" +
+    "                </voicebase-media-player>\n" +
     "              </div>\n" +
     "            </div>\n" +
-    "      -->\n" +
-    "    </div>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
     "\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <voicebase-media-player\n" +
-    "        token=\"{{ keywordsSpottingCtrl.uploadedData.token }}\"\n" +
-    "        player-type=\"jwplayer\"\n" +
-    "        media-id=\"{{ keywordsSpottingCtrl.uploadedData.uploadedMedia.mediaId }}\"\n" +
-    "        media-url=\"{{ keywordsSpottingCtrl.uploadedData.mediaUrl }}\"\n" +
-    "        media-type=\"{{ keywordsSpottingCtrl.uploadedData.mediaType }}\">\n" +
-    "      </voicebase-media-player>\n" +
+    "      </div>\n" +
     "    </div>\n" +
     "\n" +
     "  </div>\n" +

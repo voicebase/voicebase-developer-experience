@@ -379,6 +379,9 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   justify-content: center;
   margin: 15px 0;
 }
+.keywords-spotting .media-processing-loader {
+  margin-bottom: 35px;
+}
 .keywords-spotting .media-upload-loader .raml-console-spinner:after {
   content: 'Uploading file..';
 }
@@ -415,7 +418,7 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   margin-bottom: 15px;
 }
 .keywords-spotting .spotting-results .panel-body {
-  padding: 0;
+  padding: 15px;
 }
 .keywords-spotting .spotting-results .spotting-results_empty {
   color: #D14956;
