@@ -1535,6 +1535,7 @@ RAML.Decorators = (function (Decorators) {
             mediaID: scope.mediaId,
             token: scope.token,
             apiVersion: '2.0',
+            mediaTypeOverride: checkType(),
             localSearch: true,
             localSearchHelperUrl: 'voicebase-player-lib/js/workers/',
             keywordsGroups: true,
@@ -1543,6 +1544,17 @@ RAML.Decorators = (function (Decorators) {
               downloadTranscript: false
             }
           });
+        };
+
+        var checkType = function () {
+          var type = 'video';
+          if(scope.mediaType.indexOf('video') > -1) {
+            type = 'video';
+          }
+          else if (scope.mediaType.indexOf('audio') > -1) {
+            type = 'audio';
+          }
+          return type;
         };
 
         var createVideoJsPlayer = function () {
