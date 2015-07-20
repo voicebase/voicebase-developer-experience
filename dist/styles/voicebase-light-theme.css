@@ -407,6 +407,18 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   padding: 7px;
   float: left;
 }
+.keywords-spotting .drop-box-text__file-header .close {
+  float: none;
+  font-size: 16px;
+}
+.keywords-spotting .drop-box-text__file-name {
+  font-weight: bold;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: auto;
+}
 .keywords-spotting .media-preview-container {
   margin: 15px 0;
 }
