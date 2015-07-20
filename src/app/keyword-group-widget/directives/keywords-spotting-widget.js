@@ -25,6 +25,8 @@
         me.keywordGroups = [];
         me.detectGroups = [];
 
+        me.uploadFiles = [];
+
         var getKeywordGroups = function() {
           if(tokenData) {
             me.isLoadedGroups = true;
@@ -38,6 +40,29 @@
           }
         };
         getKeywordGroups();
+
+        me.changeFiles = function (files, event) {
+          if(files.length > 0) {
+            files.forEach(function (_file) {
+              me.uploadFiles.push(_file);
+            })
+          }
+        };
+
+        me.removeFile = function (file, event) {
+          event.preventDefault();
+          event.stopPropagation();
+          me.uploadFiles = me.uploadFiles.filter(function (uploadFile) {
+              return uploadFile.$$hashKey !== file.$$hashKey;
+          });
+        };
+
+        me.removeAllFiles = function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          me.uploadFiles = [];
+          me.files = [];
+        };
 
         me.validateFormat = function (file) {
           if(Object.prototype.toString.call(file) === '[object File]') {
@@ -55,22 +80,22 @@
           return me.acceptFileFormats.join(',');
         };
 
-        me.validBeforeUpload = function () {
-          return !!(me.files && me.files.length);
+        me.validBeforeUpload = function (files) {
+          return !!(files && files.length);
         };
 
         var countUploadedFiles = 0;
         me.upload = function () {
-          var isValid = me.validBeforeUpload();
+          var isValid = me.validBeforeUpload(me.uploadFiles);
           if (isValid) {
             me.isLoaded = true;
 
             me.finishedUpload = false;
-            countUploadedFiles = me.files.length;
+            countUploadedFiles = me.uploadFiles.length;
             keywordsSpottingApi.setMediaReady(false);
             me.uploadedData = [];
             for (var i = 0; i < countUploadedFiles; i++) {
-              var file = me.files[i];
+              var file = me.uploadFiles[i];
               postMedia(file);
             }
           }

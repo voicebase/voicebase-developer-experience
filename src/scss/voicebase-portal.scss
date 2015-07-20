@@ -324,6 +324,13 @@
     float: left;
   }
 
+  .drop-box-text__file-header {
+    .close {
+      float: none;
+      font-size: 16px;
+    }
+  }
+
   .drop-box-text__file-name {
     font-weight: bold;
     max-width: 300px;

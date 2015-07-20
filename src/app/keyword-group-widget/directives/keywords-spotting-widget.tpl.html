@@ -9,7 +9,8 @@
          ngf-drag-over-class="dragover"
          ngf-allow-dir="false"
          ngf-multiple="true"
-         ngf-accept="keywordsSpottingCtrl.validateFormat($file)">
+         ngf-accept="keywordsSpottingCtrl.validateFormat($file)"
+         ngf-change="keywordsSpottingCtrl.changeFiles($files, $event)">
 
       <div class="drop-box-text">
         <div>
@@ -18,8 +19,15 @@
         </div>
       </div>
 
-      <div class="drop-box-text" ng-repeat="_file in keywordsSpottingCtrl.files">
-        <div class="drop-box-text__file-name">{{ _file.name }}</div>
+      <div class="drop-box-text" ng-repeat="_file in keywordsSpottingCtrl.uploadFiles">
+        <div class="drop-box-text__file-header">
+          <span class="drop-box-text__file-name">{{ _file.name }}</span>
+          <button type="button" class="close"
+                  data-toggle="tooltip" data-placement="top" title="Delete file"
+                  ng-click="keywordsSpottingCtrl.removeFile(_file, $event)">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
         <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isAudio(_file)">
           <audio controls class="media-preview"
                  ngf-src="_file"
@@ -33,6 +41,14 @@
                  ngf-accept="'video/*'">
           </video>
         </div>
+      </div>
+
+      <div ng-if="keywordsSpottingCtrl.uploadFiles.length > 1">
+        <button type="button" class="btn btn-danger"
+                ng-click="keywordsSpottingCtrl.removeAllFiles($event)">
+          Remove All Files
+          <i class="fa fa-times"></i>
+        </button>
       </div>
 
     </div>
