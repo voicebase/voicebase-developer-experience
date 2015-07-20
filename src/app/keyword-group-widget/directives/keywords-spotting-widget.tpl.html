@@ -19,6 +19,7 @@
       </div>
 
       <div class="drop-box-text" ng-repeat="_file in keywordsSpottingCtrl.files">
+        <div class="drop-box-text__file-name">{{ _file.name }}</div>
         <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isAudio(_file)">
           <audio controls class="media-preview"
                  ngf-src="_file"
