@@ -45,7 +45,7 @@
           if(files.length > 0) {
             files.forEach(function (_file) {
               me.uploadFiles.push(_file);
-            })
+            });
           }
         };
 

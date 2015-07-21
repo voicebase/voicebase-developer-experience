@@ -19,31 +19,39 @@
         </div>
       </div>
 
-      <div class="drop-box-text" ng-repeat="_file in keywordsSpottingCtrl.uploadFiles">
-        <div class="drop-box-text__file-header">
-          <span class="drop-box-text__file-name">{{ _file.name }}</span>
-          <button type="button" class="close"
-                  data-toggle="tooltip" data-placement="top" title="Delete file"
-                  ng-click="keywordsSpottingCtrl.removeFile(_file, $event)">
-            <i class="fa fa-times"></i>
-          </button>
-        </div>
-        <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isAudio(_file)">
-          <audio controls class="media-preview"
-                 ngf-src="_file"
-                 ngf-accept="'audio/*'">
+      <div class="drop-box-all-preview">
+        <div class="drop-box-preview" ng-repeat="_file in keywordsSpottingCtrl.uploadFiles">
 
-          </audio>
-        </div>
-        <div class="media-preview-container" ng-if="keywordsSpottingCtrl.isVideo(_file)">
-          <video controls class="media-preview"
-                 ngf-src="_file"
-                 ngf-accept="'video/*'">
-          </video>
+          <div class="drop-box-text__file-header drop-box-preview__cell">
+            <span class="drop-box-text__file-name">{{ _file.name }}</span>
+          </div>
+
+          <div class="media-preview-container drop-box-preview__cell" ng-if="keywordsSpottingCtrl.isAudio(_file)">
+            <audio controls class="media-preview"
+                   ngf-src="_file"
+                   ngf-accept="'audio/*'">
+
+            </audio>
+          </div>
+          <div class="media-preview-container drop-box-preview__cell" ng-if="keywordsSpottingCtrl.isVideo(_file)">
+            <video controls class="media-preview"
+                   ngf-src="_file"
+                   ngf-accept="'video/*'">
+            </video>
+          </div>
+
+          <div class="drop-box-text__file-buttons drop-box-preview__cell">
+            <button type="button" class="close"
+                    data-toggle="tooltip" data-placement="top" title="Delete file"
+                    ng-click="keywordsSpottingCtrl.removeFile(_file, $event)">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+
         </div>
       </div>
 
-      <div ng-if="keywordsSpottingCtrl.uploadFiles.length > 1">
+      <div class="drop-box-text" ng-if="keywordsSpottingCtrl.uploadFiles.length > 1">
         <button type="button" class="btn btn-danger"
                 ng-click="keywordsSpottingCtrl.removeAllFiles($event)">
           Remove All Files

@@ -314,6 +314,20 @@
     margin: auto;
   }
 
+  .drop-box-all-preview {
+    display: table;
+    margin: auto;
+  }
+
+  .drop-box-preview {
+    display: table-row;
+  }
+
+  .drop-box-preview__cell {
+    display: table-cell;
+    padding: 15px;
+  }
+
   .drop-box-text__icon {
     padding: 3px;
     float: left;
@@ -325,6 +339,15 @@
   }
 
   .drop-box-text__file-header {
+    text-align: right;
+    font-weight: bold;
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .drop-box-text__file-buttons {
     .close {
       float: none;
       font-size: 16px;
@@ -332,21 +355,16 @@
   }
 
   .drop-box-text__file-name {
-    font-weight: bold;
-    max-width: 300px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     margin: auto;
   }
 
   .media-preview-container {
-    margin: 15px 0;
+    margin: 0;
   }
 
   .media-preview {
     max-width: 300px;
-    max-height: 150px;
+    vertical-align: middle;
   }
 
   .spotting-results {
@@ -367,4 +385,36 @@
     }
   }
 
+}
+
+@media (max-width: 600px) {
+  .keywords-spotting {
+    .drop-box-all-preview {
+      display: block;
+    }
+
+    .drop-box-preview {
+      position: relative;
+      display: table;
+      margin: auto;
+    }
+
+    .drop-box-text__file-header {
+      display: block;
+      float: left;
+    }
+
+    .media-preview-container {
+      display: block;
+      float: left;
+      clear: both;
+    }
+
+    .drop-box-text__file-buttons {
+      display: block;
+      float: right;
+      position: absolute;
+      right: 0;
+    }
+  }
 }
