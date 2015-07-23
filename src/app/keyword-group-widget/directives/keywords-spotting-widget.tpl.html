@@ -5,21 +5,25 @@
   </div>
   <div ng-if="keywordsSpottingCtrl.isLogin">
     <div class="drop-box form-group"
-         ngf-drop ngf-select ng-model="keywordsSpottingCtrl.files"
+         ngf-drop
+         ngf-select
+         ng-model="keywordsSpottingCtrl.files"
          ngf-drag-over-class="dragover"
          ngf-allow-dir="false"
          ngf-multiple="true"
          ngf-accept="keywordsSpottingCtrl.validateFormat($file)"
-         ngf-change="keywordsSpottingCtrl.changeFiles($files, $event)">
+         ngf-change="keywordsSpottingCtrl.changeFiles($files, $event)"
+         ng-disabled="!keywordsSpottingCtrl.isEnableFileSelect"
+         ng-class="!keywordsSpottingCtrl.isEnableFileSelect ? 'drop-box__disabled' : ''">
 
-      <div class="drop-box-text">
+      <div class="drop-box-text" ng-class="!keywordsSpottingCtrl.isEnableFileSelect ? 'drop-box-inner__disabled' : ''">
         <div>
           <i class="drop-box-text__icon fa fa-2x fa-cloud-upload"></i>
           <div class="drop-box-text__label">Drop file here to upload, or browse</div>
         </div>
       </div>
 
-      <div class="drop-box-all-preview">
+      <div class="drop-box-all-preview" ng-class="!keywordsSpottingCtrl.isEnableFileSelect ? 'drop-box-inner__disabled' : ''">
         <div class="drop-box-preview" ng-repeat="_file in keywordsSpottingCtrl.uploadFiles">
 
           <div class="drop-box-text__file-header drop-box-preview__cell">
@@ -43,7 +47,8 @@
           <div class="drop-box-text__file-buttons drop-box-preview__cell">
             <button type="button" class="close"
                     data-toggle="tooltip" data-placement="top" title="Delete file"
-                    ng-click="keywordsSpottingCtrl.removeFile(_file, $event)">
+                    ng-click="keywordsSpottingCtrl.removeFile(_file, $event)"
+                    ng-if="keywordsSpottingCtrl.isEnableFileSelect">
               <i class="fa fa-times"></i>
             </button>
           </div>
@@ -51,7 +56,7 @@
         </div>
       </div>
 
-      <div class="drop-box-text" ng-if="keywordsSpottingCtrl.uploadFiles.length > 1">
+      <div class="drop-box-text" ng-if="keywordsSpottingCtrl.uploadFiles.length > 1 && keywordsSpottingCtrl.isEnableFileSelect">
         <button type="button" class="btn btn-danger"
                 ng-click="keywordsSpottingCtrl.removeAllFiles($event)">
           Remove All Files
@@ -59,9 +64,17 @@
         </button>
       </div>
 
+      <div class="drop-box-text" ng-if="keywordsSpottingCtrl.showStartOverBtn">
+        <button type="button" class="btn btn-success"
+                ng-click="keywordsSpottingCtrl.startOver($event)">
+          Start Over
+          <i class="fa fa-undo"></i>
+        </button>
+      </div>
+
     </div>
 
-    <div class="form-group" ng-if="!keywordsSpottingCtrl.createLoading">
+    <div class="form-group" ng-if="!keywordsSpottingCtrl.createLoading && keywordsSpottingCtrl.isEnableFileSelect">
       <button type="button" class="btn btn-link add-keyword"
               change-keyword-group
               modal-keyword-group-mode="create"
@@ -75,7 +88,7 @@
     </div>
 
     <div ng-if="!keywordsSpottingCtrl.isLoadedGroups" class="form-group">
-      <ui-select multiple ng-model="keywordsSpottingCtrl.detectGroups">
+      <ui-select multiple ng-model="keywordsSpottingCtrl.detectGroups" ng-disabled="!keywordsSpottingCtrl.isEnableFileSelect">
         <ui-select-match placeholder="Select groups...">{{ $item.name }}</ui-select-match>
         <ui-select-choices repeat="group in keywordsSpottingCtrl.keywordGroups | filter:$select.search">
           {{ group.name }}

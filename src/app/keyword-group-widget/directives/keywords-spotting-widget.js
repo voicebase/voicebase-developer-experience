@@ -21,6 +21,8 @@
         me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
         me.finishedUpload = keywordsSpottingApi.getMediaReady();
         me.uploadedData = [];
+        me.isEnableFileSelect = true;
+        me.showStartOverBtn = false;
 
         me.keywordGroups = [];
         me.detectGroups = [];
@@ -62,6 +64,15 @@
           event.stopPropagation();
           me.uploadFiles = [];
           me.files = [];
+          me.isEnableFileSelect = true;
+        };
+
+        me.startOver = function (event) {
+          me.removeAllFiles(event);
+          me.detectGroups = [];
+          me.uploadedData = [];
+          me.finishedUpload = false;
+          me.showStartOverBtn = false;
         };
 
         me.validateFormat = function (file) {
@@ -88,6 +99,7 @@
         me.upload = function () {
           var isValid = me.validBeforeUpload(me.uploadFiles);
           if (isValid) {
+            me.isEnableFileSelect = false;
             me.isLoaded = true;
 
             me.finishedUpload = false;
@@ -135,6 +147,7 @@
                   });
                   if(me.uploadedData.length === countUploadedFiles) {
                     me.pingProcess = false;
+                    me.showStartOverBtn = true;
                   }
                   $interval.cancel(checker);
                 }

@@ -271,6 +271,15 @@
       background-color: #F5F5F5;
     }
 
+    &.drop-box__disabled {
+      background-color: #DFDFDF;
+      cursor: not-allowed;
+    }
+
+  }
+
+  .drop-box-inner__disabled {
+    opacity: 0.5;
   }
 
   .raml-console-spinner {
