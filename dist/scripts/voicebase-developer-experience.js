@@ -1027,6 +1027,8 @@ RAML.Decorators = (function (Decorators) {
         me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
         me.finishedUpload = keywordsSpottingApi.getMediaReady();
         me.uploadedData = [];
+        me.isEnableFileSelect = true;
+        me.showStartOverBtn = false;
 
         me.keywordGroups = [];
         me.detectGroups = [];
@@ -1051,7 +1053,7 @@ RAML.Decorators = (function (Decorators) {
           if(files.length > 0) {
             files.forEach(function (_file) {
               me.uploadFiles.push(_file);
-            })
+            });
           }
         };
 
@@ -1068,6 +1070,15 @@ RAML.Decorators = (function (Decorators) {
           event.stopPropagation();
           me.uploadFiles = [];
           me.files = [];
+          me.isEnableFileSelect = true;
+        };
+
+        me.startOver = function (event) {
+          me.removeAllFiles(event);
+          me.detectGroups = [];
+          me.uploadedData = [];
+          me.finishedUpload = false;
+          me.showStartOverBtn = false;
         };
 
         me.validateFormat = function (file) {
@@ -1094,6 +1105,7 @@ RAML.Decorators = (function (Decorators) {
         me.upload = function () {
           var isValid = me.validBeforeUpload(me.uploadFiles);
           if (isValid) {
+            me.isEnableFileSelect = false;
             me.isLoaded = true;
 
             me.finishedUpload = false;
@@ -1141,6 +1153,7 @@ RAML.Decorators = (function (Decorators) {
                   });
                   if(me.uploadedData.length === countUploadedFiles) {
                     me.pingProcess = false;
+                    me.showStartOverBtn = true;
                   }
                   $interval.cancel(checker);
                 }
@@ -2393,45 +2406,58 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  </div>\n" +
     "  <div ng-if=\"keywordsSpottingCtrl.isLogin\">\n" +
     "    <div class=\"drop-box form-group\"\n" +
-    "         ngf-drop ngf-select ng-model=\"keywordsSpottingCtrl.files\"\n" +
+    "         ngf-drop\n" +
+    "         ngf-select\n" +
+    "         ng-model=\"keywordsSpottingCtrl.files\"\n" +
     "         ngf-drag-over-class=\"dragover\"\n" +
     "         ngf-allow-dir=\"false\"\n" +
     "         ngf-multiple=\"true\"\n" +
     "         ngf-accept=\"keywordsSpottingCtrl.validateFormat($file)\"\n" +
-    "         ngf-change=\"keywordsSpottingCtrl.changeFiles($files, $event)\">\n" +
+    "         ngf-change=\"keywordsSpottingCtrl.changeFiles($files, $event)\"\n" +
+    "         ng-disabled=\"!keywordsSpottingCtrl.isEnableFileSelect\"\n" +
+    "         ng-class=\"!keywordsSpottingCtrl.isEnableFileSelect ? 'drop-box__disabled' : ''\">\n" +
     "\n" +
-    "      <div class=\"drop-box-text\">\n" +
+    "      <div class=\"drop-box-text\" ng-class=\"!keywordsSpottingCtrl.isEnableFileSelect ? 'drop-box-inner__disabled' : ''\">\n" +
     "        <div>\n" +
     "          <i class=\"drop-box-text__icon fa fa-2x fa-cloud-upload\"></i>\n" +
     "          <div class=\"drop-box-text__label\">Drop file here to upload, or browse</div>\n" +
     "        </div>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"drop-box-text\" ng-repeat=\"_file in keywordsSpottingCtrl.uploadFiles\">\n" +
-    "        <div class=\"drop-box-text__file-header\">\n" +
-    "          <span class=\"drop-box-text__file-name\">{{ _file.name }}</span>\n" +
-    "          <button type=\"button\" class=\"close\"\n" +
-    "                  data-toggle=\"tooltip\" data-placement=\"top\" title=\"Delete file\"\n" +
-    "                  ng-click=\"keywordsSpottingCtrl.removeFile(_file, $event)\">\n" +
-    "            <i class=\"fa fa-times\"></i>\n" +
-    "          </button>\n" +
-    "        </div>\n" +
-    "        <div class=\"media-preview-container\" ng-if=\"keywordsSpottingCtrl.isAudio(_file)\">\n" +
-    "          <audio controls class=\"media-preview\"\n" +
-    "                 ngf-src=\"_file\"\n" +
-    "                 ngf-accept=\"'audio/*'\">\n" +
+    "      <div class=\"drop-box-all-preview\" ng-class=\"!keywordsSpottingCtrl.isEnableFileSelect ? 'drop-box-inner__disabled' : ''\">\n" +
+    "        <div class=\"drop-box-preview\" ng-repeat=\"_file in keywordsSpottingCtrl.uploadFiles\">\n" +
     "\n" +
-    "          </audio>\n" +
-    "        </div>\n" +
-    "        <div class=\"media-preview-container\" ng-if=\"keywordsSpottingCtrl.isVideo(_file)\">\n" +
-    "          <video controls class=\"media-preview\"\n" +
-    "                 ngf-src=\"_file\"\n" +
-    "                 ngf-accept=\"'video/*'\">\n" +
-    "          </video>\n" +
+    "          <div class=\"drop-box-text__file-header drop-box-preview__cell\">\n" +
+    "            <span class=\"drop-box-text__file-name\">{{ _file.name }}</span>\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"media-preview-container drop-box-preview__cell\" ng-if=\"keywordsSpottingCtrl.isAudio(_file)\">\n" +
+    "            <audio controls class=\"media-preview\"\n" +
+    "                   ngf-src=\"_file\"\n" +
+    "                   ngf-accept=\"'audio/*'\">\n" +
+    "\n" +
+    "            </audio>\n" +
+    "          </div>\n" +
+    "          <div class=\"media-preview-container drop-box-preview__cell\" ng-if=\"keywordsSpottingCtrl.isVideo(_file)\">\n" +
+    "            <video controls class=\"media-preview\"\n" +
+    "                   ngf-src=\"_file\"\n" +
+    "                   ngf-accept=\"'video/*'\">\n" +
+    "            </video>\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"drop-box-text__file-buttons drop-box-preview__cell\">\n" +
+    "            <button type=\"button\" class=\"close\"\n" +
+    "                    data-toggle=\"tooltip\" data-placement=\"top\" title=\"Delete file\"\n" +
+    "                    ng-click=\"keywordsSpottingCtrl.removeFile(_file, $event)\"\n" +
+    "                    ng-if=\"keywordsSpottingCtrl.isEnableFileSelect\">\n" +
+    "              <i class=\"fa fa-times\"></i>\n" +
+    "            </button>\n" +
+    "          </div>\n" +
+    "\n" +
     "        </div>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div ng-if=\"keywordsSpottingCtrl.uploadFiles.length > 1\">\n" +
+    "      <div class=\"drop-box-text\" ng-if=\"keywordsSpottingCtrl.uploadFiles.length > 1 && keywordsSpottingCtrl.isEnableFileSelect\">\n" +
     "        <button type=\"button\" class=\"btn btn-danger\"\n" +
     "                ng-click=\"keywordsSpottingCtrl.removeAllFiles($event)\">\n" +
     "          Remove All Files\n" +
@@ -2439,9 +2465,17 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        </button>\n" +
     "      </div>\n" +
     "\n" +
+    "      <div class=\"drop-box-text\" ng-if=\"keywordsSpottingCtrl.showStartOverBtn\">\n" +
+    "        <button type=\"button\" class=\"btn btn-success\"\n" +
+    "                ng-click=\"keywordsSpottingCtrl.startOver($event)\">\n" +
+    "          Start Over\n" +
+    "          <i class=\"fa fa-undo\"></i>\n" +
+    "        </button>\n" +
+    "      </div>\n" +
+    "\n" +
     "    </div>\n" +
     "\n" +
-    "    <div class=\"form-group\" ng-if=\"!keywordsSpottingCtrl.createLoading\">\n" +
+    "    <div class=\"form-group\" ng-if=\"!keywordsSpottingCtrl.createLoading && keywordsSpottingCtrl.isEnableFileSelect\">\n" +
     "      <button type=\"button\" class=\"btn btn-link add-keyword\"\n" +
     "              change-keyword-group\n" +
     "              modal-keyword-group-mode=\"create\"\n" +
@@ -2455,7 +2489,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    </div>\n" +
     "\n" +
     "    <div ng-if=\"!keywordsSpottingCtrl.isLoadedGroups\" class=\"form-group\">\n" +
-    "      <ui-select multiple ng-model=\"keywordsSpottingCtrl.detectGroups\">\n" +
+    "      <ui-select multiple ng-model=\"keywordsSpottingCtrl.detectGroups\" ng-disabled=\"!keywordsSpottingCtrl.isEnableFileSelect\">\n" +
     "        <ui-select-match placeholder=\"Select groups...\">{{ $item.name }}</ui-select-match>\n" +
     "        <ui-select-choices repeat=\"group in keywordsSpottingCtrl.keywordGroups | filter:$select.search\">\n" +
     "          {{ group.name }}\n" +
