@@ -1015,7 +1015,7 @@ RAML.Decorators = (function (Decorators) {
       scope: {
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, ModalService) {
+      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService) {
         var me = this;
 
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
@@ -1025,7 +1025,7 @@ RAML.Decorators = (function (Decorators) {
         me.pingProcess = false;
         me.isLoadedGroups = true;
         me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
-        me.finishedUpload = keywordsSpottingApi.getMediaReady();
+        me.finishedUpload = false;
         me.uploadedData = [];
         me.isEnableFileSelect = true;
         me.showStartOverBtn = false;
@@ -1110,7 +1110,7 @@ RAML.Decorators = (function (Decorators) {
 
             me.finishedUpload = false;
             countUploadedFiles = me.uploadFiles.length;
-            keywordsSpottingApi.setMediaReady(false);
+            voicebasePlayerService.destroyVoicebase();
             me.uploadedData = [];
             for (var i = 0; i < countUploadedFiles; i++) {
               var file = me.uploadFiles[i];
@@ -1137,34 +1137,37 @@ RAML.Decorators = (function (Decorators) {
           me.pingProcess = true;
           var url = window.URL.createObjectURL(file);
           var checker = $interval(function () {
-            keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
-              .then(function (data) {
-                if (data.media && data.media.status === 'finished') {
-                  me.finishedUpload = true;
-                  keywordsSpottingApi.setMediaReady(true);
-                  me.uploadedData.push({
-                    uploadedMedia: data.media,
-                    uploadedMediaGroups: data.media.keywords.latest.groups,
-                    token: tokenData.token,
-                    mediaUrl: url,
-                    mediaType: file.type,
-                    mediaName: file.name,
-                    hasSpottedWords: getHasSpottedWords(data.media.keywords.latest.groups)
-                  });
-                  if(me.uploadedData.length === countUploadedFiles) {
-                    me.pingProcess = false;
-                    me.showStartOverBtn = true;
-                  }
-                  $interval.cancel(checker);
-                }
-              }, function () {
-                me.errorMessage = 'Error of getting file!';
-              });
+            checkMediaHandler(checker, url, mediaId, file);
           }, 5000);
 
           keywordsSpottingApi.getMediaUrl(tokenData.token, mediaId)
             .then(function (_url) {
               url = _url;
+            });
+        };
+
+        var checkMediaHandler = function (checker, url, mediaId, file) {
+          keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
+            .then(function (data) {
+              if (data.media && data.media.status === 'finished') {
+                me.finishedUpload = true;
+                me.uploadedData.push({
+                  uploadedMedia: data.media,
+                  uploadedMediaGroups: data.media.keywords.latest.groups,
+                  token: tokenData.token,
+                  mediaUrl: url,
+                  mediaType: file.type,
+                  mediaName: file.name,
+                  hasSpottedWords: getHasSpottedWords(data.media.keywords.latest.groups)
+                });
+                if(me.uploadedData.length === countUploadedFiles) {
+                  me.pingProcess = false;
+                  me.showStartOverBtn = true;
+                }
+                $interval.cancel(checker);
+              }
+            }, function () {
+              me.errorMessage = 'Error of getting file!';
             });
         };
 
@@ -1180,14 +1183,6 @@ RAML.Decorators = (function (Decorators) {
             }
           }
           return hasSpotted;
-        };
-
-        me.showHasSpottedWords = function (uploadedInfo) {
-          var res = '';
-          if(uploadedInfo.hasSpottedWords !== null) {
-            res = (uploadedInfo.hasSpottedWords) ? '(Keywords Spotted)' : '(No Keywords Spotted)';
-          }
-          return res;
         };
 
         me.isAudio = function (file) {
@@ -1216,23 +1211,6 @@ RAML.Decorators = (function (Decorators) {
           });
         };
 
-        me.toggleAccordionPane = function (uploadedInfo) {
-          var isOpen = uploadedInfo.active;
-          keywordsSpottingApi.setMediaReady(false);
-          $timeout(function () {
-            me.uploadedData.forEach(function (_data) {
-              _data.active = false;
-            });
-
-            if(!isOpen) {
-              $timeout(function () {
-                uploadedInfo.active = true;
-                keywordsSpottingApi.setMediaReady(true);
-              }, 0);
-            }
-
-          }, 0);
-        };
       }
     };
   };
@@ -1401,14 +1379,6 @@ RAML.Decorators = (function (Decorators) {
 
     var mediaReady = false;
 
-    var getMediaReady = function () {
-        return mediaReady;
-    };
-
-    var setMediaReady = function (_mediaReady) {
-        mediaReady = _mediaReady;
-    };
-
     var postMedia = function (token, file, groups) {
       var deferred = $q.defer();
 
@@ -1493,9 +1463,7 @@ RAML.Decorators = (function (Decorators) {
     return {
       postMedia: postMedia,
       checkMediaFinish: checkMediaFinish,
-      getMediaUrl: getMediaUrl,
-      getMediaReady: getMediaReady,
-      setMediaReady: setMediaReady
+      getMediaUrl: getMediaUrl
     };
   };
 
@@ -1530,7 +1498,65 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var voicebaseMediaPlayer = function ($timeout, $compile, keywordsSpottingApi) {
+  var voicebaseAccordion = function ($timeout, $compile, voicebasePlayerService) {
+    return {
+      restrict: 'E',
+      templateUrl: 'voicebase-media-player/directives/voicebase-accordion.tpl.html',
+      scope: {
+        uploadedData: '=',
+        isShow: '='
+      },
+      controller: function ($scope) {
+        $scope.showHasSpottedWords = function (uploadedInfo) {
+          var res = '';
+          if(uploadedInfo.hasSpottedWords !== null) {
+            res = (uploadedInfo.hasSpottedWords) ? '(Keywords Spotted)' : '(No Keywords Spotted)';
+          }
+          return res;
+        };
+
+      },
+      link: function (scope) {
+        scope.toggleAccordionPane = function (event, uploadedInfo) {
+          var $panel = jQuery(event.target).closest('.panel').find('.panel-collapse');
+          var isOpen = $panel.hasClass('in');
+          var $panels = jQuery('#files-accordion').find('.panel-collapse');
+          $panels.removeClass('in');
+          voicebasePlayerService.destroyVoicebase();
+          $panels.find('.panel-body').empty();
+          if(isOpen) {
+            $panel.removeClass('in');
+          }
+          else {
+            $panel.addClass('in');
+            $timeout(function () {
+              var player = $compile('<voicebase-media-player ' +
+              'token="' + uploadedInfo.token + '"' +
+              'player-type="jwplayer"' +
+              'media-id="' + uploadedInfo.uploadedMedia.mediaId + '"' +
+              'media-url="' + uploadedInfo.mediaUrl + '"' +
+              'media-type="' + uploadedInfo.mediaType + '">' +
+              '</voicebase-media-player>')(scope);
+              $panel.find('.panel-body').append(player);
+              voicebasePlayerService.setMediaReady(true);
+            }, 0);
+          }
+        };
+
+      }
+    };
+  };
+
+  angular.module('voicebasePlayerModule')
+    .directive('voicebaseAccordion', voicebaseAccordion);
+
+})();
+
+
+(function () {
+  'use strict';
+
+  var voicebaseMediaPlayer = function ($timeout, $compile, voicebasePlayerService) {
     return {
       restrict: 'E',
       templateUrl: 'voicebase-media-player/directives/voicebase-media-player.tpl.html',
@@ -1544,13 +1570,10 @@ RAML.Decorators = (function (Decorators) {
       link: function (scope) {
 
         scope.$watch(function () {
-          return keywordsSpottingApi.getMediaReady();
+          return voicebasePlayerService.getMediaReady();
         }, function (newValue) {
           if (newValue === true) {
             initPlayer();
-          }
-          else {
-            destroyPlayer();
           }
         });
 
@@ -1612,7 +1635,7 @@ RAML.Decorators = (function (Decorators) {
         };
 
         var destroyPlayer = function () {
-          jQuery('#vbs-console-player-wrap').voicebase('destroy');
+          voicebasePlayerService.destroyVoicebase();
         };
       }
     };
@@ -1623,6 +1646,37 @@ RAML.Decorators = (function (Decorators) {
 
 })();
 
+
+(function () {
+  'use strict';
+
+  var voicebasePlayerService = function ($q) {
+
+    var mediaReady = false;
+
+    var getMediaReady = function () {
+      return mediaReady;
+    };
+
+    var setMediaReady = function (_mediaReady) {
+      mediaReady = _mediaReady;
+    };
+
+    var destroyVoicebase = function () {
+      jQuery('#vbs-console-player-wrap').voicebase('destroy');
+    };
+
+    return {
+      getMediaReady: getMediaReady,
+      setMediaReady: setMediaReady,
+      destroyVoicebase: destroyVoicebase
+    };
+  };
+
+  angular.module('voicebasePlayerModule')
+    .service('voicebasePlayerService', voicebasePlayerService);
+
+})();
 
 (function () {
   'use strict';
@@ -2513,34 +2567,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <css-spinner></css-spinner>\n" +
     "    </div>\n" +
     "\n" +
-    "    <div class=\"panel-group spotting-results\" id=\"files-accordion\" ng-if=\"keywordsSpottingCtrl.finishedUpload\">\n" +
-    "      <div ng-repeat=\"uploadedInfo in keywordsSpottingCtrl.uploadedData track by $index\">\n" +
-    "        <div class=\"panel panel-default\">\n" +
-    "          <div class=\"panel-heading\" role=\"tab\">\n" +
-    "            <h4 class=\"panel-title\">\n" +
-    "              <a role=\"button\" data-toggle=\"collapse\" ng-attr-data-index=\"{{ $index }}\" href=\"javascript:void(0)\" ng-click=\"keywordsSpottingCtrl.toggleAccordionPane(uploadedInfo)\">\n" +
-    "                {{ uploadedInfo.mediaName }}\n" +
-    "                {{ keywordsSpottingCtrl.showHasSpottedWords(uploadedInfo) }}\n" +
-    "              </a>\n" +
-    "            </h4>\n" +
-    "          </div>\n" +
-    "          <div class=\"panel-collapse collapse\" ng-class=\"{'in': uploadedInfo.active === true}\" role=\"tabpanel\">\n" +
-    "            <div class=\"panel-body\">\n" +
-    "              <div ng-if=\"uploadedInfo.active\">\n" +
-    "                <voicebase-media-player\n" +
-    "                  token=\"{{ uploadedInfo.token }}\"\n" +
-    "                  player-type=\"jwplayer\"\n" +
-    "                  media-id=\"{{ uploadedInfo.uploadedMedia.mediaId }}\"\n" +
-    "                  media-url=\"{{ uploadedInfo.mediaUrl }}\"\n" +
-    "                  media-type=\"{{ uploadedInfo.mediaType }}\">\n" +
-    "                </voicebase-media-player>\n" +
-    "              </div>\n" +
-    "            </div>\n" +
-    "          </div>\n" +
-    "        </div>\n" +
-    "\n" +
-    "      </div>\n" +
-    "    </div>\n" +
+    "    <voicebase-accordion uploaded-data=\"keywordsSpottingCtrl.uploadedData\" is-show=\"keywordsSpottingCtrl.finishedUpload\"></voicebase-accordion>\n" +
     "\n" +
     "  </div>\n" +
     "\n" +
@@ -2635,6 +2662,28 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    <a href=\"http://videojs.com/html5-video-support/\" target=\"_blank\">supports HTML5 video</a>\n" +
     "  </p>\n" +
     "</video>\n"
+  );
+
+
+  $templateCache.put('voicebase-media-player/directives/voicebase-accordion.tpl.html',
+    "<div class=\"panel-group spotting-results\" id=\"files-accordion\" ng-if=\"isShow\">\n" +
+    "  <div ng-repeat=\"uploadedInfo in uploadedData track by $index\">\n" +
+    "    <div class=\"panel panel-default\">\n" +
+    "      <div class=\"panel-heading\" role=\"tab\">\n" +
+    "        <h4 class=\"panel-title\">\n" +
+    "          <a role=\"button\" data-toggle=\"collapse\" ng-attr-data-index=\"{{ $index }}\" href=\"javascript:void(0)\" ng-click=\"toggleAccordionPane($event, uploadedInfo)\">\n" +
+    "            {{ uploadedInfo.mediaName }}\n" +
+    "            {{ showHasSpottedWords(uploadedInfo) }}\n" +
+    "          </a>\n" +
+    "        </h4>\n" +
+    "      </div>\n" +
+    "      <div class=\"panel-collapse collapse\" role=\"tabpanel\">\n" +
+    "        <div class=\"panel-body\"></div>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "  </div>\n" +
+    "</div>\n"
   );
 
 

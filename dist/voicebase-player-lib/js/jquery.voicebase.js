@@ -1071,7 +1071,7 @@ voiceBase = (function(VB, $) {
             var me = this;
             var isValid = VB.api.validateSearch(terms);
             if(!isValid) {
-                VB.helper.showMessage('Search phrase is invalid. Its length can be up to 255 characters.', 'error');
+                VB.helper.showMessage('Search phrase is invalid. Its length can be up to 254 characters.', 'error');
                 VB.helper.hideLoader();
                 return false;
             }
@@ -1720,21 +1720,28 @@ voiceBase = (function(VB, $) {
                                                                   <div class="vbs-comment-message">\n\
                                                                       <p>' + comment.content + '</p>\n\
                                                                   </div>';
-                            if (comment.canEdit) {
-                                comments_html +=
-                                    '<div class="vbs-comment-edit-wrapper">\n\
-                                            <div class="vbs-comment-edit-btn-wrapper">\n\
-                                                <a href="#" c_id="' + comment.id + '" c_tm="' + thread.timeStamp + '" class="vbs-comment-edit vbs-popup-btn">Edit</a>\n\
+                            var showCommentsBtn = true;
+                            if(VB.settings.restrictions.length > 0) {
+                                showCommentsBtn = VB.settings.restrictions.indexOf('manageComments') > -1 || VB.settings.restrictions.indexOf('manageOwnComments') > -1;
+                            }
+
+                            if(showCommentsBtn) {
+                                if (comment.canEdit) {
+                                    comments_html +=
+                                        '<div class="vbs-comment-edit-wrapper">\n\
+                                                <div class="vbs-comment-edit-btn-wrapper">\n\
+                                                    <a href="#" c_id="' + comment.id + '" c_tm="' + thread.timeStamp + '" class="vbs-comment-edit vbs-popup-btn">Edit</a>\n\
                                                 </div>\n\
                                                 <div class="vbs-comment-delete-btn-wrapper">\n\
                                                     <a href="#" c_id="' + comment.id + '" class="vbs-comment-delete vbs-popup-btn">Delete</a>\n\
                                                 </div>\n\
                                             </div>';
-                            } else {
-                                comments_html +=
-                                    '<div class="vbs-comment-reply-wrapper">\n\
-                                            <a href="#"  c_id="' + comment.id + '" class="vbs-comment-reply vbs-popup-btn">Reply</a>\n\
+                                } else {
+                                    comments_html +=
+                                        '<div class="vbs-comment-reply-wrapper">\n\
+                                                <a href="#"  c_id="' + comment.id + '" class="vbs-comment-reply vbs-popup-btn">Reply</a>\n\
                                             </div>';
+                                }
                             }
                             comments_html += '</div>\n\
                                                           </div>\n\
@@ -5660,7 +5667,9 @@ voiceBase = (function(VB, $) {
 
                     };
                     me.destroy = function () {
-                        me.jw_player.remove();
+                        if(me.jw_player.getRenderingMode()) {
+                            me.jw_player.remove();
+                        }
                     };
                 };
 
@@ -7010,23 +7019,29 @@ voiceBase = (function(VB, $) {
                     <div class="vbs-section-header">\n\
                         <div class="vbs-section-title" data-title="Show Comments">\n\
                             <span class="vbs-section-name"></span>\n\
-                        </div>\n\
-                        <div class="vbs-section-btns">\n\
+                        </div>';
+                    var showAddBtn = true;
+                    if(VB.settings.restrictions.length > 0) {
+                        showAddBtn = VB.settings.restrictions.indexOf('manageComments') > -1 || VB.settings.restrictions.indexOf('manageOwnComments') > -1;
+                    }
+                    if(showAddBtn) {
+                        tmpl += '<div class="vbs-section-btns">\n\
                             <ul class="vbs-clearfix">\n\
                                 <li>';
-                    if(VB.settings.tabView){
-                        tmpl += '<a href="#" class="vbs-comments-btn vbs-popup-btn" data-title="Add a Comment">' +
+                        if(VB.settings.tabView){
+                            tmpl += '<a href="#" class="vbs-comments-btn vbs-popup-btn" data-title="Add a Comment">' +
                             '<div class="vbs-comments-btn-icon"></div>' +
                             '<span>Add New Comment</span>' +
-                        '</a>';
-                    }
-                    else{
-                        tmpl += '<a href="#" class="vbs-comments-btn vbs-popup-btn" data-title="Add a Comment"></a>';
-                    }
-                                tmpl += '</li>\n\
+                            '</a>';
+                        }
+                        else{
+                            tmpl += '<a href="#" class="vbs-comments-btn vbs-popup-btn" data-title="Add a Comment"></a>';
+                        }
+                        tmpl += '</li>\n\
                             </ul>\n\
-                        </div>\n\
-                    </div>\n\
+                        </div>';
+                    }
+                    tmpl += '</div>\n\
                     <!--wrapper for comments content-->\n\
                     <div class="vbs-section-body"></div>\n\
                 </div>';
