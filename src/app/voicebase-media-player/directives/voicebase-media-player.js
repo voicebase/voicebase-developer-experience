@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var voicebaseMediaPlayer = function ($timeout, $compile, keywordsSpottingApi) {
+  var voicebaseMediaPlayer = function ($timeout, $compile, voicebasePlayerService) {
     return {
       restrict: 'E',
       templateUrl: 'voicebase-media-player/directives/voicebase-media-player.tpl.html',
@@ -15,13 +15,10 @@
       link: function (scope) {
 
         scope.$watch(function () {
-          return keywordsSpottingApi.getMediaReady();
+          return voicebasePlayerService.getMediaReady();
         }, function (newValue) {
           if (newValue === true) {
             initPlayer();
-          }
-          else {
-            destroyPlayer();
           }
         });
 
@@ -83,7 +80,7 @@
         };
 
         var destroyPlayer = function () {
-          jQuery('#vbs-console-player-wrap').voicebase('destroy');
+          voicebasePlayerService.destroyVoicebase();
         };
       }
     };

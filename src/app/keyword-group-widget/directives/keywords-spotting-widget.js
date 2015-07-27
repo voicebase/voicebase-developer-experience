@@ -9,7 +9,7 @@
       scope: {
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, ModalService) {
+      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService) {
         var me = this;
 
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
@@ -19,7 +19,7 @@
         me.pingProcess = false;
         me.isLoadedGroups = true;
         me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
-        me.finishedUpload = keywordsSpottingApi.getMediaReady();
+        me.finishedUpload = false;
         me.uploadedData = [];
         me.isEnableFileSelect = true;
         me.showStartOverBtn = false;
@@ -104,7 +104,7 @@
 
             me.finishedUpload = false;
             countUploadedFiles = me.uploadFiles.length;
-            keywordsSpottingApi.setMediaReady(false);
+            voicebasePlayerService.destroyVoicebase();
             me.uploadedData = [];
             for (var i = 0; i < countUploadedFiles; i++) {
               var file = me.uploadFiles[i];
@@ -131,34 +131,37 @@
           me.pingProcess = true;
           var url = window.URL.createObjectURL(file);
           var checker = $interval(function () {
-            keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
-              .then(function (data) {
-                if (data.media && data.media.status === 'finished') {
-                  me.finishedUpload = true;
-                  keywordsSpottingApi.setMediaReady(true);
-                  me.uploadedData.push({
-                    uploadedMedia: data.media,
-                    uploadedMediaGroups: data.media.keywords.latest.groups,
-                    token: tokenData.token,
-                    mediaUrl: url,
-                    mediaType: file.type,
-                    mediaName: file.name,
-                    hasSpottedWords: getHasSpottedWords(data.media.keywords.latest.groups)
-                  });
-                  if(me.uploadedData.length === countUploadedFiles) {
-                    me.pingProcess = false;
-                    me.showStartOverBtn = true;
-                  }
-                  $interval.cancel(checker);
-                }
-              }, function () {
-                me.errorMessage = 'Error of getting file!';
-              });
+            checkMediaHandler(checker, url, mediaId, file);
           }, 5000);
 
           keywordsSpottingApi.getMediaUrl(tokenData.token, mediaId)
             .then(function (_url) {
               url = _url;
+            });
+        };
+
+        var checkMediaHandler = function (checker, url, mediaId, file) {
+          keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
+            .then(function (data) {
+              if (data.media && data.media.status === 'finished') {
+                me.finishedUpload = true;
+                me.uploadedData.push({
+                  uploadedMedia: data.media,
+                  uploadedMediaGroups: data.media.keywords.latest.groups,
+                  token: tokenData.token,
+                  mediaUrl: url,
+                  mediaType: file.type,
+                  mediaName: file.name,
+                  hasSpottedWords: getHasSpottedWords(data.media.keywords.latest.groups)
+                });
+                if(me.uploadedData.length === countUploadedFiles) {
+                  me.pingProcess = false;
+                  me.showStartOverBtn = true;
+                }
+                $interval.cancel(checker);
+              }
+            }, function () {
+              me.errorMessage = 'Error of getting file!';
             });
         };
 
@@ -174,14 +177,6 @@
             }
           }
           return hasSpotted;
-        };
-
-        me.showHasSpottedWords = function (uploadedInfo) {
-          var res = '';
-          if(uploadedInfo.hasSpottedWords !== null) {
-            res = (uploadedInfo.hasSpottedWords) ? '(Keywords Spotted)' : '(No Keywords Spotted)';
-          }
-          return res;
         };
 
         me.isAudio = function (file) {
@@ -210,23 +205,6 @@
           });
         };
 
-        me.toggleAccordionPane = function (uploadedInfo) {
-          var isOpen = uploadedInfo.active;
-          keywordsSpottingApi.setMediaReady(false);
-          $timeout(function () {
-            me.uploadedData.forEach(function (_data) {
-              _data.active = false;
-            });
-
-            if(!isOpen) {
-              $timeout(function () {
-                uploadedInfo.active = true;
-                keywordsSpottingApi.setMediaReady(true);
-              }, 0);
-            }
-
-          }, 0);
-        };
       }
     };
   };

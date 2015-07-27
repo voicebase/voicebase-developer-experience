@@ -1,0 +1,18 @@
+<div class="panel-group spotting-results" id="files-accordion" ng-if="isShow">
+  <div ng-repeat="uploadedInfo in uploadedData track by $index">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab">
+        <h4 class="panel-title">
+          <a role="button" data-toggle="collapse" ng-attr-data-index="{{ $index }}" href="javascript:void(0)" ng-click="toggleAccordionPane($event, uploadedInfo)">
+            {{ uploadedInfo.mediaName }}
+            {{ showHasSpottedWords(uploadedInfo) }}
+          </a>
+        </h4>
+      </div>
+      <div class="panel-collapse collapse" role="tabpanel">
+        <div class="panel-body"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
