@@ -2618,7 +2618,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <h4 class=\"modal-title raml-console-modal-title\">Remove Phrase Spotting Group</h4>\n" +
     "      </div>\n" +
     "      <div class=\"modal-body\">\n" +
-    "        <p class=\"raml-console-confirmation-message\">Are you sure you want to delete keyword group?</p>\n" +
+    "        <p class=\"raml-console-confirmation-message\">Are you sure you want to delete phrase spotting group?</p>\n" +
     "      </div>\n" +
     "      <div class=\"modal-footer raml-console-modal-footer\">\n" +
     "        <button type=\"button\" class=\"btn btn-success\" ng-click=\"removeGroup()\">\n" +
