@@ -90,7 +90,7 @@
   'use strict';
 
   angular.module('ramlVoicebaseConsoleApp')
-    .controller('portalPageCtrl', ['$scope', '$timeout', '$location', 'voicebaseTokensApi', function($scope, $timeout, $location, voicebaseTokensApi) {
+    .controller('portalPageCtrl', ['$scope', '$timeout', '$location', '$window', 'voicebaseTokensApi', function($scope, $timeout, $location, $window, voicebaseTokensApi) {
       $scope.isSkipping = false;
 
       var tokenData = voicebaseTokensApi.getCurrentToken();
@@ -107,6 +107,10 @@
 
       $scope.loadKeywordsSpottingApp = function() {
         $location.path('/keywords-spotting');
+      };
+
+      $scope.redirectToSupport = function() {
+        $window.open('http://www.voicebase.com/developers/');
       };
 
     }]);
