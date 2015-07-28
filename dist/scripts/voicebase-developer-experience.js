@@ -2383,12 +2383,12 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
   $templateCache.put('keyword-group-widget/directives/keyword-group-widget.tpl.html',
     "<div class=\"raml-console-vbs-keyword-group-widget-container\">\n" +
     "  <a class=\"raml-console-meta-button\" ng-click=\"keywordWidgetCtrl.toggleWidget()\" ng-if=\"keywordWidgetCtrl.isPopup\">\n" +
-    "    <span>Keywords spotting widget</span>\n" +
+    "    <span>Phrase Spotting Widget</span>\n" +
     "  </a>\n" +
     "\n" +
     "  <div class=\"raml-console-vbs-popup\" ng-show=\"keywordWidgetCtrl.isShowWidget\">\n" +
     "    <div class=\"raml-console-vbs-popup-header\" ng-if=\"keywordWidgetCtrl.isPopup\">\n" +
-    "      <h3 class=\"raml-console-vbs-popup-title\">Keyword Spotting Groups</h3>\n" +
+    "      <h3 class=\"raml-console-vbs-popup-title\">Phrase Spotting Groups</h3>\n" +
     "      <div class=\"raml-console-vbs-popup-close\" ng-click=\"keywordWidgetCtrl.hideWidget()\">\n" +
     "        <i class=\"fa fa-remove\"></i>\n" +
     "      </div>\n" +
@@ -2399,7 +2399,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <!--Toolbar-->\n" +
     "        <div class=\"list-group raml-console-keyword-group-toolbar\" ng-if=\"keywordWidgetCtrl.isLogin\">\n" +
     "          <a class=\"list-group-item raml-console-add-group\"\n" +
-    "             data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Add Keyword Spotting Group\"\n" +
+    "             data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Add Phrase Spotting Group\"\n" +
     "             change-keyword-group\n" +
     "             modal-keyword-group-mode=\"create\"\n" +
     "             change-group-callback=\"keywordWidgetCtrl.createGroup\"\n" +
@@ -2407,7 +2407,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "            <h4 class=\"list-group-item-heading raml-console-item-heading\">\n" +
     "              <i class=\"fa fa-plus-circle\"></i>\n" +
-    "              Add Keyword Spotting Group\n" +
+    "              Add Phrase Spotting Group\n" +
     "            </h4>\n" +
     "\n" +
     "          </a>\n" +
@@ -2539,7 +2539,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "              modal-keyword-group-mode=\"create\"\n" +
     "              change-group-callback=\"keywordsSpottingCtrl.createGroup\">\n" +
     "        <i class=\"fa fa-plus-circle\"></i>\n" +
-    "        Add Keyword Spotting Group\n" +
+    "        Add Phrase Spotting Group\n" +
     "      </button>\n" +
     "    </div>\n" +
     "    <div ng-if=\"keywordsSpottingCtrl.createLoading\" class=\"create-group-loader\">\n" +
@@ -2586,7 +2586,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    <div class=\"modal-content raml-console-modal\">\n" +
     "      <div class=\"modal-header raml-console-modal-header\">\n" +
     "        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\"><i class=\"fa fa-times\"></i></button>\n" +
-    "        <h4 class=\"modal-title raml-console-modal-title\">{{ mode === 'create' ? 'Add' : 'Edit' }} Keyword Spotting Group</h4>\n" +
+    "        <h4 class=\"modal-title raml-console-modal-title\">{{ mode === 'create' ? 'Add' : 'Edit' }} Phrase Spotting Group</h4>\n" +
     "      </div>\n" +
     "      <div class=\"modal-body\">\n" +
     "        <form class=\"form-horizontal\" name=\"keywordGroupForm\" novalidate focus-form>\n" +
@@ -2615,7 +2615,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "    <div class=\"modal-content raml-console-modal\">\n" +
     "      <div class=\"modal-header raml-console-modal-header\">\n" +
     "        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\"><i class=\"fa fa-times\"></i></button>\n" +
-    "        <h4 class=\"modal-title raml-console-modal-title\">Remove Keyword Spotting Group</h4>\n" +
+    "        <h4 class=\"modal-title raml-console-modal-title\">Remove Phrase Spotting Group</h4>\n" +
     "      </div>\n" +
     "      <div class=\"modal-body\">\n" +
     "        <p class=\"raml-console-confirmation-message\">Are you sure you want to delete keyword group?</p>\n" +

@@ -1,11 +1,11 @@
 <div class="raml-console-vbs-keyword-group-widget-container">
   <a class="raml-console-meta-button" ng-click="keywordWidgetCtrl.toggleWidget()" ng-if="keywordWidgetCtrl.isPopup">
-    <span>Keywords spotting widget</span>
+    <span>Phrase Spotting Widget</span>
   </a>
 
   <div class="raml-console-vbs-popup" ng-show="keywordWidgetCtrl.isShowWidget">
     <div class="raml-console-vbs-popup-header" ng-if="keywordWidgetCtrl.isPopup">
-      <h3 class="raml-console-vbs-popup-title">Keyword Spotting Groups</h3>
+      <h3 class="raml-console-vbs-popup-title">Phrase Spotting Groups</h3>
       <div class="raml-console-vbs-popup-close" ng-click="keywordWidgetCtrl.hideWidget()">
         <i class="fa fa-remove"></i>
       </div>
@@ -16,7 +16,7 @@
         <!--Toolbar-->
         <div class="list-group raml-console-keyword-group-toolbar" ng-if="keywordWidgetCtrl.isLogin">
           <a class="list-group-item raml-console-add-group"
-             data-toggle="tooltip" data-placement="bottom" title="Add Keyword Spotting Group"
+             data-toggle="tooltip" data-placement="bottom" title="Add Phrase Spotting Group"
              change-keyword-group
              modal-keyword-group-mode="create"
              change-group-callback="keywordWidgetCtrl.createGroup"
@@ -24,7 +24,7 @@
 
             <h4 class="list-group-item-heading raml-console-item-heading">
               <i class="fa fa-plus-circle"></i>
-              Add Keyword Spotting Group
+              Add Phrase Spotting Group
             </h4>
 
           </a>
