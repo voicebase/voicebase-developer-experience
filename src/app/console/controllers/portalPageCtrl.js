@@ -25,5 +25,9 @@
         $window.open('http://www.voicebase.com/developers/');
       };
 
+      $scope.loadDoc = function() {
+        $location.path('/documentation');
+      };
+
     }]);
 })();

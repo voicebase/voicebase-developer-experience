@@ -52,6 +52,10 @@
         templateUrl: 'pages/consolePage.html',
         reloadOnSearch: false
       })
+      .when('/documentation', {
+        templateUrl: 'pages/documentationPage.html',
+        reloadOnSearch: false
+      })
       .when('/keywords-groups', {
         templateUrl: 'pages/keywordsGroups.html',
         reloadOnSearch: false
@@ -67,6 +71,28 @@
   });
 
 
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ramlVoicebaseConsoleApp')
+    .controller('documentationPageCtrl', ['$scope', '$timeout', 'ramlParserWrapper', function($scope, $timeout, ramlParserWrapper) {
+
+      var firstReady = true;
+      ramlParserWrapper.onParseSuccess(function(raml) {
+        if(firstReady) {
+          firstReady = false;
+          $timeout(function () {
+            if(jQuery('#getting_started').length > 0) {
+              jQuery('#getting_started').find('.raml-console-document-heading').click();
+            }
+          }, 100);
+
+        }
+      });
+
+    }]);
 })();
 
 (function () {
@@ -111,6 +137,10 @@
 
       $scope.redirectToSupport = function() {
         $window.open('http://www.voicebase.com/developers/');
+      };
+
+      $scope.loadDoc = function() {
+        $location.path('/documentation');
       };
 
     }]);

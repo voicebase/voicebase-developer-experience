@@ -52,6 +52,10 @@
         templateUrl: 'pages/consolePage.html',
         reloadOnSearch: false
       })
+      .when('/documentation', {
+        templateUrl: 'pages/documentationPage.html',
+        reloadOnSearch: false
+      })
       .when('/keywords-groups', {
         templateUrl: 'pages/keywordsGroups.html',
         reloadOnSearch: false
