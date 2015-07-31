@@ -1,0 +1,14 @@
+<div class="panel panel-default raml-console-panel key-manager">
+
+  <div class="alert alert-danger" role="alert" ng-if="keyManagerCtrl.errorMessage">
+    <button type="button" class="close" ng-click="keyManagerCtrl.errorMessage = ''"><span aria-hidden="true">&times;</span></button>
+    {{ keyManagerCtrl.errorMessage }}
+  </div>
+
+  <div ng-if="keyManagerCtrl.isLogin">
+    123
+  </div>
+
+  <div ng-if="!keyManagerCtrl.isLogin" class="raml-console-error-message">Please sign in</div>
+
+</div>
