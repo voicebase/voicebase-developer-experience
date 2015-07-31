@@ -6,7 +6,41 @@
   </div>
 
   <div ng-if="keyManagerCtrl.isLogin">
-    123
+
+    <div class="panel-group users-list" id="users-accordion">
+      <div ng-repeat="user in keyManagerCtrl.users track by $index">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" href="javascript:void(0)" toggle-bootstrap-accordion ng-click="keyManagerCtrl.showUserTokens(user)">
+                {{ user.name }}
+              </a>
+            </h4>
+          </div>
+          <div class="panel-collapse collapse" role="tabpanel">
+            <div class="panel-body user-info">
+              <div ng-if="user.isLoadTokens">
+                <css-spinner></css-spinner>
+              </div>
+
+              <div ng-if="user.tokens">
+                <div class="user-info__token-row" ng-repeat="_token in user.tokens track by $index">
+                  <div class="user-info__token-name">{{ _token.token }}</div>
+                  <div class="user-info__token-actions">
+                    <a href="javascript:void(0)" class="user-info__token-actions__remove"
+                            data-toggle="tooltip" data-placement="top" title="Remove token">
+                      <i class="fa fa-times-circle"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 
   <div ng-if="!keyManagerCtrl.isLogin" class="raml-console-error-message">Please sign in</div>
