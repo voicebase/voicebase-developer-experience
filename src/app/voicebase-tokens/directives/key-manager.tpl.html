@@ -8,6 +8,9 @@
   <div ng-if="keyManagerCtrl.isLogin">
 
     <div class="panel-group users-list" id="users-accordion">
+      <div ng-if="keyManagerCtrl.isLoadUsers">
+        <css-spinner></css-spinner>
+      </div>
       <div ng-repeat="user in keyManagerCtrl.users track by $index">
         <div class="panel panel-default">
           <div class="panel-heading" role="tab">
@@ -15,17 +18,21 @@
               <a role="button" data-toggle="collapse" href="javascript:void(0)" toggle-bootstrap-accordion ng-click="keyManagerCtrl.showUserTokens(user)">
                 {{ user.name }}
               </a>
+              <a href="javascript:void(0)" class="pull-right add-user-token">
+                <i class="fa fa-plus-circle"></i>
+                Add token
+              </a>
             </h4>
           </div>
           <div class="panel-collapse collapse" role="tabpanel">
-            <div class="panel-body user-info">
+            <div class="panel-body user-info list-group">
               <div ng-if="user.isLoadTokens">
                 <css-spinner></css-spinner>
               </div>
 
               <div ng-if="user.tokens">
-                <div class="user-info__token-row" ng-repeat="_token in user.tokens track by $index">
-                  <div class="user-info__token-name">{{ _token.token }}</div>
+                <div class="list-group-item user-info__token-row" ng-repeat="_token in user.tokens track by $index">
+                  <h4 class="user-info__token-name">{{ _token.token }}</h4>
                   <div class="user-info__token-actions">
                     <a href="javascript:void(0)" class="user-info__token-actions__remove"
                             data-toggle="tooltip" data-placement="top" title="Remove token">

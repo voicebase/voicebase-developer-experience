@@ -13,24 +13,26 @@
         var me = this;
 
         var credentials = {
-          username: '',
-          password: ''
+          username: '33586649-D8D5-43BC-98FA-31A60B11EF72',
+          password: '2eDdjBqtZu3rbp'
         };
 
         var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
         var tokenData = voicebaseTokensApi.getCurrentToken();
         me.isLogin = (tokenData) ? true : false;
 
+        me.isLoadUsers = false;
         me.users = [];
 
         me.getUsers = function () {
-            voicebaseTokensApi.getUsers(credentials).then(function (users) {
-
-              me.users = users;
-
-            }, function () {
-              me.errorMessage = 'Can\'t getting users!';
-            });
+          me.isLoadUsers = true;
+          voicebaseTokensApi.getUsers(credentials).then(function (users) {
+            me.isLoadUsers = false;
+            me.users = users;
+          }, function () {
+            me.isLoadUsers = false;
+            me.errorMessage = 'Can\'t getting users!';
+          });
         };
 
         me.showUserTokens = function (user) {
