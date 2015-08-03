@@ -64,6 +64,10 @@
         templateUrl: 'pages/keywordsSpottingPage.html',
         reloadOnSearch: false
       })
+      .when('/key-manager', {
+        templateUrl: 'pages/keyManagerPage.html',
+        reloadOnSearch: false
+      })
       .when('/wait', {
         templateUrl: 'pages/addToWaitListPage.html',
         reloadOnSearch: false
@@ -129,6 +133,10 @@
 
       $scope.loadKeywordsGroupApp = function() {
         $location.path('/keywords-groups');
+      };
+
+      $scope.loadKeyManager = function() {
+        $location.path('/key-manager');
       };
 
       $scope.loadKeywordsSpottingApp = function() {
@@ -1715,6 +1723,67 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  var keyManager = function () {
+    return {
+      restrict: 'E',
+      templateUrl: 'voicebase-tokens/directives/key-manager.tpl.html',
+      replace: true,
+      scope: {
+      },
+      controllerAs: 'keyManagerCtrl',
+      controller: function($scope, voicebaseTokensApi, formValidate) {
+        var me = this;
+
+        var credentials = {
+          username: '33586649-D8D5-43BC-98FA-31A60B11EF72',
+          password: '2eDdjBqtZu3rbp'
+        };
+
+        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
+        var tokenData = voicebaseTokensApi.getCurrentToken();
+        me.isLogin = (tokenData) ? true : false;
+
+        me.isLoadUsers = false;
+        me.users = [];
+
+        me.getUsers = function () {
+          me.isLoadUsers = true;
+          voicebaseTokensApi.getUsers(credentials).then(function (users) {
+            me.isLoadUsers = false;
+            me.users = users;
+          }, function () {
+            me.isLoadUsers = false;
+            me.errorMessage = 'Can\'t getting users!';
+          });
+        };
+
+        me.showUserTokens = function (user) {
+          if(!user.tokens) {
+            user.isLoadTokens = true;
+            voicebaseTokensApi.getUserTokens(credentials, user.userId).then(function (tokens) {
+              user.isLoadTokens = false;
+              user.tokens = tokens;
+            }, function () {
+              user.isLoadTokens = false;
+              me.errorMessage = 'Can\'t getting tokens!';
+            });
+
+          }
+        };
+
+        me.getUsers();
+      }
+    };
+  };
+
+  angular.module('voicebaseTokensModule')
+    .directive('keyManager', keyManager);
+
+})();
+
+(function () {
+  'use strict';
+
   var nullForm = function() {
     return {
       restrict: 'A',
@@ -1764,6 +1833,36 @@ RAML.Decorators = (function (Decorators) {
 
   angular.module('voicebaseTokensModule')
     .directive('nullForm', nullForm);
+})();
+
+(function () {
+  'use strict';
+
+  var toggleBootstrapAccordion = function() {
+    return {
+      restrict: 'A',
+      replace: false,
+      link: function (scope, element) {
+        element.click(function (event) {
+          var $accordion = jQuery(event.target).closest('.panel-group');
+          var $panel = jQuery(event.target).closest('.panel').find('.panel-collapse');
+          var isOpen = $panel.hasClass('in');
+          var $panels = $accordion.find('.panel-collapse');
+          $panels.removeClass('in');
+          if(isOpen) {
+            $panel.removeClass('in');
+          }
+          else {
+            $panel.addClass('in');
+          }
+        });
+      }
+    };
+  };
+
+  angular.module('voicebaseTokensModule')
+    .directive('toggleBootstrapAccordion', toggleBootstrapAccordion);
+
 })();
 
 (function () {
@@ -1936,6 +2035,8 @@ RAML.Decorators = (function (Decorators) {
   'use strict';
 
   var voicebaseTokensApi = function($http, $q) {
+    var baseUrl = 'https://apis.voicebase.com/v2-beta';
+
     var tokens = null;
     var currentToken = null;
     var needRemember = localStorage.getItem('needRemember') || false;
@@ -2089,6 +2190,58 @@ RAML.Decorators = (function (Decorators) {
       }
     };
 
+    /* Key Manager*/
+    var getUsers = function(credentials) {
+      var deferred = $q.defer();
+
+      var username = credentials.username;
+      var password = credentials.password;
+
+      jQuery.ajax({
+        url: baseUrl + '/access/users',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Basic ' + btoa(username + ':' + password)
+        },
+        success: function(_users) {
+          deferred.resolve(_users.users);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
+    var getUserTokens = function (credentials, userId) {
+      var deferred = $q.defer();
+
+      var username = credentials.username;
+      var password = credentials.password;
+
+      jQuery.ajax({
+        url: baseUrl + '/access/users/+' + userId + '/tokens',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Basic ' + btoa(username + ':' + password)
+        },
+        success: function(_tokens) {
+          deferred.resolve(_tokens.tokens);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+
+    };
+
     return {
       getTokens: getTokens,
       getToken: getToken,
@@ -2099,7 +2252,9 @@ RAML.Decorators = (function (Decorators) {
       getTokenFromLocation: getTokenFromLocation,
       getNeedRemember: getNeedRemember,
       setNeedRemember: setNeedRemember,
-      getTokenFromStorage: getTokenFromStorage
+      getTokenFromStorage: getTokenFromStorage,
+      getUsers: getUsers,
+      getUserTokens: getUserTokens
     };
 
   };
@@ -2726,6 +2881,65 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  <div id=\"vbs-console-player-wrap\">\n" +
     "    <videojs media-url=\"{{ mediaUrl }}\" media-type=\"{{ mediaType }}\"></videojs>\n" +
     "  </div>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('voicebase-tokens/directives/key-manager.tpl.html',
+    "<div class=\"panel panel-default raml-console-panel key-manager\">\n" +
+    "\n" +
+    "  <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"keyManagerCtrl.errorMessage\">\n" +
+    "    <button type=\"button\" class=\"close\" ng-click=\"keyManagerCtrl.errorMessage = ''\"><span aria-hidden=\"true\">&times;</span></button>\n" +
+    "    {{ keyManagerCtrl.errorMessage }}\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div ng-if=\"keyManagerCtrl.isLogin\">\n" +
+    "\n" +
+    "    <div class=\"panel-group users-list\" id=\"users-accordion\">\n" +
+    "      <div ng-if=\"keyManagerCtrl.isLoadUsers\">\n" +
+    "        <css-spinner></css-spinner>\n" +
+    "      </div>\n" +
+    "      <div ng-repeat=\"user in keyManagerCtrl.users track by $index\">\n" +
+    "        <div class=\"panel panel-default\">\n" +
+    "          <div class=\"panel-heading\" role=\"tab\">\n" +
+    "            <h4 class=\"panel-title\">\n" +
+    "              <a role=\"button\" data-toggle=\"collapse\" href=\"javascript:void(0)\" toggle-bootstrap-accordion ng-click=\"keyManagerCtrl.showUserTokens(user)\">\n" +
+    "                {{ user.name }}\n" +
+    "              </a>\n" +
+    "              <a href=\"javascript:void(0)\" class=\"pull-right add-user-token\">\n" +
+    "                <i class=\"fa fa-plus-circle\"></i>\n" +
+    "                Add token\n" +
+    "              </a>\n" +
+    "            </h4>\n" +
+    "          </div>\n" +
+    "          <div class=\"panel-collapse collapse\" role=\"tabpanel\">\n" +
+    "            <div class=\"panel-body user-info list-group\">\n" +
+    "              <div ng-if=\"user.isLoadTokens\">\n" +
+    "                <css-spinner></css-spinner>\n" +
+    "              </div>\n" +
+    "\n" +
+    "              <div ng-if=\"user.tokens\">\n" +
+    "                <div class=\"list-group-item user-info__token-row\" ng-repeat=\"_token in user.tokens track by $index\">\n" +
+    "                  <h4 class=\"user-info__token-name\">{{ _token.token }}</h4>\n" +
+    "                  <div class=\"user-info__token-actions\">\n" +
+    "                    <a href=\"javascript:void(0)\" class=\"user-info__token-actions__remove\"\n" +
+    "                            data-toggle=\"tooltip\" data-placement=\"top\" title=\"Remove token\">\n" +
+    "                      <i class=\"fa fa-times-circle\"></i>\n" +
+    "                    </a>\n" +
+    "                  </div>\n" +
+    "                </div>\n" +
+    "              </div>\n" +
+    "            </div>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div ng-if=\"!keyManagerCtrl.isLogin\" class=\"raml-console-error-message\">Please sign in</div>\n" +
+    "\n" +
     "</div>\n"
   );
 
