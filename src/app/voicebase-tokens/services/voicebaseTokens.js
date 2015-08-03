@@ -2,6 +2,8 @@
   'use strict';
 
   var voicebaseTokensApi = function($http, $q) {
+    var baseUrl = 'https://apis.voicebase.com/v2-beta';
+
     var tokens = null;
     var currentToken = null;
     var needRemember = localStorage.getItem('needRemember') || false;
@@ -155,6 +157,58 @@
       }
     };
 
+    /* Key Manager*/
+    var getUsers = function(credentials) {
+      var deferred = $q.defer();
+
+      var username = credentials.username;
+      var password = credentials.password;
+
+      jQuery.ajax({
+        url: baseUrl + '/access/users',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Basic ' + btoa(username + ':' + password)
+        },
+        success: function(_users) {
+          deferred.resolve(_users.users);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
+    var getUserTokens = function (credentials, userId) {
+      var deferred = $q.defer();
+
+      var username = credentials.username;
+      var password = credentials.password;
+
+      jQuery.ajax({
+        url: baseUrl + '/access/users/+' + userId + '/tokens',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Basic ' + btoa(username + ':' + password)
+        },
+        success: function(_tokens) {
+          deferred.resolve(_tokens.tokens);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+
+    };
+
     return {
       getTokens: getTokens,
       getToken: getToken,
@@ -165,7 +219,9 @@
       getTokenFromLocation: getTokenFromLocation,
       getNeedRemember: getNeedRemember,
       setNeedRemember: setNeedRemember,
-      getTokenFromStorage: getTokenFromStorage
+      getTokenFromStorage: getTokenFromStorage,
+      getUsers: getUsers,
+      getUserTokens: getUserTokens
     };
 
   };

@@ -17,6 +17,10 @@
         $location.path('/keywords-groups');
       };
 
+      $scope.loadKeyManager = function() {
+        $location.path('/key-manager');
+      };
+
       $scope.loadKeywordsSpottingApp = function() {
         $location.path('/keywords-spotting');
       };

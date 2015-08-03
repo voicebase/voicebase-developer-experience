@@ -73,7 +73,7 @@
       padding-left: 55px;
       position: relative;
 
-      i {
+      .widget-icon {
         position: absolute;
         left: 15px;
         top: 15px;
@@ -427,3 +427,58 @@
     }
   }
 }
+
+.key-manager {
+  padding: 15px;
+  cursor: default !important;
+
+  .panel .panel-body {
+    padding: 15px 0;
+  }
+
+  .raml-console-spinner {
+    margin: 35px auto;
+    height: 35px;
+  }
+
+  .users-list {
+    .raml-console-spinner:after {
+      content: 'Loading users..';
+    }
+  }
+
+  .add-user-token {
+    color: #85D04A;
+  }
+
+  .user-info {
+    cursor: default;
+
+    .raml-console-spinner:after {
+      content: 'Loading tokens..';
+    }
+  }
+
+  .user-info__token-row {
+    display: table;
+  }
+
+  .user-info__token-name,
+  .user-info__token-actions {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  .user-info__token-actions__remove i {
+    font-size: 20px;
+    line-height: 20px;
+    color: #BBB;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #D9534F;
+    }
+
+  }
+}
+
