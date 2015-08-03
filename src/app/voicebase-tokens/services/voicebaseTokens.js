@@ -209,6 +209,41 @@
 
     };
 
+    var addUserToken = function (credentials, userId) {
+      var deferred = $q.defer();
+
+      var username = credentials.username;
+      var password = credentials.password;
+
+      var data = JSON.stringify({
+        token: {}
+      });
+
+      jQuery.ajax({
+        url: baseUrl + '/access/users/+' + userId + '/tokens',
+        type: 'POST',
+        dataType: 'json',
+        contentType: "application/json",
+        headers: {
+          'Authorization': 'Basic ' + btoa(username + ':' + password)
+        },
+        data: data,
+        success: function(_token) {
+          deferred.resolve({
+            token: _token.token,
+            type: _token.type
+          });
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+
+    };
+
     return {
       getTokens: getTokens,
       getToken: getToken,
@@ -221,7 +256,8 @@
       setNeedRemember: setNeedRemember,
       getTokenFromStorage: getTokenFromStorage,
       getUsers: getUsers,
-      getUserTokens: getUserTokens
+      getUserTokens: getUserTokens,
+      addUserToken: addUserToken
     };
 
   };

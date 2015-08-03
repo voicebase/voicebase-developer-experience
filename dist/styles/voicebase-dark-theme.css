@@ -499,6 +499,13 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 .key-manager .users-list .raml-console-spinner:after {
   content: 'Loading users..';
 }
+.key-manager .add-user-token__loader .raml-console-spinner {
+  margin: 0;
+  height: 20px;
+}
+.key-manager .add-user-token__loader .raml-console-spinner:after {
+  content: '';
+}
 .key-manager .add-user-token {
   color: #85D04A;
 }
@@ -510,11 +517,21 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 }
 .key-manager .user-info__token-row {
   display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 .key-manager .user-info__token-name,
 .key-manager .user-info__token-actions {
   display: table-cell;
   vertical-align: middle;
+}
+.key-manager .user-info__token-name {
+  width: 95%;
+  overflow-x: auto;
+}
+.key-manager .user-info__token-actions {
+  width: 5%;
+  text-align: right;
 }
 .key-manager .user-info__token-actions__remove i {
   font-size: 20px;

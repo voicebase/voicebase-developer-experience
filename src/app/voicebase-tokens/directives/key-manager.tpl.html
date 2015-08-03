@@ -18,10 +18,15 @@
               <a role="button" data-toggle="collapse" href="javascript:void(0)" toggle-bootstrap-accordion ng-click="keyManagerCtrl.showUserTokens(user)">
                 {{ user.name }}
               </a>
-              <a href="javascript:void(0)" class="pull-right add-user-token">
+              <a href="javascript:void(0)" class="pull-right add-user-token"
+                 ng-click="keyManagerCtrl.addToken(user)"
+                 ng-if="!user.isCreatingToken">
                 <i class="fa fa-plus-circle"></i>
                 Add token
               </a>
+              <div ng-if="user.isCreatingToken" class="pull-right add-user-token__loader">
+                <css-spinner></css-spinner>
+              </div>
             </h4>
           </div>
           <div class="panel-collapse collapse" role="tabpanel">

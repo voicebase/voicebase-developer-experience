@@ -447,6 +447,17 @@
     }
   }
 
+  .add-user-token__loader {
+    .raml-console-spinner {
+      margin: 0;
+      height: 20px;
+    }
+
+    .raml-console-spinner:after {
+      content: '';
+    }
+  }
+
   .add-user-token {
     color: #85D04A;
   }
@@ -461,12 +472,25 @@
 
   .user-info__token-row {
     display: table;
+    width: 100%;
+    table-layout: fixed;
   }
 
   .user-info__token-name,
   .user-info__token-actions {
     display: table-cell;
     vertical-align: middle;
+  }
+
+  .user-info__token-name {
+    width: 95%;
+    overflow-x: auto;
+//    white-space: nowrap;
+  }
+
+  .user-info__token-actions {
+    width: 5%;
+    text-align: right;
   }
 
   .user-info__token-actions__remove i {

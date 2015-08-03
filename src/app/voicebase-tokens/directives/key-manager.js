@@ -49,6 +49,19 @@
           }
         };
 
+        me.addToken = function (user) {
+          user.isCreatingToken = true;
+          voicebaseTokensApi.addUserToken(credentials, user.userId).then(function (_token) {
+            user.isCreatingToken = false;
+            if(user.tokens) {
+              user.tokens.push(_token);
+            }
+          }, function () {
+            user.isCreatingToken = false;
+            me.errorMessage = 'Can\'t creating token!';
+          });
+        };
+
         me.getUsers();
       }
     };

@@ -1771,6 +1771,19 @@ RAML.Decorators = (function (Decorators) {
           }
         };
 
+        me.addToken = function (user) {
+          user.isCreatingToken = true;
+          voicebaseTokensApi.addUserToken(credentials, user.userId).then(function (_token) {
+            user.isCreatingToken = false;
+            if(user.tokens) {
+              user.tokens.push(_token);
+            }
+          }, function () {
+            user.isCreatingToken = false;
+            me.errorMessage = 'Can\'t creating token!';
+          });
+        };
+
         me.getUsers();
       }
     };
@@ -2242,6 +2255,41 @@ RAML.Decorators = (function (Decorators) {
 
     };
 
+    var addUserToken = function (credentials, userId) {
+      var deferred = $q.defer();
+
+      var username = credentials.username;
+      var password = credentials.password;
+
+      var data = JSON.stringify({
+        token: {}
+      });
+
+      jQuery.ajax({
+        url: baseUrl + '/access/users/+' + userId + '/tokens',
+        type: 'POST',
+        dataType: 'json',
+        contentType: "application/json",
+        headers: {
+          'Authorization': 'Basic ' + btoa(username + ':' + password)
+        },
+        data: data,
+        success: function(_token) {
+          deferred.resolve({
+            token: _token.token,
+            type: _token.type
+          });
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+
+    };
+
     return {
       getTokens: getTokens,
       getToken: getToken,
@@ -2254,7 +2302,8 @@ RAML.Decorators = (function (Decorators) {
       setNeedRemember: setNeedRemember,
       getTokenFromStorage: getTokenFromStorage,
       getUsers: getUsers,
-      getUserTokens: getUserTokens
+      getUserTokens: getUserTokens,
+      addUserToken: addUserToken
     };
 
   };
@@ -2906,10 +2955,15 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "              <a role=\"button\" data-toggle=\"collapse\" href=\"javascript:void(0)\" toggle-bootstrap-accordion ng-click=\"keyManagerCtrl.showUserTokens(user)\">\n" +
     "                {{ user.name }}\n" +
     "              </a>\n" +
-    "              <a href=\"javascript:void(0)\" class=\"pull-right add-user-token\">\n" +
+    "              <a href=\"javascript:void(0)\" class=\"pull-right add-user-token\"\n" +
+    "                 ng-click=\"keyManagerCtrl.addToken(user)\"\n" +
+    "                 ng-if=\"!user.isCreatingToken\">\n" +
     "                <i class=\"fa fa-plus-circle\"></i>\n" +
     "                Add token\n" +
     "              </a>\n" +
+    "              <div ng-if=\"user.isCreatingToken\" class=\"pull-right add-user-token__loader\">\n" +
+    "                <css-spinner></css-spinner>\n" +
+    "              </div>\n" +
     "            </h4>\n" +
     "          </div>\n" +
     "          <div class=\"panel-collapse collapse\" role=\"tabpanel\">\n" +
