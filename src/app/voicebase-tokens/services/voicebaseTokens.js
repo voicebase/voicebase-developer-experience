@@ -223,7 +223,7 @@
         url: baseUrl + '/access/users/+' + userId + '/tokens',
         type: 'POST',
         dataType: 'json',
-        contentType: "application/json",
+        contentType: 'application/json',
         headers: {
           'Authorization': 'Basic ' + btoa(username + ':' + password)
         },
