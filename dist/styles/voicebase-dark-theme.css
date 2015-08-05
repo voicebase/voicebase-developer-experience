@@ -542,6 +542,15 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 .key-manager .user-info__token-actions__remove i:hover {
   color: #D9534F;
 }
+.key-manager .raml-console-vbs-token-auth-form {
+  position: inherit;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.key-manager .raml-console-vbs-token-auth-form .raml-console-vbs-auth-form-btns {
+  padding: 0;
+}
 
 .raml-console-login-page-container {
   background: #242f3e;

@@ -1723,6 +1723,77 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  var basicAuthForm = function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'voicebase-tokens/directives/basic-auth-form.tpl.html',
+      scope: {
+        needRemember: '@',
+        canHideForm: '@',
+        hideForm: '&'
+      },
+      controllerAs: 'basicAuthCtrl',
+      controller: function($scope, formValidate, voicebaseTokensApi) {
+        var me = this;
+        me.isLoaded = false;
+        me.formError = null;
+        me.credentials = {};
+
+        if($scope.needRemember) {
+          me.isRemember = voicebaseTokensApi.getNeedRemember();
+
+          me.changeRemember = function() {
+            me.isRemember = !me.isRemember;
+            voicebaseTokensApi.setNeedRemember(me.isRemember);
+          };
+        }
+
+        me.hideForm = function() {
+          if($scope.hideForm) {
+            $scope.hideForm();
+          }
+        };
+
+        me.hideError = function(){
+          me.formError = '';
+        };
+
+        me.startAuth = function($event) {
+          var isValid = formValidate.validateForm($scope.authForm);
+          if(!isValid) {
+            jQuery($event.currentTarget).closest('form').find('.ng-invalid').first().focus();
+          }
+          else {
+            me.hideForm();
+            me.auth(me.credentials);
+          }
+          return false;
+        };
+
+        me.auth = function(credentials) {
+          me.isLoaded = true;
+          var baseUri = 'https://apis.voicebase.com/v2-beta';
+
+          voicebaseTokensApi.basicAuth(credentials).then(function() {
+            me.isLoaded = false;
+          }, function(error){
+            me.isLoaded = false;
+            me.formError = error;
+          });
+        };
+
+      }
+    };
+  };
+
+  angular.module('voicebaseTokensModule')
+    .directive('basicAuthForm', basicAuthForm);
+
+})();
+
+(function () {
+  'use strict';
+
   var keyManager = function () {
     return {
       restrict: 'E',
@@ -1734,21 +1805,23 @@ RAML.Decorators = (function (Decorators) {
       controller: function($scope, voicebaseTokensApi, formValidate) {
         var me = this;
 
-        var credentials = {
-          username: '33586649-D8D5-43BC-98FA-31A60B11EF72',
-          password: '2eDdjBqtZu3rbp'
-        };
+        me.isLogin = false;
 
-        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
-        var tokenData = voicebaseTokensApi.getCurrentToken();
-        me.isLogin = (tokenData) ? true : false;
+        $scope.$watch(function () {
+          return voicebaseTokensApi.getBasicToken();
+        }, function (newToken) {
+            if(newToken) {
+              me.isLogin = true;
+              me.getUsers();
+            }
+        });
 
         me.isLoadUsers = false;
         me.users = [];
 
         me.getUsers = function () {
           me.isLoadUsers = true;
-          voicebaseTokensApi.getUsers(credentials).then(function (users) {
+          voicebaseTokensApi.getUsers().then(function (users) {
             me.isLoadUsers = false;
             me.users = users;
           }, function () {
@@ -1760,7 +1833,7 @@ RAML.Decorators = (function (Decorators) {
         me.showUserTokens = function (user) {
           if(!user.tokens) {
             user.isLoadTokens = true;
-            voicebaseTokensApi.getUserTokens(credentials, user.userId).then(function (tokens) {
+            voicebaseTokensApi.getUserTokens(user.userId).then(function (tokens) {
               user.isLoadTokens = false;
               user.tokens = tokens;
             }, function () {
@@ -1773,7 +1846,7 @@ RAML.Decorators = (function (Decorators) {
 
         me.addToken = function (user) {
           user.isCreatingToken = true;
-          voicebaseTokensApi.addUserToken(credentials, user.userId).then(function (_token) {
+          voicebaseTokensApi.addUserToken(user.userId).then(function (_token) {
             user.isCreatingToken = false;
             if(user.tokens) {
               user.tokens.push(_token);
@@ -1783,8 +1856,6 @@ RAML.Decorators = (function (Decorators) {
             me.errorMessage = 'Can\'t creating token!';
           });
         };
-
-        me.getUsers();
       }
     };
   };
@@ -2204,18 +2275,58 @@ RAML.Decorators = (function (Decorators) {
     };
 
     /* Key Manager*/
-    var getUsers = function(credentials) {
+    var basicToken = null;
+
+    var setBasicToken = function(_basicToken){
+      basicToken = _basicToken;
+    };
+
+    var getBasicToken = function(){
+      return basicToken;
+    };
+
+    var basicAuth = function (credentials) {
       var deferred = $q.defer();
 
       var username = credentials.username;
       var password = credentials.password;
+
+      var token = 'Basic ' + btoa(username + ':' + password);
+
+      jQuery.ajax({
+        url: baseUrl + '/access/users/+' + username.toLowerCase() + '/tokens',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+          'Authorization': token
+        },
+        success: function(_tokens) {
+          if(!_tokens.tokens.length) {
+            deferred.reject('Can\'t authorize!');
+          }
+          else {
+            setBasicToken(token);
+            deferred.resolve();
+          }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
+    var getUsers = function() {
+      var deferred = $q.defer();
 
       jQuery.ajax({
         url: baseUrl + '/access/users',
         type: 'GET',
         dataType: 'json',
         headers: {
-          'Authorization': 'Basic ' + btoa(username + ':' + password)
+          'Authorization': getBasicToken()
         },
         success: function(_users) {
           deferred.resolve(_users.users);
@@ -2229,18 +2340,15 @@ RAML.Decorators = (function (Decorators) {
       return deferred.promise;
     };
 
-    var getUserTokens = function (credentials, userId) {
+    var getUserTokens = function (userId) {
       var deferred = $q.defer();
-
-      var username = credentials.username;
-      var password = credentials.password;
 
       jQuery.ajax({
         url: baseUrl + '/access/users/+' + userId + '/tokens',
         type: 'GET',
         dataType: 'json',
         headers: {
-          'Authorization': 'Basic ' + btoa(username + ':' + password)
+          'Authorization': getBasicToken()
         },
         success: function(_tokens) {
           deferred.resolve(_tokens.tokens);
@@ -2255,11 +2363,8 @@ RAML.Decorators = (function (Decorators) {
 
     };
 
-    var addUserToken = function (credentials, userId) {
+    var addUserToken = function (userId) {
       var deferred = $q.defer();
-
-      var username = credentials.username;
-      var password = credentials.password;
 
       var data = JSON.stringify({
         token: {}
@@ -2271,7 +2376,7 @@ RAML.Decorators = (function (Decorators) {
         dataType: 'json',
         contentType: 'application/json',
         headers: {
-          'Authorization': 'Basic ' + btoa(username + ':' + password)
+          'Authorization': getBasicToken()
         },
         data: data,
         success: function(_token) {
@@ -2301,6 +2406,8 @@ RAML.Decorators = (function (Decorators) {
       getNeedRemember: getNeedRemember,
       setNeedRemember: setNeedRemember,
       getTokenFromStorage: getTokenFromStorage,
+      getBasicToken: getBasicToken,
+      basicAuth: basicAuth,
       getUsers: getUsers,
       getUserTokens: getUserTokens,
       addUserToken: addUserToken
@@ -2934,6 +3041,55 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
   );
 
 
+  $templateCache.put('voicebase-tokens/directives/basic-auth-form.tpl.html',
+    "<div class=\"raml-console-auth-form-container\">\n" +
+    "  <div class=\"raml-console-vbs-token-auth-form\">\n" +
+    "    <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"basicAuthCtrl.formError\">\n" +
+    "      <button type=\"button\" class=\"close\" ng-click=\"basicAuthCtrl.formError = ''\"><span aria-hidden=\"true\">&times;</span></button>\n" +
+    "      {{ basicAuthCtrl.formError }}\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <form name=\"authForm\" novalidate null-form ng-submit=\"basicAuthCtrl.startAuth($event)\">\n" +
+    "      <div class=\"\">\n" +
+    "        <p class=\"raml-console-sidebar-input-container\">\n" +
+    "          <label class=\"raml-console-sidebar-label\">API Key <span class=\"raml-console-side-bar-required-field\">*</span></label>\n" +
+    "          <input required=\"true\" type=\"text\" name=\"username\" class=\"raml-console-sidebar-input raml-console-sidebar-security-field\"\n" +
+    "                 ng-model=\"basicAuthCtrl.credentials.username\"/>\n" +
+    "          <span class=\"raml-console-field-validation-error\"></span>\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <p class=\"raml-console-sidebar-input-container\">\n" +
+    "          <label class=\"raml-console-sidebar-label\">Password <span class=\"raml-console-side-bar-required-field\">*</span></label>\n" +
+    "          <input required=\"true\" type=\"password\" name=\"password\" class=\"raml-console-sidebar-input raml-console-sidebar-security-field\"\n" +
+    "                 ng-model=\"basicAuthCtrl.credentials.password\"/>\n" +
+    "          <span class=\"raml-console-field-validation-error\"></span>\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <p ng-if=\"needRemember\">\n" +
+    "          <label class=\"raml-console-sidebar-label raml-console-pull-right\">\n" +
+    "            <input type=\"checkbox\" class=\"raml-console-rememberVoicebaseToken\" ng-checked=\"basicAuthCtrl.isRemember\" ng-click=\"basicAuthCtrl.changeRemember()\"/>\n" +
+    "            Remember me\n" +
+    "          </label>\n" +
+    "        </p>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"raml-console-vbs-auth-form-btns\">\n" +
+    "        <button type=\"submit\" class=\"raml-console-sidebar-action raml-console-sidebar-action-get\">\n" +
+    "          <span ng-if=\"!basicAuthCtrl.isLoaded\">Sign In</span>\n" +
+    "          <span ng-if=\"basicAuthCtrl.isLoaded\">Signing In...</span>\n" +
+    "        </button>\n" +
+    "        <button type=\"button\" class=\"raml-console-sidebar-action raml-console-sidebar-action-reset\"\n" +
+    "                ng-if=\"canHideForm\"\n" +
+    "                ng-click=\"basicAuthCtrl.hideForm()\">\n" +
+    "          Cancel\n" +
+    "        </button>\n" +
+    "      </div>\n" +
+    "    </form>\n" +
+    "  </div>\n" +
+    "</div>\n"
+  );
+
+
   $templateCache.put('voicebase-tokens/directives/key-manager.tpl.html',
     "<div class=\"panel panel-default raml-console-panel key-manager\">\n" +
     "\n" +
@@ -2992,7 +3148,9 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "  </div>\n" +
     "\n" +
-    "  <div ng-if=\"!keyManagerCtrl.isLogin\" class=\"raml-console-error-message\">Please sign in</div>\n" +
+    "  <div ng-if=\"!keyManagerCtrl.isLogin\" class=\"\">\n" +
+    "    <basic-auth-form need-remember=\"false\" can-hide-form=\"false\"></basic-auth-form>\n" +
+    "  </div>\n" +
     "\n" +
     "</div>\n"
   );
