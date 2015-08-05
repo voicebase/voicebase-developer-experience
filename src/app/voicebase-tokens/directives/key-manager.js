@@ -12,21 +12,23 @@
       controller: function($scope, voicebaseTokensApi, formValidate) {
         var me = this;
 
-        var credentials = {
-          username: '33586649-D8D5-43BC-98FA-31A60B11EF72',
-          password: '2eDdjBqtZu3rbp'
-        };
+        me.isLogin = false;
 
-        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
-        var tokenData = voicebaseTokensApi.getCurrentToken();
-        me.isLogin = (tokenData) ? true : false;
+        $scope.$watch(function () {
+          return voicebaseTokensApi.getBasicToken();
+        }, function (newToken) {
+            if(newToken) {
+              me.isLogin = true;
+              me.getUsers();
+            }
+        });
 
         me.isLoadUsers = false;
         me.users = [];
 
         me.getUsers = function () {
           me.isLoadUsers = true;
-          voicebaseTokensApi.getUsers(credentials).then(function (users) {
+          voicebaseTokensApi.getUsers().then(function (users) {
             me.isLoadUsers = false;
             me.users = users;
           }, function () {
@@ -38,7 +40,7 @@
         me.showUserTokens = function (user) {
           if(!user.tokens) {
             user.isLoadTokens = true;
-            voicebaseTokensApi.getUserTokens(credentials, user.userId).then(function (tokens) {
+            voicebaseTokensApi.getUserTokens(user.userId).then(function (tokens) {
               user.isLoadTokens = false;
               user.tokens = tokens;
             }, function () {
@@ -51,7 +53,7 @@
 
         me.addToken = function (user) {
           user.isCreatingToken = true;
-          voicebaseTokensApi.addUserToken(credentials, user.userId).then(function (_token) {
+          voicebaseTokensApi.addUserToken(user.userId).then(function (_token) {
             user.isCreatingToken = false;
             if(user.tokens) {
               user.tokens.push(_token);
@@ -61,8 +63,6 @@
             me.errorMessage = 'Can\'t creating token!';
           });
         };
-
-        me.getUsers();
       }
     };
   };

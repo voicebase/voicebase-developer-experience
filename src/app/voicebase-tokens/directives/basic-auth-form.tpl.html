@@ -1,0 +1,45 @@
+<div class="raml-console-auth-form-container">
+  <div class="raml-console-vbs-token-auth-form">
+    <div class="alert alert-danger" role="alert" ng-if="basicAuthCtrl.formError">
+      <button type="button" class="close" ng-click="basicAuthCtrl.formError = ''"><span aria-hidden="true">&times;</span></button>
+      {{ basicAuthCtrl.formError }}
+    </div>
+
+    <form name="authForm" novalidate null-form ng-submit="basicAuthCtrl.startAuth($event)">
+      <div class="">
+        <p class="raml-console-sidebar-input-container">
+          <label class="raml-console-sidebar-label">API Key <span class="raml-console-side-bar-required-field">*</span></label>
+          <input required="true" type="text" name="username" class="raml-console-sidebar-input raml-console-sidebar-security-field"
+                 ng-model="basicAuthCtrl.credentials.username"/>
+          <span class="raml-console-field-validation-error"></span>
+        </p>
+
+        <p class="raml-console-sidebar-input-container">
+          <label class="raml-console-sidebar-label">Password <span class="raml-console-side-bar-required-field">*</span></label>
+          <input required="true" type="password" name="password" class="raml-console-sidebar-input raml-console-sidebar-security-field"
+                 ng-model="basicAuthCtrl.credentials.password"/>
+          <span class="raml-console-field-validation-error"></span>
+        </p>
+
+        <p ng-if="needRemember">
+          <label class="raml-console-sidebar-label raml-console-pull-right">
+            <input type="checkbox" class="raml-console-rememberVoicebaseToken" ng-checked="basicAuthCtrl.isRemember" ng-click="basicAuthCtrl.changeRemember()"/>
+            Remember me
+          </label>
+        </p>
+      </div>
+
+      <div class="raml-console-vbs-auth-form-btns">
+        <button type="submit" class="raml-console-sidebar-action raml-console-sidebar-action-get">
+          <span ng-if="!basicAuthCtrl.isLoaded">Sign In</span>
+          <span ng-if="basicAuthCtrl.isLoaded">Signing In...</span>
+        </button>
+        <button type="button" class="raml-console-sidebar-action raml-console-sidebar-action-reset"
+                ng-if="canHideForm"
+                ng-click="basicAuthCtrl.hideForm()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

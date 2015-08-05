@@ -158,18 +158,58 @@
     };
 
     /* Key Manager*/
-    var getUsers = function(credentials) {
+    var basicToken = null;
+
+    var setBasicToken = function(_basicToken){
+      basicToken = _basicToken;
+    };
+
+    var getBasicToken = function(){
+      return basicToken;
+    };
+
+    var basicAuth = function (credentials) {
       var deferred = $q.defer();
 
       var username = credentials.username;
       var password = credentials.password;
+
+      var token = 'Basic ' + btoa(username + ':' + password);
+
+      jQuery.ajax({
+        url: baseUrl + '/access/users/+' + username.toLowerCase() + '/tokens',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+          'Authorization': token
+        },
+        success: function(_tokens) {
+          if(!_tokens.tokens.length) {
+            deferred.reject('Can\'t authorize!');
+          }
+          else {
+            setBasicToken(token);
+            deferred.resolve();
+          }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
+    var getUsers = function() {
+      var deferred = $q.defer();
 
       jQuery.ajax({
         url: baseUrl + '/access/users',
         type: 'GET',
         dataType: 'json',
         headers: {
-          'Authorization': 'Basic ' + btoa(username + ':' + password)
+          'Authorization': getBasicToken()
         },
         success: function(_users) {
           deferred.resolve(_users.users);
@@ -183,18 +223,15 @@
       return deferred.promise;
     };
 
-    var getUserTokens = function (credentials, userId) {
+    var getUserTokens = function (userId) {
       var deferred = $q.defer();
-
-      var username = credentials.username;
-      var password = credentials.password;
 
       jQuery.ajax({
         url: baseUrl + '/access/users/+' + userId + '/tokens',
         type: 'GET',
         dataType: 'json',
         headers: {
-          'Authorization': 'Basic ' + btoa(username + ':' + password)
+          'Authorization': getBasicToken()
         },
         success: function(_tokens) {
           deferred.resolve(_tokens.tokens);
@@ -209,11 +246,8 @@
 
     };
 
-    var addUserToken = function (credentials, userId) {
+    var addUserToken = function (userId) {
       var deferred = $q.defer();
-
-      var username = credentials.username;
-      var password = credentials.password;
 
       var data = JSON.stringify({
         token: {}
@@ -225,7 +259,7 @@
         dataType: 'json',
         contentType: 'application/json',
         headers: {
-          'Authorization': 'Basic ' + btoa(username + ':' + password)
+          'Authorization': getBasicToken()
         },
         data: data,
         success: function(_token) {
@@ -255,6 +289,8 @@
       getNeedRemember: getNeedRemember,
       setNeedRemember: setNeedRemember,
       getTokenFromStorage: getTokenFromStorage,
+      getBasicToken: getBasicToken,
+      basicAuth: basicAuth,
       getUsers: getUsers,
       getUserTokens: getUserTokens,
       addUserToken: addUserToken

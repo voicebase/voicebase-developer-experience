@@ -504,5 +504,16 @@
     }
 
   }
+
+  .raml-console-vbs-token-auth-form {
+    position: inherit;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+
+    .raml-console-vbs-auth-form-btns {
+      padding: 0;
+    }
+  }
 }
 

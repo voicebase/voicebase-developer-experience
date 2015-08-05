@@ -55,6 +55,8 @@
 
   </div>
 
-  <div ng-if="!keyManagerCtrl.isLogin" class="raml-console-error-message">Please sign in</div>
+  <div ng-if="!keyManagerCtrl.isLogin" class="">
+    <basic-auth-form need-remember="false" can-hide-form="false"></basic-auth-form>
+  </div>
 
 </div>
