@@ -16,6 +16,12 @@
         me.isLoaded = false;
         me.formError = null;
         me.credentials = {};
+        me.noUsernameInput = false;
+
+        me.credentials.username = voicebaseTokensApi.getApiKey() || '';
+        if(me.credentials.username) {
+          me.noUsernameInput = true;
+        }
 
         if($scope.needRemember) {
           me.isRemember = voicebaseTokensApi.getNeedRemember();

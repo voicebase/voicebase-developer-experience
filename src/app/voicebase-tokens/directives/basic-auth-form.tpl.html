@@ -7,7 +7,7 @@
 
     <form name="authForm" novalidate null-form ng-submit="basicAuthCtrl.startAuth($event)">
       <div class="">
-        <p class="raml-console-sidebar-input-container">
+        <p class="raml-console-sidebar-input-container" ng-if="!basicAuthCtrl.noUsernameInput">
           <label class="raml-console-sidebar-label">API Key <span class="raml-console-side-bar-required-field">*</span></label>
           <input required="true" type="text" name="username" class="raml-console-sidebar-input raml-console-sidebar-security-field"
                  ng-model="basicAuthCtrl.credentials.username"/>

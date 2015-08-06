@@ -72,6 +72,7 @@
               }]
             };
             setTokensObj(_tokens);
+            saveApiKey(username);
             deferred.resolve(_tokens);
           }
         },
@@ -84,6 +85,19 @@
       return deferred.promise;
     };
 
+    var saveApiKey = function (username) {
+      if(needRemember && username) {
+        localStorage.setItem('voicebaseApiKey', username);
+      }
+      else {
+        localStorage.removeItem('voicebaseApiKey');
+      }
+    };
+
+    var getApiKey = function () {
+      return localStorage.getItem('voicebaseApiKey');
+    };
+
     var setTokensObj = function(tokensObj) {
       var _tokensObj = (!tokensObj) ? null : tokensObj.tokens[0];
       setCurrentToken(_tokensObj);
@@ -93,6 +107,7 @@
       }
       else {
         localStorage.removeItem('voicebaseToken');
+        saveApiKey(null);
       }
 
       tokens = tokensObj;
@@ -290,6 +305,7 @@
       setNeedRemember: setNeedRemember,
       getTokenFromStorage: getTokenFromStorage,
       getBasicToken: getBasicToken,
+      getApiKey: getApiKey,
       basicAuth: basicAuth,
       getUsers: getUsers,
       getUserTokens: getUserTokens,
