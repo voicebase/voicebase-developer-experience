@@ -1738,6 +1738,12 @@ RAML.Decorators = (function (Decorators) {
         me.isLoaded = false;
         me.formError = null;
         me.credentials = {};
+        me.noUsernameInput = false;
+
+        me.credentials.username = voicebaseTokensApi.getApiKey() || '';
+        if(me.credentials.username) {
+          me.noUsernameInput = true;
+        }
 
         if($scope.needRemember) {
           me.isRemember = voicebaseTokensApi.getNeedRemember();
@@ -1806,6 +1812,7 @@ RAML.Decorators = (function (Decorators) {
         var me = this;
 
         me.isLogin = false;
+        me.highlightToken = null;
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getBasicToken();
@@ -1846,16 +1853,43 @@ RAML.Decorators = (function (Decorators) {
 
         me.addToken = function (user) {
           user.isCreatingToken = true;
+          me.highlightToken = '';
           voicebaseTokensApi.addUserToken(user.userId).then(function (_token) {
             user.isCreatingToken = false;
             if(user.tokens) {
-              user.tokens.push(_token);
+              me.highlightToken = _token;
+              user.tokens.unshift(_token);
             }
           }, function () {
             user.isCreatingToken = false;
             me.errorMessage = 'Can\'t creating token!';
           });
         };
+
+        me.removeToken = function (user, _token) {
+          _token.isRemoving = true;
+          voicebaseTokensApi.deleteUserToken(user.userId, _token.token).then(function () {
+            _token.isRemoving = false;
+            user.tokens = user.tokens.filter(function (userToken) {
+              return userToken.token !== _token.token;
+            });
+          }, function () {
+            _token.isRemoving = false;
+            me.errorMessage = 'Can\'t removing token!';
+          });
+        };
+      },
+      link: function (scope, element) {
+        element.on('click', function (event) {
+          if(jQuery(event.target).hasClass('add-user-token')) {
+            var $panel = jQuery(event.target).closest('.panel');
+            var $panelBody = $panel.find('.panel-collapse');
+            var $userName = $panel.find('.panel-title .user-name');
+            if(!$panelBody.hasClass('in')) {
+              $userName.click();
+            }
+          }
+        });
       }
     };
   };
@@ -2189,6 +2223,7 @@ RAML.Decorators = (function (Decorators) {
               }]
             };
             setTokensObj(_tokens);
+            saveApiKey(username);
             deferred.resolve(_tokens);
           }
         },
@@ -2201,6 +2236,19 @@ RAML.Decorators = (function (Decorators) {
       return deferred.promise;
     };
 
+    var saveApiKey = function (username) {
+      if(needRemember && username) {
+        localStorage.setItem('voicebaseApiKey', username);
+      }
+      else {
+        localStorage.removeItem('voicebaseApiKey');
+      }
+    };
+
+    var getApiKey = function () {
+      return localStorage.getItem('voicebaseApiKey');
+    };
+
     var setTokensObj = function(tokensObj) {
       var _tokensObj = (!tokensObj) ? null : tokensObj.tokens[0];
       setCurrentToken(_tokensObj);
@@ -2210,6 +2258,7 @@ RAML.Decorators = (function (Decorators) {
       }
       else {
         localStorage.removeItem('voicebaseToken');
+        saveApiKey(null);
       }
 
       tokens = tokensObj;
@@ -2395,6 +2444,28 @@ RAML.Decorators = (function (Decorators) {
 
     };
 
+    var deleteUserToken = function (userId, token) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        url: baseUrl + '/access/users/+' + userId + '/tokens/' + token,
+        type: 'DELETE',
+        headers: {
+          'Authorization': getBasicToken()
+        },
+        success: function() {
+          deferred.resolve();
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+
+    };
+
     return {
       getTokens: getTokens,
       getToken: getToken,
@@ -2407,10 +2478,12 @@ RAML.Decorators = (function (Decorators) {
       setNeedRemember: setNeedRemember,
       getTokenFromStorage: getTokenFromStorage,
       getBasicToken: getBasicToken,
+      getApiKey: getApiKey,
       basicAuth: basicAuth,
       getUsers: getUsers,
       getUserTokens: getUserTokens,
-      addUserToken: addUserToken
+      addUserToken: addUserToken,
+      deleteUserToken: deleteUserToken
     };
 
   };
@@ -3051,7 +3124,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "    <form name=\"authForm\" novalidate null-form ng-submit=\"basicAuthCtrl.startAuth($event)\">\n" +
     "      <div class=\"\">\n" +
-    "        <p class=\"raml-console-sidebar-input-container\">\n" +
+    "        <p class=\"raml-console-sidebar-input-container\" ng-if=\"!basicAuthCtrl.noUsernameInput\">\n" +
     "          <label class=\"raml-console-sidebar-label\">API Key <span class=\"raml-console-side-bar-required-field\">*</span></label>\n" +
     "          <input required=\"true\" type=\"text\" name=\"username\" class=\"raml-console-sidebar-input raml-console-sidebar-security-field\"\n" +
     "                 ng-model=\"basicAuthCtrl.credentials.username\"/>\n" +
@@ -3108,12 +3181,12 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <div class=\"panel panel-default\">\n" +
     "          <div class=\"panel-heading\" role=\"tab\">\n" +
     "            <h4 class=\"panel-title\">\n" +
-    "              <a role=\"button\" data-toggle=\"collapse\" href=\"javascript:void(0)\" toggle-bootstrap-accordion ng-click=\"keyManagerCtrl.showUserTokens(user)\">\n" +
+    "              <a role=\"button\" class=\"user-name\" data-toggle=\"collapse\" href=\"javascript:void(0)\" toggle-bootstrap-accordion ng-click=\"keyManagerCtrl.showUserTokens(user)\">\n" +
     "                {{ user.name }}\n" +
     "              </a>\n" +
     "              <a href=\"javascript:void(0)\" class=\"pull-right add-user-token\"\n" +
     "                 ng-click=\"keyManagerCtrl.addToken(user)\"\n" +
-    "                 ng-if=\"!user.isCreatingToken\">\n" +
+    "                 ng-show=\"!user.isCreatingToken\">\n" +
     "                <i class=\"fa fa-plus-circle\"></i>\n" +
     "                Add token\n" +
     "              </a>\n" +
@@ -3129,14 +3202,23 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "              </div>\n" +
     "\n" +
     "              <div ng-if=\"user.tokens\">\n" +
-    "                <div class=\"list-group-item user-info__token-row\" ng-repeat=\"_token in user.tokens track by $index\">\n" +
-    "                  <h4 class=\"user-info__token-name\">{{ _token.token }}</h4>\n" +
-    "                  <div class=\"user-info__token-actions\">\n" +
+    "                <div class=\"list-group-item user-info__token-row\"\n" +
+    "                     ng-repeat=\"_token in user.tokens track by $index\"\n" +
+    "                     ng-class=\"keyManagerCtrl.highlightToken === _token ? 'user-info__token-row_highlight' : ''\">\n" +
+    "\n" +
+    "                  <h4 class=\"user-info__token-name\" ng-if=\"!_token.isRemoving\">{{ _token.token }}</h4>\n" +
+    "                  <div class=\"user-info__token-actions\" ng-if=\"!_token.isRemoving\">\n" +
     "                    <a href=\"javascript:void(0)\" class=\"user-info__token-actions__remove\"\n" +
-    "                            data-toggle=\"tooltip\" data-placement=\"top\" title=\"Remove token\">\n" +
+    "                            data-toggle=\"tooltip\" data-placement=\"top\" title=\"Remove token\"\n" +
+    "                            ng-click=\"keyManagerCtrl.removeToken(user, _token)\">\n" +
     "                      <i class=\"fa fa-times-circle\"></i>\n" +
     "                    </a>\n" +
     "                  </div>\n" +
+    "\n" +
+    "                  <div ng-if=\"_token.isRemoving\" class=\"remove-token__loader\">\n" +
+    "                    <css-spinner></css-spinner>\n" +
+    "                  </div>\n" +
+    "\n" +
     "                </div>\n" +
     "              </div>\n" +
     "            </div>\n" +
@@ -3148,7 +3230,11 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "  </div>\n" +
     "\n" +
-    "  <div ng-if=\"!keyManagerCtrl.isLogin\" class=\"\">\n" +
+    "  <div ng-if=\"!keyManagerCtrl.isLogin\">\n" +
+    "    <div class=\"alert alert-warning\" role=\"alert\">\n" +
+    "      <p>I understand that adding or removing users or tokens may affect the security of my account or break existing integrations.</p>\n" +
+    "      <p>Please enter your password to continue</p>\n" +
+    "    </div>\n" +
     "    <basic-auth-form need-remember=\"false\" can-hide-form=\"false\"></basic-auth-form>\n" +
     "  </div>\n" +
     "\n" +

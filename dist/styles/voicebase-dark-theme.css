@@ -490,7 +490,7 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   cursor: default !important;
 }
 .key-manager .panel .panel-body {
-  padding: 15px 0;
+  padding: 0 0 15px;
 }
 .key-manager .raml-console-spinner {
   margin: 35px auto;
@@ -499,11 +499,13 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 .key-manager .users-list .raml-console-spinner:after {
   content: 'Loading users..';
 }
-.key-manager .add-user-token__loader .raml-console-spinner {
+.key-manager .add-user-token__loader .raml-console-spinner,
+.key-manager .remove-token__loader .raml-console-spinner {
   margin: 0;
   height: 20px;
 }
-.key-manager .add-user-token__loader .raml-console-spinner:after {
+.key-manager .add-user-token__loader .raml-console-spinner:after,
+.key-manager .remove-token__loader .raml-console-spinner:after {
   content: '';
 }
 .key-manager .add-user-token {
@@ -515,10 +517,20 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 .key-manager .user-info .raml-console-spinner:after {
   content: 'Loading tokens..';
 }
+.key-manager .remove-token__loader {
+  margin: 0 auto;
+  display: table;
+}
+.key-manager .remove-token__loader .raml-console-spinner:after {
+  content: '';
+}
 .key-manager .user-info__token-row {
   display: table;
   width: 100%;
   table-layout: fixed;
+}
+.key-manager .user-info__token-row_highlight {
+  background-color: #FCF8E3;
 }
 .key-manager .user-info__token-name,
 .key-manager .user-info__token-actions {
