@@ -447,7 +447,8 @@
     }
   }
 
-  .add-user-token__loader {
+  .add-user-token__loader,
+  .remove-token__loader {
     .raml-console-spinner {
       margin: 0;
       height: 20px;
@@ -467,6 +468,15 @@
 
     .raml-console-spinner:after {
       content: 'Loading tokens..';
+    }
+  }
+
+  .remove-token__loader {
+    margin: 0 auto;
+    display: table;
+
+    .raml-console-spinner:after {
+      content: '';
     }
   }
 

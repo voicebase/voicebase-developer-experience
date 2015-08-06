@@ -293,6 +293,28 @@
 
     };
 
+    var deleteUserToken = function (userId, token) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        url: baseUrl + '/access/users/+' + userId + '/tokens/' + token,
+        type: 'DELETE',
+        headers: {
+          'Authorization': getBasicToken()
+        },
+        success: function() {
+          deferred.resolve();
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+
+    };
+
     return {
       getTokens: getTokens,
       getToken: getToken,
@@ -309,7 +331,8 @@
       basicAuth: basicAuth,
       getUsers: getUsers,
       getUserTokens: getUserTokens,
-      addUserToken: addUserToken
+      addUserToken: addUserToken,
+      deleteUserToken: deleteUserToken
     };
 
   };

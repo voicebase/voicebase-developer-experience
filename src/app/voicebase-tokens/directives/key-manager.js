@@ -66,6 +66,19 @@
             me.errorMessage = 'Can\'t creating token!';
           });
         };
+
+        me.removeToken = function (user, _token) {
+          _token.isRemoving = true;
+          voicebaseTokensApi.deleteUserToken(user.userId, _token.token).then(function () {
+            _token.isRemoving = false;
+            user.tokens = user.tokens.filter(function (userToken) {
+              return userToken.token !== _token.token;
+            });
+          }, function () {
+            _token.isRemoving = false;
+            me.errorMessage = 'Can\'t removing token!';
+          });
+        };
       },
       link: function (scope, element) {
         element.on('click', function (event) {
