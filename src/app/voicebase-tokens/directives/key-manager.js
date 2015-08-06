@@ -13,6 +13,7 @@
         var me = this;
 
         me.isLogin = false;
+        me.highlightToken = null;
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getBasicToken();
@@ -53,16 +54,30 @@
 
         me.addToken = function (user) {
           user.isCreatingToken = true;
+          me.highlightToken = '';
           voicebaseTokensApi.addUserToken(user.userId).then(function (_token) {
             user.isCreatingToken = false;
             if(user.tokens) {
-              user.tokens.push(_token);
+              me.highlightToken = _token;
+              user.tokens.unshift(_token);
             }
           }, function () {
             user.isCreatingToken = false;
             me.errorMessage = 'Can\'t creating token!';
           });
         };
+      },
+      link: function (scope, element) {
+        element.on('click', function (event) {
+          if(jQuery(event.target).hasClass('add-user-token')) {
+            var $panel = jQuery(event.target).closest('.panel');
+            var $panelBody = $panel.find('.panel-collapse');
+            var $userName = $panel.find('.panel-title .user-name');
+            if(!$panelBody.hasClass('in')) {
+              $userName.click();
+            }
+          }
+        });
       }
     };
   };

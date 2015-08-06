@@ -433,7 +433,7 @@
   cursor: default !important;
 
   .panel .panel-body {
-    padding: 15px 0;
+    padding: 0 0 15px;
   }
 
   .raml-console-spinner {
@@ -474,6 +474,10 @@
     display: table;
     width: 100%;
     table-layout: fixed;
+  }
+
+  .user-info__token-row_highlight {
+    background-color: #FCF8E3;
   }
 
   .user-info__token-name,
