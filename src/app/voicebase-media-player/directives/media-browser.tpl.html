@@ -1,0 +1,22 @@
+<div class="panel panel-default raml-console-panel media-browser">
+
+  <div class="alert alert-danger" role="alert" ng-if="mediaBroserCtrl.errorMessage">
+    <button type="button" class="close" ng-click="mediaBroserCtrl.errorMessage = ''"><span aria-hidden="true">&times;</span></button>
+    {{ mediaBroserCtrl.errorMessage }}
+  </div>
+
+  <div ng-if="mediaBroserCtrl.isLogin">
+
+    <div ng-if="!mediaBroserCtrl.mediaLoaded">
+      123
+    </div>
+
+    <div ng-if="mediaBroserCtrl.mediaLoaded" class="media-loader">
+      <css-spinner></css-spinner>
+    </div>
+
+  </div>
+
+  <div ng-if="!mediaBroserCtrl.isLogin" class="raml-console-error-message">Please sign in</div>
+
+</div>

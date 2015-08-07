@@ -21,6 +21,10 @@
         $location.path('/key-manager');
       };
 
+      $scope.loadMediaBrowser = function() {
+        $location.path('/media-browser');
+      };
+
       $scope.loadKeywordsSpottingApp = function() {
         $location.path('/keywords-spotting');
       };

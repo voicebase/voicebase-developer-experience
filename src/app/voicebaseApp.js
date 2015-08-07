@@ -68,6 +68,10 @@
         templateUrl: 'pages/keyManagerPage.html',
         reloadOnSearch: false
       })
+      .when('/media-browser', {
+        templateUrl: 'pages/mediaBrowserPage.html',
+        reloadOnSearch: false
+      })
       .when('/wait', {
         templateUrl: 'pages/addToWaitListPage.html',
         reloadOnSearch: false
