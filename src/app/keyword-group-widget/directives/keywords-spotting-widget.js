@@ -160,6 +160,11 @@
                 }
                 $interval.cancel(checker);
               }
+              else if(data.media && data.media.status === 'failed') {
+                me.pingProcess = false;
+                me.showStartOverBtn = true;
+                $interval.cancel(checker);
+              }
             }, function () {
               me.errorMessage = 'Error of getting file!';
             });
