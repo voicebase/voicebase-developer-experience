@@ -33,10 +33,10 @@
         };
 
         me.loadMedia = function (event, media) {
-          if(!media.url) {
+          if(!media.mediaUrl) {
             keywordsSpottingApi.getMediaUrl(tokenData.token, media.mediaId)
               .then(function (_url) {
-                media.url = _url;
+                media.mediaUrl = _url;
                 me.toggleAccordionPane(event, media);
               });
           }
