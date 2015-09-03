@@ -26,7 +26,7 @@
           var $panels = jQuery('#files-accordion').find('.panel-collapse');
           $panels.removeClass('in');
           voicebasePlayerService.destroyVoicebase();
-          $panels.find('.panel-body').empty();
+          $panels.find('.panel-player-container').empty();
           if(isOpen) {
             $panel.removeClass('in');
           }
@@ -40,7 +40,7 @@
               'media-url="' + uploadedInfo.mediaUrl + '"' +
               'media-type="' + uploadedInfo.mediaType + '">' +
               '</voicebase-media-player>')(scope);
-              $panel.find('.panel-body').append(player);
+              $panel.find('.panel-player-container').append(player);
               voicebasePlayerService.setMediaReady(true);
             }, 0);
           }
