@@ -1287,36 +1287,6 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var predictions = function () {
-    return {
-      restrict: 'E',
-      templateUrl: 'keyword-group-widget/directives/predictions.tpl.html',
-      scope: {
-        predictionsList: '='
-      },
-      controllerAs: 'predictionsCtrl',
-      controller: function ($scope) {
-        var me = this;
-
-        if($scope.predictionsList && $scope.predictionsList.latest && $scope.predictionsList.latest.predictions) {
-          me.predictions = $scope.predictionsList.latest.predictions;
-        }
-        else {
-          me.predictions = [];
-        }
-      }
-    };
-  };
-
-  angular.module('vbsKeywordGroupWidget')
-    .directive('predictionsTable', predictions);
-
-})();
-
-
-(function () {
-  'use strict';
-
   var scrollToBottom = function () {
     return {
       restrict: 'A',
@@ -3021,36 +2991,6 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  </div>\n" +
     "\n" +
     "  <div ng-if=\"!keywordsSpottingCtrl.isLogin\" class=\"raml-console-error-message\">Please sign in</div>\n" +
-    "</div>\n"
-  );
-
-
-  $templateCache.put('keyword-group-widget/directives/predictions.tpl.html',
-    "<div class=\"predictions-wrapper\" ng-if=\"predictionsCtrl.predictions.length > 0\">\n" +
-    "  <table class=\"table table-bordered\">\n" +
-    "    <thead>\n" +
-    "      <tr>\n" +
-    "        <th>Model Id</th>\n" +
-    "        <th>Type</th>\n" +
-    "        <th>Class</th>\n" +
-    "      </tr>\n" +
-    "    </thead>\n" +
-    "    <tbody>\n" +
-    "\n" +
-    "      <tr ng-repeat=\"prediction in predictionsCtrl.predictions\">\n" +
-    "        <td>\n" +
-    "          {{ prediction.model }}\n" +
-    "        </td>\n" +
-    "        <td>\n" +
-    "          {{ prediction.type }}\n" +
-    "        </td>\n" +
-    "        <td>\n" +
-    "          {{ prediction['class'] }}\n" +
-    "        </td>\n" +
-    "      </tr>\n" +
-    "\n" +
-    "    </tbody>\n" +
-    "  </table>\n" +
     "</div>\n"
   );
 
