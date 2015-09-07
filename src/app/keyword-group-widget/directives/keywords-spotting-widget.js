@@ -152,8 +152,7 @@
                   mediaUrl: url,
                   mediaType: file.type,
                   mediaName: file.name,
-                  hasSpottedWords: getHasSpottedWords(data.media.keywords.latest.groups),
-                  predictions: data.media.predictions
+                  hasSpottedWords: getHasSpottedWords(data.media.keywords.latest.groups)
                 });
                 if(me.uploadedData.length === countUploadedFiles) {
                   me.pingProcess = false;

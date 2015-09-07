@@ -45,6 +45,7 @@
             localSearch: true,
             localSearchHelperUrl: 'voicebase-player-lib/js/workers/',
             keywordsGroups: true,
+            showPredictionsBlock: true,
             actionFlag: {
               downloadMedia: false,
               downloadTranscript: false
