@@ -1287,6 +1287,36 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  var predictions = function () {
+    return {
+      restrict: 'E',
+      templateUrl: 'keyword-group-widget/directives/predictions.tpl.html',
+      scope: {
+        predictionsList: '='
+      },
+      controllerAs: 'predictionsCtrl',
+      controller: function ($scope) {
+        var me = this;
+
+        if($scope.predictionsList && $scope.predictionsList.latest && $scope.predictionsList.latest.predictions) {
+          me.predictions = $scope.predictionsList.latest.predictions;
+        }
+        else {
+          me.predictions = [];
+        }
+      }
+    };
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .directive('predictionsTable', predictions);
+
+})();
+
+
+(function () {
+  'use strict';
+
   var scrollToBottom = function () {
     return {
       restrict: 'A',
@@ -1565,7 +1595,7 @@ RAML.Decorators = (function (Decorators) {
           var $panels = jQuery('#files-accordion').find('.panel-collapse');
           $panels.removeClass('in');
           voicebasePlayerService.destroyVoicebase();
-          $panels.find('.panel-body').empty();
+          $panels.find('.panel-player-container').empty();
           if(isOpen) {
             $panel.removeClass('in');
           }
@@ -1579,7 +1609,7 @@ RAML.Decorators = (function (Decorators) {
               'media-url="' + uploadedInfo.mediaUrl + '"' +
               'media-type="' + uploadedInfo.mediaType + '">' +
               '</voicebase-media-player>')(scope);
-              $panel.find('.panel-body').append(player);
+              $panel.find('.panel-player-container').append(player);
               voicebasePlayerService.setMediaReady(true);
             }, 0);
           }
@@ -1642,6 +1672,7 @@ RAML.Decorators = (function (Decorators) {
             localSearch: true,
             localSearchHelperUrl: 'voicebase-player-lib/js/workers/',
             keywordsGroups: true,
+            showPredictionsBlock: true,
             actionFlag: {
               downloadMedia: false,
               downloadTranscript: false
@@ -2994,6 +3025,36 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
   );
 
 
+  $templateCache.put('keyword-group-widget/directives/predictions.tpl.html',
+    "<div class=\"predictions-wrapper\" ng-if=\"predictionsCtrl.predictions.length > 0\">\n" +
+    "  <table class=\"table table-bordered\">\n" +
+    "    <thead>\n" +
+    "      <tr>\n" +
+    "        <th>Model Id</th>\n" +
+    "        <th>Type</th>\n" +
+    "        <th>Class</th>\n" +
+    "      </tr>\n" +
+    "    </thead>\n" +
+    "    <tbody>\n" +
+    "\n" +
+    "      <tr ng-repeat=\"prediction in predictionsCtrl.predictions\">\n" +
+    "        <td>\n" +
+    "          {{ prediction.model }}\n" +
+    "        </td>\n" +
+    "        <td>\n" +
+    "          {{ prediction.type }}\n" +
+    "        </td>\n" +
+    "        <td>\n" +
+    "          {{ prediction['class'] }}\n" +
+    "        </td>\n" +
+    "      </tr>\n" +
+    "\n" +
+    "    </tbody>\n" +
+    "  </table>\n" +
+    "</div>\n"
+  );
+
+
   $templateCache.put('keyword-group-widget/templates/editKeywordGroupModal.tpl.html',
     "<div class=\"modal fade\" data-backdrop=\"static\">\n" +
     "  <div class=\"modal-dialog\">\n" +
@@ -3096,7 +3157,9 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        </h4>\n" +
     "      </div>\n" +
     "      <div class=\"panel-collapse collapse\" role=\"tabpanel\">\n" +
-    "        <div class=\"panel-body\"></div>\n" +
+    "        <div class=\"panel-body\">\n" +
+    "          <div class=\"panel-player-container\"></div>\n" +
+    "        </div>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "\n" +
