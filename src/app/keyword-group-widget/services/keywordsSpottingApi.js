@@ -48,6 +48,27 @@
       return deferred.promise;
     };
 
+    var getMedia = function (token) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        type: 'GET',
+        url: url + '/media',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function (data) {
+          deferred.resolve(data);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
     var checkMediaFinish = function (token, mediaId) {
       var deferred = $q.defer();
 
@@ -89,6 +110,7 @@
     };
 
     return {
+      getMedia: getMedia,
       postMedia: postMedia,
       checkMediaFinish: checkMediaFinish,
       getMediaUrl: getMediaUrl

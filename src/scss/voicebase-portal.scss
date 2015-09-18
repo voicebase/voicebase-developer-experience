@@ -531,3 +531,19 @@
   }
 }
 
+.media-browser {
+  padding: 15px;
+
+  .raml-console-spinner {
+    margin: 35px auto;
+    height: 35px;
+  }
+
+  .media-loader {
+    .raml-console-spinner:after {
+      content: 'Loading media..';
+    }
+  }
+
+}
+

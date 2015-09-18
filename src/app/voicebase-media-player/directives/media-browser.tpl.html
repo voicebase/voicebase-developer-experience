@@ -1,0 +1,49 @@
+<div class="panel panel-default raml-console-panel media-browser">
+
+  <div class="alert alert-danger" role="alert" ng-if="mediaBroserCtrl.errorMessage">
+    <button type="button" class="close" ng-click="mediaBroserCtrl.errorMessage = ''"><span aria-hidden="true">&times;</span></button>
+    {{ mediaBroserCtrl.errorMessage }}
+  </div>
+
+  <div ng-if="mediaBroserCtrl.isLogin">
+
+    <div ng-if="!mediaBroserCtrl.mediaLoaded">
+      <div class="media-browser-list" id="media-browser-list">
+
+        <div
+          dir-paginate="media in mediaBroserCtrl.media | itemsPerPage: mediaBroserCtrl.groupsPerPage"
+          current-page="mediaBroserCtrl.currentPage">
+
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" ng-attr-data-index="{{ $index }}" href="javascript:void(0)"
+                   ng-click="mediaBroserCtrl.loadMedia($event, media)">
+                  {{ media.mediaId }}
+                </a>
+              </h4>
+            </div>
+            <div class="panel-collapse collapse" role="tabpanel">
+              <div class="panel-body"></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="raml-console-keywords-pagination" >
+        <dir-pagination-controls
+          template-url="pagination/dirPagination.tpl.html">
+        </dir-pagination-controls>
+      </div>
+    </div>
+
+    <div ng-if="mediaBroserCtrl.mediaLoaded" class="media-loader">
+      <css-spinner></css-spinner>
+    </div>
+
+  </div>
+
+  <div ng-if="!mediaBroserCtrl.isLogin" class="raml-console-error-message">Please sign in</div>
+
+</div>
