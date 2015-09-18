@@ -564,6 +564,17 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   padding: 0;
 }
 
+.media-browser {
+  padding: 15px;
+}
+.media-browser .raml-console-spinner {
+  margin: 35px auto;
+  height: 35px;
+}
+.media-browser .media-loader .raml-console-spinner:after {
+  content: 'Loading media..';
+}
+
 .raml-console-login-page-container {
   background: #242f3e;
   color: #6e7e95;

@@ -68,6 +68,10 @@
         templateUrl: 'pages/keyManagerPage.html',
         reloadOnSearch: false
       })
+      .when('/media-browser', {
+        templateUrl: 'pages/mediaBrowserPage.html',
+        reloadOnSearch: false
+      })
       .when('/wait', {
         templateUrl: 'pages/addToWaitListPage.html',
         reloadOnSearch: false
@@ -137,6 +141,10 @@
 
       $scope.loadKeyManager = function() {
         $location.path('/key-manager');
+      };
+
+      $scope.loadMediaBrowser = function() {
+        $location.path('/media-browser');
       };
 
       $scope.loadKeywordsSpottingApp = function() {
@@ -1208,6 +1216,11 @@ RAML.Decorators = (function (Decorators) {
                 }
                 $interval.cancel(checker);
               }
+              else if(data.media && data.media.status === 'failed') {
+                me.pingProcess = false;
+                me.showStartOverBtn = true;
+                $interval.cancel(checker);
+              }
             }, function () {
               me.errorMessage = 'Error of getting file!';
             });
@@ -1462,6 +1475,27 @@ RAML.Decorators = (function (Decorators) {
       return deferred.promise;
     };
 
+    var getMedia = function (token) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        type: 'GET',
+        url: url + '/media',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function (data) {
+          deferred.resolve(data);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
     var checkMediaFinish = function (token, mediaId) {
       var deferred = $q.defer();
 
@@ -1503,6 +1537,7 @@ RAML.Decorators = (function (Decorators) {
     };
 
     return {
+      getMedia: getMedia,
       postMedia: postMedia,
       checkMediaFinish: checkMediaFinish,
       getMediaUrl: getMediaUrl
@@ -1513,6 +1548,94 @@ RAML.Decorators = (function (Decorators) {
     .service('keywordsSpottingApi', keywordsSpottingApi);
 
 })();
+
+(function () {
+  'use strict';
+
+  var mediaBrowser = function () {
+    return {
+      restrict: 'E',
+      templateUrl: 'voicebase-media-player/directives/media-browser.tpl.html',
+      scope: {
+      },
+      controllerAs: 'mediaBroserCtrl',
+      controller: function ($scope, $timeout, $compile, voicebaseTokensApi, keywordsSpottingApi, voicebasePlayerService) {
+        var me = this;
+
+        me.groupsPerPage = 5;
+        me.currentPage = 1;
+
+        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
+        var tokenData = voicebaseTokensApi.getCurrentToken();
+        me.isLogin = (tokenData) ? true : false;
+        me.mediaLoaded = false;
+        me.media = [];
+
+        var getMedia = function () {
+          me.mediaLoaded = true;
+          keywordsSpottingApi.getMedia(tokenData.token)
+            .then(function (_media) {
+              me.mediaLoaded = false;
+              me.media = _media.media;
+            }, function () {
+              me.mediaLoaded = false;
+              me.errorMessage = 'Can\'t getting media!';
+            });
+        };
+
+        me.loadMedia = function (event, media) {
+          if(!media.mediaUrl) {
+            keywordsSpottingApi.getMediaUrl(tokenData.token, media.mediaId)
+              .then(function (_url) {
+                media.mediaUrl = _url;
+                me.toggleAccordionPane(event, media);
+              });
+          }
+          else {
+            me.toggleAccordionPane(event, media);
+          }
+        };
+
+        me.toggleAccordionPane = function (event, media) {
+          var $panel = jQuery(event.target).closest('.panel').find('.panel-collapse');
+          var isOpen = $panel.hasClass('in');
+          var $panels = jQuery('#media-browser-list').find('.panel-collapse');
+          $panels.removeClass('in');
+          voicebasePlayerService.destroyVoicebase();
+          $panels.find('.panel-body').empty();
+          if(isOpen) {
+            $panel.removeClass('in');
+          }
+          else {
+            $panel.addClass('in');
+            $timeout(function () {
+              var player = $compile('<voicebase-media-player ' +
+              'token="' + tokenData.token + '"' +
+              'player-type="jwplayer"' +
+              'media-id="' + media.mediaId + '"' +
+              'media-url="' + media.mediaUrl + '"' +
+              'media-type="video">' +
+              '</voicebase-media-player>')($scope);
+              $panel.find('.panel-body').append(player);
+              voicebasePlayerService.setMediaReady(true);
+            }, 0);
+          }
+        };
+
+        me.changePage = function () {
+          voicebasePlayerService.destroyVoicebase();
+        };
+
+        getMedia();
+      }
+    };
+  };
+
+  angular.module('voicebasePlayerModule')
+    .directive('mediaBrowser', mediaBrowser);
+
+})();
+
 
 (function () {
   'use strict';
@@ -3070,6 +3193,60 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <a href=\"\" ng-click=\"setCurrent(pagination.last)\">&raquo;</a>\n" +
     "    </li>\n" +
     "</ul>\n"
+  );
+
+
+  $templateCache.put('voicebase-media-player/directives/media-browser.tpl.html',
+    "<div class=\"panel panel-default raml-console-panel media-browser\">\n" +
+    "\n" +
+    "  <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"mediaBroserCtrl.errorMessage\">\n" +
+    "    <button type=\"button\" class=\"close\" ng-click=\"mediaBroserCtrl.errorMessage = ''\"><span aria-hidden=\"true\">&times;</span></button>\n" +
+    "    {{ mediaBroserCtrl.errorMessage }}\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div ng-if=\"mediaBroserCtrl.isLogin\">\n" +
+    "\n" +
+    "    <div ng-if=\"!mediaBroserCtrl.mediaLoaded\">\n" +
+    "      <div class=\"media-browser-list\" id=\"media-browser-list\">\n" +
+    "\n" +
+    "        <div\n" +
+    "          dir-paginate=\"media in mediaBroserCtrl.media | itemsPerPage: mediaBroserCtrl.groupsPerPage\"\n" +
+    "          current-page=\"mediaBroserCtrl.currentPage\">\n" +
+    "\n" +
+    "          <div class=\"panel panel-default\">\n" +
+    "            <div class=\"panel-heading\" role=\"tab\">\n" +
+    "              <h4 class=\"panel-title\">\n" +
+    "                <a role=\"button\" data-toggle=\"collapse\" ng-attr-data-index=\"{{ $index }}\" href=\"javascript:void(0)\"\n" +
+    "                   ng-click=\"mediaBroserCtrl.loadMedia($event, media)\">\n" +
+    "                  {{ media.mediaId }}\n" +
+    "                </a>\n" +
+    "              </h4>\n" +
+    "            </div>\n" +
+    "            <div class=\"panel-collapse collapse\" role=\"tabpanel\">\n" +
+    "              <div class=\"panel-body\"></div>\n" +
+    "            </div>\n" +
+    "          </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "      </div>\n" +
+    "      <div class=\"raml-console-keywords-pagination\" >\n" +
+    "        <dir-pagination-controls\n" +
+    "          on-page-change=\"mediaBroserCtrl.changePage()\"\n" +
+    "          template-url=\"pagination/dirPagination.tpl.html\">\n" +
+    "        </dir-pagination-controls>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"mediaBroserCtrl.mediaLoaded\" class=\"media-loader\">\n" +
+    "      <css-spinner></css-spinner>\n" +
+    "    </div>\n" +
+    "\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div ng-if=\"!mediaBroserCtrl.isLogin\" class=\"raml-console-error-message\">Please sign in</div>\n" +
+    "\n" +
+    "</div>\n"
   );
 
 

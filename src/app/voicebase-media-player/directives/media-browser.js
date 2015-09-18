@@ -71,6 +71,10 @@
           }
         };
 
+        me.changePage = function () {
+          voicebasePlayerService.destroyVoicebase();
+        };
+
         getMedia();
       }
     };
