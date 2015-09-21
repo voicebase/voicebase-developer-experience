@@ -75,7 +75,9 @@
       .when('/wait', {
         templateUrl: 'pages/addToWaitListPage.html',
         reloadOnSearch: false
-      });
+      })
+      .otherwise({redirectTo: '/'});
+
   });
 
 
