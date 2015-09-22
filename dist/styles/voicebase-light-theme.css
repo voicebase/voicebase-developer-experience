@@ -157,63 +157,276 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   left: 0;
 }
 
-.dashboard-page {
+.dashboard-page,
+.keyword-config-page,
+.keywords-spotting,
+.key-manager-page,
+.media-browser-page,
+.media-browser {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.42857143;
   color: #333;
   padding-top: 80px;
 }
-.dashboard-page a {
+.dashboard-page .raml-console-error-message,
+.keyword-config-page .raml-console-error-message,
+.keywords-spotting .raml-console-error-message,
+.key-manager-page .raml-console-error-message,
+.media-browser-page .raml-console-error-message,
+.media-browser .raml-console-error-message {
+  font-size: 18px;
+  padding: 15px;
+  color: #D14956;
+}
+.dashboard-page .panel,
+.keyword-config-page .panel,
+.keywords-spotting .panel,
+.key-manager-page .panel,
+.media-browser-page .panel,
+.media-browser .panel {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #DDD;
+}
+.dashboard-page .panel:hover,
+.keyword-config-page .panel:hover,
+.keywords-spotting .panel:hover,
+.key-manager-page .panel:hover,
+.media-browser-page .panel:hover,
+.media-browser .panel:hover {
+  border: 1px solid #DDD;
+  box-shadow: none;
+}
+.dashboard-page .panel a,
+.keyword-config-page .panel a,
+.keywords-spotting .panel a,
+.key-manager-page .panel a,
+.media-browser-page .panel a,
+.media-browser .panel a {
+  text-decoration: none;
+}
+.dashboard-page .panel a:hover,
+.keyword-config-page .panel a:hover,
+.keywords-spotting .panel a:hover,
+.key-manager-page .panel a:hover,
+.media-browser-page .panel a:hover,
+.media-browser .panel a:hover {
+  text-decoration: none;
+}
+.dashboard-page .panel a small,
+.keyword-config-page .panel a small,
+.keywords-spotting .panel a small,
+.key-manager-page .panel a small,
+.media-browser-page .panel a small,
+.media-browser .panel a small {
+  color: #555;
+}
+.dashboard-page .panel h4,
+.keyword-config-page .panel h4,
+.keywords-spotting .panel h4,
+.key-manager-page .panel h4,
+.media-browser-page .panel h4,
+.media-browser .panel h4 {
+  margin-top: 0;
+  font-size: 16px;
+}
+.dashboard-page .panel h4 a,
+.keyword-config-page .panel h4 a,
+.keywords-spotting .panel h4 a,
+.key-manager-page .panel h4 a,
+.media-browser-page .panel h4 a,
+.media-browser .panel h4 a {
+  text-decoration: none;
+}
+.dashboard-page .panel .panel-body,
+.keyword-config-page .panel .panel-body,
+.keywords-spotting .panel .panel-body,
+.key-manager-page .panel .panel-body,
+.media-browser-page .panel .panel-body,
+.media-browser .panel .panel-body {
+  padding-left: 55px;
+  position: relative;
+}
+.dashboard-page .panel .panel-body ul,
+.keyword-config-page .panel .panel-body ul,
+.keywords-spotting .panel .panel-body ul,
+.key-manager-page .panel .panel-body ul,
+.media-browser-page .panel .panel-body ul,
+.media-browser .panel .panel-body ul {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.dashboard-page .sidebar h3,
+.keyword-config-page .sidebar h3,
+.keywords-spotting .sidebar h3,
+.key-manager-page .sidebar h3,
+.media-browser-page .sidebar h3,
+.media-browser .sidebar h3 {
+  margin-top: 0;
+}
+.dashboard-page .sidebar .lead,
+.keyword-config-page .sidebar .lead,
+.keywords-spotting .sidebar .lead,
+.key-manager-page .sidebar .lead,
+.media-browser-page .sidebar .lead,
+.media-browser .sidebar .lead {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.dashboard-page a,
+.keyword-config-page a,
+.keywords-spotting a,
+.key-manager-page a,
+.media-browser-page a,
+.media-browser a {
   color: #0079c0;
   text-decoration: none;
 }
-.dashboard-page a:focus, .dashboard-page a:hover {
+.dashboard-page a:focus, .dashboard-page a:hover,
+.keyword-config-page a:focus,
+.keyword-config-page a:hover,
+.keywords-spotting a:focus,
+.keywords-spotting a:hover,
+.key-manager-page a:focus,
+.key-manager-page a:hover,
+.media-browser-page a:focus,
+.media-browser-page a:hover,
+.media-browser a:focus,
+.media-browser a:hover {
   color: #23527C;
   text-decoration: underline;
 }
-.dashboard-page h3 {
+.dashboard-page h3,
+.keyword-config-page h3,
+.keywords-spotting h3,
+.key-manager-page h3,
+.media-browser-page h3,
+.media-browser h3 {
   font-size: 24px;
 }
-.dashboard-page h4 {
+.dashboard-page h4,
+.keyword-config-page h4,
+.keywords-spotting h4,
+.key-manager-page h4,
+.media-browser-page h4,
+.media-browser h4 {
   font-size: 18px;
 }
-.dashboard-page .h1, .dashboard-page .h2, .dashboard-page .h3, .dashboard-page .h4, .dashboard-page .h5, .dashboard-page .h6, .dashboard-page h1, .dashboard-page h2, .dashboard-page h3, .dashboard-page h4, .dashboard-page h5, .dashboard-page h6 {
+.dashboard-page .h1, .dashboard-page .h2, .dashboard-page .h3, .dashboard-page .h4, .dashboard-page .h5, .dashboard-page .h6, .dashboard-page h1, .dashboard-page h2, .dashboard-page h3, .dashboard-page h4, .dashboard-page h5, .dashboard-page h6,
+.keyword-config-page .h1,
+.keyword-config-page .h2,
+.keyword-config-page .h3,
+.keyword-config-page .h4,
+.keyword-config-page .h5,
+.keyword-config-page .h6,
+.keyword-config-page h1,
+.keyword-config-page h2,
+.keyword-config-page h3,
+.keyword-config-page h4,
+.keyword-config-page h5,
+.keyword-config-page h6,
+.keywords-spotting .h1,
+.keywords-spotting .h2,
+.keywords-spotting .h3,
+.keywords-spotting .h4,
+.keywords-spotting .h5,
+.keywords-spotting .h6,
+.keywords-spotting h1,
+.keywords-spotting h2,
+.keywords-spotting h3,
+.keywords-spotting h4,
+.keywords-spotting h5,
+.keywords-spotting h6,
+.key-manager-page .h1,
+.key-manager-page .h2,
+.key-manager-page .h3,
+.key-manager-page .h4,
+.key-manager-page .h5,
+.key-manager-page .h6,
+.key-manager-page h1,
+.key-manager-page h2,
+.key-manager-page h3,
+.key-manager-page h4,
+.key-manager-page h5,
+.key-manager-page h6,
+.media-browser-page .h1,
+.media-browser-page .h2,
+.media-browser-page .h3,
+.media-browser-page .h4,
+.media-browser-page .h5,
+.media-browser-page .h6,
+.media-browser-page h1,
+.media-browser-page h2,
+.media-browser-page h3,
+.media-browser-page h4,
+.media-browser-page h5,
+.media-browser-page h6,
+.media-browser .h1,
+.media-browser .h2,
+.media-browser .h3,
+.media-browser .h4,
+.media-browser .h5,
+.media-browser .h6,
+.media-browser h1,
+.media-browser h2,
+.media-browser h3,
+.media-browser h4,
+.media-browser h5,
+.media-browser h6 {
   font-family: inherit;
   font-weight: 500;
   line-height: 1.1;
   color: inherit;
 }
-.dashboard-page small {
+.dashboard-page small,
+.keyword-config-page small,
+.keywords-spotting small,
+.key-manager-page small,
+.media-browser-page small,
+.media-browser small {
   font-size: 85%;
 }
-.dashboard-page .text-muted {
+.dashboard-page .text-muted,
+.keyword-config-page .text-muted,
+.keywords-spotting .text-muted,
+.key-manager-page .text-muted,
+.media-browser-page .text-muted,
+.media-browser .text-muted {
   color: #777;
 }
-.dashboard-page .sidebar h3 {
-  margin-top: 0;
+
+@media (min-width: 768px) {
+  .dashboard-page,
+  .keyword-config-page,
+  .keywords-spotting,
+  .key-manager-page,
+  .media-browser-page,
+  .media-browser {
+    padding-top: 110px;
+  }
+  .dashboard-page .panel,
+  .keyword-config-page .panel,
+  .keywords-spotting .panel,
+  .key-manager-page .panel,
+  .media-browser-page .panel,
+  .media-browser .panel {
+    margin-bottom: 30px;
+  }
 }
-.dashboard-page .sidebar .lead {
-  margin-bottom: 10px;
-  font-size: 18px;
-}
-.dashboard-page .panel {
-  cursor: pointer;
-  transition: all 0.3s ease;
+@media (max-width: 767px) {
+  .dashboard-page .panel,
+  .keyword-config-page .panel,
+  .keywords-spotting .panel,
+  .key-manager-page .panel,
+  .media-browser-page .panel,
+  .media-browser .panel {
+    margin-bottom: 10px;
+  }
 }
 .dashboard-page .panel:hover {
   border-color: #0079c0;
-}
-.dashboard-page .panel h4 {
-  margin-top: 0;
-  font-size: 16px;
-}
-.dashboard-page .panel h4 a {
-  text-decoration: none;
-}
-.dashboard-page .panel .panel-body {
-  padding-left: 55px;
-  position: relative;
 }
 .dashboard-page .panel .panel-body .widget-icon {
   position: absolute;
@@ -221,26 +434,7 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   top: 15px;
   color: #85d04a;
 }
-.dashboard-page .panel .panel-body ul {
-  margin-bottom: 0;
-  padding-left: 0;
-  list-style: none;
-}
 
-@media (min-width: 768px) {
-  .dashboard-page {
-    padding-top: 110px;
-  }
-
-  .panel {
-    margin-bottom: 30px;
-  }
-}
-@media (max-width: 767px) {
-  .dashboard-page .panel {
-    margin-bottom: 10px;
-  }
-}
 .keyword-config-page .raml-console-vbs-keyword-group-widget-container {
   float: none;
 }
@@ -262,27 +456,6 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 }
 .keyword-config-page .raml-console-vbs-keyword-group-widget-container h3 {
   font-size: 16px;
-}
-.keyword-config-page .raml-console-error-message {
-  font-size: 18px;
-  padding: 15px;
-  color: #D14956;
-}
-.keyword-config-page .panel {
-  border: 1px solid #DDD;
-}
-.keyword-config-page .panel:hover {
-  border: 1px solid #DDD;
-  box-shadow: none;
-}
-.keyword-config-page .panel a {
-  text-decoration: none;
-}
-.keyword-config-page .panel a:hover {
-  text-decoration: none;
-}
-.keyword-config-page .panel a small {
-  color: #555;
 }
 
 .tooltip {

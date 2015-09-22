@@ -1,22 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('voicebaseTokensModule', []);
-
-  angular.module('voicebasePlayerModule', []);
-
-  angular.module('vbsKeywordGroupWidget', [
-    'angularModalService',
-    'formValidateModule',
-    'cssSpinnerModule',
-    'angularUtils.directives.dirPagination',
-    'ngFileUpload',
-    'ui.select',
-    'ngSanitize',
-    'voicebasePlayerModule'
-  ]);
-
-  angular.module('ramlVoicebaseConsoleApp', [
+  angular.module('voicebaseVendorsModule', [
     'ngRoute',
     'RAML.Directives',
     'RAML.Services',
@@ -25,10 +10,31 @@
     'ui.codemirror',
     'hljs',
     'frapontillo.bootstrap-switch',
-    'formValidateModule',
+
+    'angularModalService',
+    'angularUtils.directives.dirPagination',
+    'ngFileUpload',
+    'ui.select',
+    'ngSanitize',
+
     'cssSpinnerModule',
+    'formValidateModule'
+  ]);
+
+  angular.module('voicebaseTokensModule', []);
+
+  angular.module('voicebasePlayerModule', []);
+
+  angular.module('vbsKeywordGroupWidget', [
+    'voicebaseVendorsModule',
+    'voicebasePlayerModule'
+  ]);
+
+  angular.module('ramlVoicebaseConsoleApp', [
+    'voicebaseVendorsModule',
     'ramlConsoleApp',
     'voicebaseTokensModule',
+    'voicebasePlayerModule',
     'vbsKeywordGroupWidget'
   ]).config(function ($provide, $routeProvider) {
     //RAML.Decorators.ramlConsole($provide);
@@ -128,10 +134,6 @@
   angular.module('ramlVoicebaseConsoleApp')
     .controller('portalPageCtrl', ['$scope', '$timeout', '$location', '$window', 'voicebaseTokensApi', function($scope, $timeout, $location, $window, voicebaseTokensApi) {
       $scope.isSkipping = false;
-
-      var tokenData = voicebaseTokensApi.getCurrentToken();
-      $scope.isLogin = (tokenData) ? true : false;
-
 
       $scope.loadConsole = function() {
         $location.path('/console');
@@ -923,9 +925,15 @@ RAML.Decorators = (function (Decorators) {
         me.currentPage = 1;
         me.isPopup = ($scope.isPopup === 'true');
 
-        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
-        var tokenData = voicebaseTokensApi.getCurrentToken();
-        me.isLogin = (tokenData) ? true : false;
+        var tokenData;
+
+        $scope.$watch(function () {
+          return voicebaseTokensApi.getCurrentToken();
+        }, function (_tokenData) {
+          tokenData = _tokenData;
+          me.isLogin = (tokenData) ? true : false;
+          me.showWidget();
+        });
 
         me.startRemovingGroup = function(group, event) {
           event.stopPropagation();
@@ -1070,9 +1078,7 @@ RAML.Decorators = (function (Decorators) {
       controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService) {
         var me = this;
 
-        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
-        var tokenData = voicebaseTokensApi.getCurrentToken();
-        me.isLogin = (tokenData) ? true : false;
+        var tokenData;
         me.isLoaded = false;
         me.pingProcess = false;
         me.isLoadedGroups = true;
@@ -1087,6 +1093,14 @@ RAML.Decorators = (function (Decorators) {
 
         me.uploadFiles = [];
 
+        $scope.$watch(function () {
+          return voicebaseTokensApi.getCurrentToken();
+        }, function (_tokenData) {
+          tokenData = _tokenData;
+          me.isLogin = (tokenData) ? true : false;
+          getKeywordGroups();
+        });
+
         var getKeywordGroups = function() {
           if(tokenData) {
             me.isLoadedGroups = true;
@@ -1099,7 +1113,6 @@ RAML.Decorators = (function (Decorators) {
             });
           }
         };
-        getKeywordGroups();
 
         me.changeFiles = function (files, event) {
           if(files.length > 0) {
@@ -1567,13 +1580,22 @@ RAML.Decorators = (function (Decorators) {
         me.groupsPerPage = 5;
         me.currentPage = 1;
 
-        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
-        var tokenData = voicebaseTokensApi.getCurrentToken();
-        me.isLogin = (tokenData) ? true : false;
+        var tokenData;
         me.mediaLoaded = false;
         me.media = [];
 
+        $scope.$watch(function () {
+          return voicebaseTokensApi.getCurrentToken();
+        }, function (_tokenData) {
+          tokenData = _tokenData;
+          me.isLogin = (tokenData) ? true : false;
+          getMedia();
+        });
+
         var getMedia = function () {
+          if(!me.isLogin) {
+            return false;
+          }
           me.mediaLoaded = true;
           keywordsSpottingApi.getMedia(tokenData.token)
             .then(function (_media) {
@@ -1627,8 +1649,6 @@ RAML.Decorators = (function (Decorators) {
         me.changePage = function () {
           voicebasePlayerService.destroyVoicebase();
         };
-
-        getMedia();
       }
     };
   };
@@ -2212,11 +2232,6 @@ RAML.Decorators = (function (Decorators) {
           $scope.signed = !!tokensObj;
         });
 
-        var tokenFromLocation = voicebaseTokensApi.getTokenFromLocation();
-        if(!tokenFromLocation) {
-          voicebaseTokensApi.getTokenFromStorage();
-        }
-
         $scope.consoleView = false;
       }
     };
@@ -2448,6 +2463,11 @@ RAML.Decorators = (function (Decorators) {
         localStorage.removeItem('needRemember');
       }
     };
+
+    var tokenFromLocation = getTokenFromLocation();
+    if(!tokenFromLocation) {
+      getTokenFromStorage();
+    }
 
     /* Key Manager*/
     var basicToken = null;
@@ -2980,7 +3000,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "          </a>\n" +
     "        </div>\n" +
     "\n" +
-    "        <div class=\"raml-console-keywords-pagination\" >\n" +
+    "        <div class=\"raml-console-keywords-pagination\" ng-if=\"keywordWidgetCtrl.isLogin\">\n" +
     "          <dir-pagination-controls\n" +
     "            template-url=\"pagination/dirPagination.tpl.html\">\n" +
     "          </dir-pagination-controls>\n" +
