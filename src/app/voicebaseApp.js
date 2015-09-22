@@ -1,22 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('voicebaseTokensModule', []);
-
-  angular.module('voicebasePlayerModule', []);
-
-  angular.module('vbsKeywordGroupWidget', [
-    'angularModalService',
-    'formValidateModule',
-    'cssSpinnerModule',
-    'angularUtils.directives.dirPagination',
-    'ngFileUpload',
-    'ui.select',
-    'ngSanitize',
-    'voicebasePlayerModule'
-  ]);
-
-  angular.module('ramlVoicebaseConsoleApp', [
+  angular.module('voicebaseVendorsModule', [
     'ngRoute',
     'RAML.Directives',
     'RAML.Services',
@@ -25,10 +10,31 @@
     'ui.codemirror',
     'hljs',
     'frapontillo.bootstrap-switch',
-    'formValidateModule',
+
+    'angularModalService',
+    'angularUtils.directives.dirPagination',
+    'ngFileUpload',
+    'ui.select',
+    'ngSanitize',
+
     'cssSpinnerModule',
+    'formValidateModule'
+  ]);
+
+  angular.module('voicebaseTokensModule', []);
+
+  angular.module('voicebasePlayerModule', []);
+
+  angular.module('vbsKeywordGroupWidget', [
+    'voicebaseVendorsModule',
+    'voicebasePlayerModule'
+  ]);
+
+  angular.module('ramlVoicebaseConsoleApp', [
+    'voicebaseVendorsModule',
     'ramlConsoleApp',
     'voicebaseTokensModule',
+    'voicebasePlayerModule',
     'vbsKeywordGroupWidget'
   ]).config(function ($provide, $routeProvider) {
     //RAML.Decorators.ramlConsole($provide);

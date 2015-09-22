@@ -12,9 +12,7 @@
       controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService) {
         var me = this;
 
-        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
-        var tokenData = voicebaseTokensApi.getCurrentToken();
-        me.isLogin = (tokenData) ? true : false;
+        var tokenData;
         me.isLoaded = false;
         me.pingProcess = false;
         me.isLoadedGroups = true;
@@ -29,6 +27,14 @@
 
         me.uploadFiles = [];
 
+        $scope.$watch(function () {
+          return voicebaseTokensApi.getCurrentToken();
+        }, function (_tokenData) {
+          tokenData = _tokenData;
+          me.isLogin = (tokenData) ? true : false;
+          getKeywordGroups();
+        });
+
         var getKeywordGroups = function() {
           if(tokenData) {
             me.isLoadedGroups = true;
@@ -41,7 +47,6 @@
             });
           }
         };
-        getKeywordGroups();
 
         me.changeFiles = function (files, event) {
           if(files.length > 0) {

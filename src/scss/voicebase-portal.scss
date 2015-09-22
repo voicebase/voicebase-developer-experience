@@ -1,10 +1,76 @@
-.dashboard-page {
+.dashboard-page,
+.keyword-config-page,
+.keywords-spotting,
+.key-manager-page,
+.media-browser-page,
+.media-browser {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.42857143;
   color: #333;
-
   padding-top: 80px;
+
+  .raml-console-error-message {
+    font-size: 18px;
+    padding: 15px;
+    color: #D14956;
+  }
+
+  .panel {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #DDD;
+
+    &:hover {
+      border: 1px solid #DDD;
+      box-shadow: none;
+    }
+
+    a {
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: none;
+      }
+
+      small {
+        color: #555;
+      }
+    }
+
+    h4 {
+      margin-top: 0;
+      font-size: 16px;
+
+      a {
+        text-decoration: none;
+      }
+    }
+
+    .panel-body {
+      padding-left: 55px;
+      position: relative;
+
+      ul {
+        margin-bottom: 0;
+        padding-left: 0;
+        list-style: none;
+      }
+
+    }
+
+  }
+
+  .sidebar {
+    h3 {
+      margin-top: 0;
+    }
+
+    .lead {
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+  }
 
   a {
     color: #0079c0;
@@ -41,69 +107,32 @@
     color: #777;
   }
 
-  .sidebar {
-    h3 {
-      margin-top: 0;
-    }
-
-    .lead {
-      margin-bottom: 10px;
-      font-size: 18px;
-    }
-  }
-
-  .panel {
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-      border-color: #0079c0;
-    }
-
-    h4 {
-      margin-top: 0;
-      font-size: 16px;
-
-      a {
-        text-decoration: none;
-      }
-    }
-
-    .panel-body {
-      padding-left: 55px;
-      position: relative;
-
-      .widget-icon {
-        position: absolute;
-        left: 15px;
-        top: 15px;
-        color: #85d04a;
-      }
-
-      ul {
-        margin-bottom: 0;
-        padding-left: 0;
-        list-style: none;
-      }
-    }
-
-  }
 
 }
 
 @media (min-width: 768px) {
-  .dashboard-page {
+  .dashboard-page,
+  .keyword-config-page,
+  .keywords-spotting,
+  .key-manager-page,
+  .media-browser-page,
+  .media-browser {
     padding-top: 110px;
-  }
 
-  .panel {
-    margin-bottom: 30px;
-  }
+    .panel {
+      margin-bottom: 30px;
+    }
 
+  }
 }
 
 @media (max-width: 767px) {
-  .dashboard-page {
+  .dashboard-page,
+  .keyword-config-page,
+  .keywords-spotting,
+  .key-manager-page,
+  .media-browser-page,
+  .media-browser {
 
     .panel {
       margin-bottom: 10px;
@@ -111,7 +140,26 @@
   }
 }
 
-@media screen and (max-width: 767px) {
+
+.dashboard-page {
+
+  .panel {
+
+    &:hover {
+      border-color: #0079c0;
+    }
+
+    .panel-body {
+
+      .widget-icon {
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        color: #85d04a;
+      }
+    }
+
+  }
 }
 
 .keyword-config-page {
@@ -139,34 +187,6 @@
 
     h3 {
       font-size: 16px;
-    }
-
-  }
-
-  .raml-console-error-message {
-    font-size: 18px;
-    padding: 15px;
-    color: #D14956;
-  }
-
-  .panel {
-    border: 1px solid #DDD;
-
-    &:hover {
-      border: 1px solid #DDD;
-      box-shadow: none;
-    }
-
-    a {
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: none;
-      }
-
-      small {
-        color: #555;
-      }
     }
 
   }

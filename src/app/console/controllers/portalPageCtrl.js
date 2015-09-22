@@ -5,10 +5,6 @@
     .controller('portalPageCtrl', ['$scope', '$timeout', '$location', '$window', 'voicebaseTokensApi', function($scope, $timeout, $location, $window, voicebaseTokensApi) {
       $scope.isSkipping = false;
 
-      var tokenData = voicebaseTokensApi.getCurrentToken();
-      $scope.isLogin = (tokenData) ? true : false;
-
-
       $scope.loadConsole = function() {
         $location.path('/console');
       };

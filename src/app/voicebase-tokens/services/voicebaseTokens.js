@@ -172,6 +172,11 @@
       }
     };
 
+    var tokenFromLocation = getTokenFromLocation();
+    if(!tokenFromLocation) {
+      getTokenFromStorage();
+    }
+
     /* Key Manager*/
     var basicToken = null;
 

@@ -22,9 +22,15 @@
         me.currentPage = 1;
         me.isPopup = ($scope.isPopup === 'true');
 
-        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
-        var tokenData = voicebaseTokensApi.getCurrentToken();
-        me.isLogin = (tokenData) ? true : false;
+        var tokenData;
+
+        $scope.$watch(function () {
+          return voicebaseTokensApi.getCurrentToken();
+        }, function (_tokenData) {
+          tokenData = _tokenData;
+          me.isLogin = (tokenData) ? true : false;
+          me.showWidget();
+        });
 
         me.startRemovingGroup = function(group, event) {
           event.stopPropagation();

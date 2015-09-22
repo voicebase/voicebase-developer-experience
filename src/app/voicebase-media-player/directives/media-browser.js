@@ -14,13 +14,22 @@
         me.groupsPerPage = 5;
         me.currentPage = 1;
 
-        var tokenFromStorage = voicebaseTokensApi.getTokenFromStorage();
-        var tokenData = voicebaseTokensApi.getCurrentToken();
-        me.isLogin = (tokenData) ? true : false;
+        var tokenData;
         me.mediaLoaded = false;
         me.media = [];
 
+        $scope.$watch(function () {
+          return voicebaseTokensApi.getCurrentToken();
+        }, function (_tokenData) {
+          tokenData = _tokenData;
+          me.isLogin = (tokenData) ? true : false;
+          getMedia();
+        });
+
         var getMedia = function () {
+          if(!me.isLogin) {
+            return false;
+          }
           me.mediaLoaded = true;
           keywordsSpottingApi.getMedia(tokenData.token)
             .then(function (_media) {
@@ -74,8 +83,6 @@
         me.changePage = function () {
           voicebasePlayerService.destroyVoicebase();
         };
-
-        getMedia();
       }
     };
   };

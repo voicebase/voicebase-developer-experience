@@ -28,11 +28,6 @@
           $scope.signed = !!tokensObj;
         });
 
-        var tokenFromLocation = voicebaseTokensApi.getTokenFromLocation();
-        if(!tokenFromLocation) {
-          voicebaseTokensApi.getTokenFromStorage();
-        }
-
         $scope.consoleView = false;
       }
     };
