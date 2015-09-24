@@ -12,7 +12,6 @@
         $scope.formError = '';
         $scope.isInit = true;
         $scope.isLoaded = false;
-        var url = 'https://apis.voicebase.com/v2-beta';
 
         $scope.$watch('isRemember', function(newValue, oldValue) {
           if(newValue !== oldValue) {
@@ -35,7 +34,7 @@
           }
           else {
             $scope.isLoaded = true;
-            voicebaseTokensApi.getToken(url, $scope.credentials).then(function() {
+            voicebaseTokensApi.getToken($scope.credentials).then(function() {
               $scope.loadPortal();
             }, function(error){
               $scope.isLoaded = false;

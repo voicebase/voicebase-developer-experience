@@ -12,7 +12,6 @@
         $scope.successMessage = '';
 
         $scope.isLoaded = false;
-        var url = 'https://apis.voicebase.com/v2-beta';
 
         $scope.hideError = function(){
           $scope.formError = '';
@@ -25,7 +24,7 @@
           }
           else {
             $scope.isLoaded = true;
-            waitList.addEmailToWaitList(url, $scope.credentials).then(function() {
+            waitList.addEmailToWaitList($scope.credentials).then(function() {
               $scope.isLoaded = false;
               $scope.successMessage = 'Your email has been added to wait list.';
             }, function(error){

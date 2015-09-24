@@ -1,4 +1,4 @@
-<nav class="navbar navbar-inverse navbar-fixed-top vbs-portal-navbar">
+<nav class="navbar navbar-inverse navbar-fixed-top vbs-portal-navbar" ng-controller="portalNavbarCtrl">
   <div class="container">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#/portal" >
+      <a class="navbar-brand" href="#" ng-click="loadMain($event)" >
         <img alt="VoiceBase Developer Portal" src="img/logo-portal.png">
       </a>
     </div>

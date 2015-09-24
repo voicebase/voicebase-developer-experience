@@ -1,8 +1,8 @@
 (function () {
   'use strict';
 
-  var voicebaseTokensApi = function($http, $q) {
-    var baseUrl = 'https://apis.voicebase.com/v2-beta';
+  var voicebaseTokensApi = function($http, $q, voicebaseUrl) {
+    var baseUrl = voicebaseUrl.getBaseUrl();
 
     var tokens = null;
     var currentToken = null;
@@ -16,14 +16,14 @@
         return currentToken;
     };
 
-    var getTokens = function(url, credentials) {
+    var getTokens = function(credentials) {
       var deferred = $q.defer();
 
       var username = credentials.username;
       var password = credentials.password;
 
       jQuery.ajax({
-        url: url + '/access/users/+' + username.toLowerCase() + '/tokens',
+        url: baseUrl + '/access/users/+' + username.toLowerCase() + '/tokens',
         type: 'GET',
         dataType: 'json',
         headers: {
@@ -47,14 +47,14 @@
       return deferred.promise;
     };
 
-    var getToken = function(url, credentials) {
+    var getToken = function(credentials) {
       var deferred = $q.defer();
 
       var username = credentials.username;
       var password = credentials.password;
 
       jQuery.ajax({
-        url: url,
+        url: baseUrl,
         type: 'GET',
         dataType: 'json',
         data: {

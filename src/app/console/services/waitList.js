@@ -1,15 +1,17 @@
 (function () {
   'use strict';
 
-  RAML.Services.waitList = function($http, $q) {
+  RAML.Services.waitList = function($http, $q, voicebaseUrl) {
 
-    var addEmailToWaitList = function(url, credentials) {
+    var baseUrl = voicebaseUrl.getBaseUrl();
+
+    var addEmailToWaitList = function(credentials) {
       var deferred = $q.defer();
 
       var email = credentials.email;
 
       setTimeout(function() {
-        console.log(url + email);
+        console.log(baseUrl + '/' + email);
         deferred.resolve();
       }, 1000);
 

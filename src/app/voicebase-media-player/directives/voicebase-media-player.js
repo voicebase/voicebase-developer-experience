@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var voicebaseMediaPlayer = function ($timeout, $compile, voicebasePlayerService) {
+  var voicebaseMediaPlayer = function ($timeout, $compile, voicebasePlayerService, voicebaseUrl) {
     return {
       restrict: 'E',
       templateUrl: 'voicebase-media-player/directives/voicebase-media-player.tpl.html',
@@ -37,7 +37,7 @@
           $player.voicebase({
             playerId: 'player',
             playerType: scope.playerType,
-            apiUrl: 'https://apis.voicebase.com/v2-beta/',
+            apiUrl: voicebaseUrl.getBaseUrl() + '/',
             mediaID: scope.mediaId,
             token: scope.token,
             apiVersion: '2.0',

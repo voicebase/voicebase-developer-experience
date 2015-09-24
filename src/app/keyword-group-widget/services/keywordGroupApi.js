@@ -1,9 +1,9 @@
 (function () {
   'use strict';
 
-  var keywordGroupApi = function($http, $q) {
+  var keywordGroupApi = function($http, $q, voicebaseUrl) {
 
-    var url = 'https://apis.voicebase.com/v2-beta';
+    var url = voicebaseUrl.getBaseUrl();
 
     var getKeywordGroups = function(token) {
       var deferred = $q.defer();

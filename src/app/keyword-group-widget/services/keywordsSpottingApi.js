@@ -1,9 +1,9 @@
 (function () {
   'use strict';
 
-  var keywordsSpottingApi = function ($q) {
+  var keywordsSpottingApi = function ($q, voicebaseUrl) {
 
-    var url = 'https://apis.voicebase.com/v2-beta';
+    var url = voicebaseUrl.getBaseUrl();
 
     var mediaReady = false;
 

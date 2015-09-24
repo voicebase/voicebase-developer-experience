@@ -132,6 +132,20 @@
   'use strict';
 
   angular.module('ramlVoicebaseConsoleApp')
+    .controller('portalNavbarCtrl', ['$scope', '$location', function($scope, $location) {
+
+      $scope.loadMain = function(event) {
+        event.preventDefault();
+        $location.path('/portal');
+      };
+
+    }]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ramlVoicebaseConsoleApp')
     .controller('portalPageCtrl', ['$scope', '$timeout', '$location', '$window', 'voicebaseTokensApi', function($scope, $timeout, $location, $window, voicebaseTokensApi) {
       $scope.isSkipping = false;
 
@@ -448,7 +462,6 @@ RAML.Decorators = (function (Decorators) {
         $scope.formError = '';
         $scope.isInit = true;
         $scope.isLoaded = false;
-        var url = 'https://apis.voicebase.com/v2-beta';
 
         $scope.$watch('isRemember', function(newValue, oldValue) {
           if(newValue !== oldValue) {
@@ -471,7 +484,7 @@ RAML.Decorators = (function (Decorators) {
           }
           else {
             $scope.isLoaded = true;
-            voicebaseTokensApi.getToken(url, $scope.credentials).then(function() {
+            voicebaseTokensApi.getToken($scope.credentials).then(function() {
               $scope.loadPortal();
             }, function(error){
               $scope.isLoaded = false;
@@ -548,7 +561,6 @@ RAML.Decorators = (function (Decorators) {
         $scope.successMessage = '';
 
         $scope.isLoaded = false;
-        var url = 'https://apis.voicebase.com/v2-beta';
 
         $scope.hideError = function(){
           $scope.formError = '';
@@ -561,7 +573,7 @@ RAML.Decorators = (function (Decorators) {
           }
           else {
             $scope.isLoaded = true;
-            waitList.addEmailToWaitList(url, $scope.credentials).then(function() {
+            waitList.addEmailToWaitList($scope.credentials).then(function() {
               $scope.isLoaded = false;
               $scope.successMessage = 'Your email has been added to wait list.';
             }, function(error){
@@ -638,15 +650,17 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  RAML.Services.waitList = function($http, $q) {
+  RAML.Services.waitList = function($http, $q, voicebaseUrl) {
 
-    var addEmailToWaitList = function(url, credentials) {
+    var baseUrl = voicebaseUrl.getBaseUrl();
+
+    var addEmailToWaitList = function(credentials) {
       var deferred = $q.defer();
 
       var email = credentials.email;
 
       setTimeout(function() {
-        console.log(url + email);
+        console.log(baseUrl + '/' + email);
         deferred.resolve();
       }, 1000);
 
@@ -1355,9 +1369,9 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var keywordGroupApi = function($http, $q) {
+  var keywordGroupApi = function($http, $q, voicebaseUrl) {
 
-    var url = 'https://apis.voicebase.com/v2-beta';
+    var url = voicebaseUrl.getBaseUrl();
 
     var getKeywordGroups = function(token) {
       var deferred = $q.defer();
@@ -1443,9 +1457,9 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var keywordsSpottingApi = function ($q) {
+  var keywordsSpottingApi = function ($q, voicebaseUrl) {
 
-    var url = 'https://apis.voicebase.com/v2-beta';
+    var url = voicebaseUrl.getBaseUrl();
 
     var mediaReady = false;
 
@@ -1743,7 +1757,7 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var voicebaseMediaPlayer = function ($timeout, $compile, voicebasePlayerService) {
+  var voicebaseMediaPlayer = function ($timeout, $compile, voicebasePlayerService, voicebaseUrl) {
     return {
       restrict: 'E',
       templateUrl: 'voicebase-media-player/directives/voicebase-media-player.tpl.html',
@@ -1779,7 +1793,7 @@ RAML.Decorators = (function (Decorators) {
           $player.voicebase({
             playerId: 'player',
             playerType: scope.playerType,
-            apiUrl: 'https://apis.voicebase.com/v2-beta/',
+            apiUrl: voicebaseUrl.getBaseUrl() + '/',
             mediaID: scope.mediaId,
             token: scope.token,
             apiVersion: '2.0',
@@ -1924,7 +1938,6 @@ RAML.Decorators = (function (Decorators) {
 
         me.auth = function(credentials) {
           me.isLoaded = true;
-          var baseUri = 'https://apis.voicebase.com/v2-beta';
 
           voicebaseTokensApi.basicAuth(credentials).then(function() {
             me.isLoaded = false;
@@ -2177,13 +2190,8 @@ RAML.Decorators = (function (Decorators) {
 
         $scope.auth = function(credentials, errorCallback) {
           $scope.isLoaded = true;
-          var baseUri = 'https://apis.voicebase.com/v2-beta';
-          if(RAML.Client && $scope.raml) {
-            var client = RAML.Client.create($scope.raml);
-            baseUri = client.baseUri;
-          }
 
-          voicebaseTokensApi.getTokens(baseUri, credentials).then(function() {
+          voicebaseTokensApi.getTokens(credentials).then(function() {
             $scope.isLoaded = false;
           }, function(error){
             $scope.isLoaded = false;
@@ -2293,8 +2301,8 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var voicebaseTokensApi = function($http, $q) {
-    var baseUrl = 'https://apis.voicebase.com/v2-beta';
+  var voicebaseTokensApi = function($http, $q, voicebaseUrl) {
+    var baseUrl = voicebaseUrl.getBaseUrl();
 
     var tokens = null;
     var currentToken = null;
@@ -2308,14 +2316,14 @@ RAML.Decorators = (function (Decorators) {
         return currentToken;
     };
 
-    var getTokens = function(url, credentials) {
+    var getTokens = function(credentials) {
       var deferred = $q.defer();
 
       var username = credentials.username;
       var password = credentials.password;
 
       jQuery.ajax({
-        url: url + '/access/users/+' + username.toLowerCase() + '/tokens',
+        url: baseUrl + '/access/users/+' + username.toLowerCase() + '/tokens',
         type: 'GET',
         dataType: 'json',
         headers: {
@@ -2339,14 +2347,14 @@ RAML.Decorators = (function (Decorators) {
       return deferred.promise;
     };
 
-    var getToken = function(url, credentials) {
+    var getToken = function(credentials) {
       var deferred = $q.defer();
 
       var username = credentials.username;
       var password = credentials.password;
 
       jQuery.ajax({
-        url: url,
+        url: baseUrl,
         type: 'GET',
         dataType: 'json',
         data: {
@@ -2639,6 +2647,42 @@ RAML.Decorators = (function (Decorators) {
 
 })();
 
+(function () {
+  'use strict';
+
+  angular.module('voicebaseTokensModule').service('voicebaseUrl', [
+    '$location',
+    function ($location) {
+
+      var getBaseUrl = function () {
+        var environment = $location.search().environment;
+        var url;
+
+        if (environment === 'dev') {
+          url = 'https://apis.dev.voicebase.com/v2-beta';
+        }
+        else if (environment === 'qa') {
+          url = 'https://apis.qa.voicebase.com/v2-beta';
+        }
+        else if (environment === 'preprod') {
+          url = 'https://apis.preprod.voicebase.com/v2-beta';
+        }
+        else {
+          url = 'https://apis.voicebase.com/v2-beta';
+        }
+
+        return url;
+      };
+
+      return {
+        getBaseUrl: getBaseUrl
+      }
+
+    }
+  ]);
+
+})();
+
 angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache) {
   'use strict';
 
@@ -2833,7 +2877,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
 
   $templateCache.put('console/templates/portal-navbar.tpl.html',
-    "<nav class=\"navbar navbar-inverse navbar-fixed-top vbs-portal-navbar\">\n" +
+    "<nav class=\"navbar navbar-inverse navbar-fixed-top vbs-portal-navbar\" ng-controller=\"portalNavbarCtrl\">\n" +
     "  <div class=\"container\">\n" +
     "    <!-- Brand and toggle get grouped for better mobile display -->\n" +
     "    <div class=\"navbar-header\">\n" +
@@ -2843,7 +2887,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <span class=\"icon-bar\"></span>\n" +
     "        <span class=\"icon-bar\"></span>\n" +
     "      </button>\n" +
-    "      <a class=\"navbar-brand\" href=\"#/portal\" >\n" +
+    "      <a class=\"navbar-brand\" href=\"#\" ng-click=\"loadMain($event)\" >\n" +
     "        <img alt=\"VoiceBase Developer Portal\" src=\"img/logo-portal.png\">\n" +
     "      </a>\n" +
     "    </div>\n" +

@@ -56,7 +56,6 @@
 
         me.auth = function(credentials) {
           me.isLoaded = true;
-          var baseUri = 'https://apis.voicebase.com/v2-beta';
 
           voicebaseTokensApi.basicAuth(credentials).then(function() {
             me.isLoaded = false;
