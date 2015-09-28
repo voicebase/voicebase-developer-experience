@@ -142,44 +142,6 @@
     }]);
 })();
 
-(function () {
-  'use strict';
-
-  angular.module('ramlVoicebaseConsoleApp')
-    .controller('portalPageCtrl', ['$scope', '$timeout', '$location', '$window', 'voicebaseTokensApi', function($scope, $timeout, $location, $window, voicebaseTokensApi) {
-      $scope.isSkipping = false;
-
-      $scope.loadConsole = function() {
-        $location.path('/console');
-      };
-
-      $scope.loadKeywordsGroupApp = function() {
-        $location.path('/keywords-groups');
-      };
-
-      $scope.loadKeyManager = function() {
-        $location.path('/key-manager');
-      };
-
-      $scope.loadMediaBrowser = function() {
-        $location.path('/media-browser');
-      };
-
-      $scope.loadKeywordsSpottingApp = function() {
-        $location.path('/keywords-spotting');
-      };
-
-      $scope.redirectToSupport = function() {
-        $window.open('http://www.voicebase.com/developers/');
-      };
-
-      $scope.loadDoc = function() {
-        $location.path('/documentation');
-      };
-
-    }]);
-})();
-
 RAML.Decorators = (function (Decorators) {
   'use strict';
 
@@ -592,6 +554,63 @@ RAML.Decorators = (function (Decorators) {
     .directive('waitListForm', RAML.Directives.waitListForm);
 
 })();
+
+(function () {
+  'use strict';
+
+  angular.module('ramlVoicebaseConsoleApp').directive('widgetList', [
+    '$window',
+    '$location',
+    function ($window, $location) {
+      return {
+        restrict: 'E',
+        templateUrl: 'console/directives/widget-list.tpl.html',
+        replace: false,
+        scope: {
+          showConsole: '@',
+          showDoc: '@',
+          showKeywordsGroups: '@',
+          showKeywordsSpotting: '@',
+          showSupport: '@',
+          showMediaBrowser: '@',
+          showKeyManager: '@',
+          showComingSoon: '@'
+        },
+        controller: function($scope) {
+          $scope.loadConsole = function() {
+            $location.path('/console');
+          };
+
+          $scope.loadKeywordsGroupApp = function() {
+            $location.path('/keywords-groups');
+          };
+
+          $scope.loadKeyManager = function() {
+            $location.path('/key-manager');
+          };
+
+          $scope.loadMediaBrowser = function() {
+            $location.path('/media-browser');
+          };
+
+          $scope.loadKeywordsSpottingApp = function() {
+            $location.path('/keywords-spotting');
+          };
+
+          $scope.redirectToSupport = function() {
+            $window.open('http://www.voicebase.com/developers/');
+          };
+
+          $scope.loadDoc = function() {
+            $location.path('/documentation');
+          };
+        }
+      };
+    }
+  ]);
+
+})();
+
 
 (function () {
   'use strict';
@@ -2898,6 +2917,71 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "  </form>\n" +
     "\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('console/directives/widget-list.tpl.html',
+    "<div>\n" +
+    "  <div class=\"col-md-4\">\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showConsole\" ng-click=\"loadConsole()\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-dashboard\"></i>\n" +
+    "        <h4><a href=\"\">API Console</a></h4>\n" +
+    "        Explore the VoiceBase REST API and call methods interactively.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showKeywordsGroups\" ng-click=\"loadKeywordsGroupApp()\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-search\"></i>\n" +
+    "        <h4><a href=\"\">Phrase Spotting</a></h4>\n" +
+    "        Create and manage Phrase Spotting groups for use in the API.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showSupport\" ng-click=\"redirectToSupport()\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-external-link\"></i>\n" +
+    "        <h4><a href=\"\">VoiceBase Support</a></h4>\n" +
+    "        Visit the VoiceBase support site (this link opens a new window).\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showKeyManager\" ng-click=\"loadKeyManager()\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
+    "        <h4><a href=\"\">API Key Management</a></h4>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-4\">\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showDoc\" ng-click=\"loadDoc()\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-file-text-o\"></i>\n" +
+    "        <h4><a href=\"\">API Documentation</a></h4>\n" +
+    "        Find detailed documentation and best practices for common use cases.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showKeywordsSpotting\" ng-click=\"loadKeywordsSpottingApp()\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-cloud-upload\"></i>\n" +
+    "        <h4><a href=\"\">Phrase Spotting Demo App</a></h4>\n" +
+    "        Try out Phrase Spotting by uploading your own content.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showMediaBrowser\" ng-click=\"loadMediaBrowser()\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-search\"></i>\n" +
+    "        <h4><a href=\"\">Media Browser</a></h4>\n" +
+    "        Browse previously uploaded media, transcripts, keywords, topics, and predictions.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showComingSoon\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-th\"></i>\n" +
+    "        <h4>Coming Soon</h4>\n" +
+    "        Additional Developer Portal functionality and examples coming soon.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
     "</div>\n"
   );
 

@@ -1,0 +1,61 @@
+<div>
+  <div class="col-md-4">
+    <div class="panel panel-default" ng-if="showConsole" ng-click="loadConsole()">
+      <div class="panel-body">
+        <i class="widget-icon fa fa-2x fa-dashboard"></i>
+        <h4><a href="">API Console</a></h4>
+        Explore the VoiceBase REST API and call methods interactively.
+      </div>
+    </div>
+    <div class="panel panel-default" ng-if="showKeywordsGroups" ng-click="loadKeywordsGroupApp()">
+      <div class="panel-body">
+        <i class="widget-icon fa fa-2x fa-search"></i>
+        <h4><a href="">Phrase Spotting</a></h4>
+        Create and manage Phrase Spotting groups for use in the API.
+      </div>
+    </div>
+    <div class="panel panel-default" ng-if="showSupport" ng-click="redirectToSupport()">
+      <div class="panel-body">
+        <i class="widget-icon fa fa-2x fa-external-link"></i>
+        <h4><a href="">VoiceBase Support</a></h4>
+        Visit the VoiceBase support site (this link opens a new window).
+      </div>
+    </div>
+    <div class="panel panel-default" ng-if="showKeyManager" ng-click="loadKeyManager()">
+      <div class="panel-body">
+        <i class="widget-icon fa fa-2x fa-key"></i>
+        <h4><a href="">API Key Management</a></h4>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="panel panel-default" ng-if="showDoc" ng-click="loadDoc()">
+      <div class="panel-body">
+        <i class="widget-icon fa fa-2x fa-file-text-o"></i>
+        <h4><a href="">API Documentation</a></h4>
+        Find detailed documentation and best practices for common use cases.
+      </div>
+    </div>
+    <div class="panel panel-default" ng-if="showKeywordsSpotting" ng-click="loadKeywordsSpottingApp()">
+      <div class="panel-body">
+        <i class="widget-icon fa fa-2x fa-cloud-upload"></i>
+        <h4><a href="">Phrase Spotting Demo App</a></h4>
+        Try out Phrase Spotting by uploading your own content.
+      </div>
+    </div>
+    <div class="panel panel-default" ng-if="showMediaBrowser" ng-click="loadMediaBrowser()">
+      <div class="panel-body">
+        <i class="widget-icon fa fa-2x fa-search"></i>
+        <h4><a href="">Media Browser</a></h4>
+        Browse previously uploaded media, transcripts, keywords, topics, and predictions.
+      </div>
+    </div>
+    <div class="panel panel-default" ng-if="showComingSoon">
+      <div class="panel-body">
+        <i class="widget-icon fa fa-2x fa-th"></i>
+        <h4>Coming Soon</h4>
+        Additional Developer Portal functionality and examples coming soon.
+      </div>
+    </div>
+  </div>
+</div>

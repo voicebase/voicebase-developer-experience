@@ -1,4 +1,4 @@
-<div class="dashboard-page" ng-cloak ng-controller="portalPageCtrl">
+<div class="dashboard-page" ng-cloak>
 
   <div ng-include="'console/templates/portal-navbar.tpl.html'"></div>
 
@@ -13,66 +13,17 @@
         example components you can use to jump-start your
         integration.
       </div>
-      <div class="col-md-4">
-        <div class="panel panel-default" ng-click="loadConsole()">
-          <div class="panel-body">
-            <i class="widget-icon fa fa-2x fa-dashboard"></i>
-            <h4><a href="">API Console</a></h4>
-            Explore the VoiceBase REST API and call methods interactively.
-          </div>
-        </div>
-        <div class="panel panel-default" ng-click="loadKeywordsGroupApp()">
-          <div class="panel-body">
-            <i class="widget-icon fa fa-2x fa-search"></i>
-            <h4><a href="">Phrase Spotting</a></h4>
-            Create and manage Phrase Spotting groups for use in the API.
-          </div>
-        </div>
-        <div class="panel panel-default" ng-click="redirectToSupport()">
-          <div class="panel-body">
-            <i class="widget-icon fa fa-2x fa-external-link"></i>
-            <h4><a href="">VoiceBase Support</a></h4>
-            Visit the VoiceBase support site (this link opens a new window).
-          </div>
-        </div>
-        <div class="panel panel-default" ng-click="loadKeyManager()">
-          <div class="panel-body">
-            <i class="widget-icon fa fa-2x fa-key"></i>
-            <h4><a href="">API Key Management</a></h4>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="panel panel-default" ng-click="loadDoc()">
-          <div class="panel-body">
-            <i class="widget-icon fa fa-2x fa-file-text-o"></i>
-            <h4><a href="">API Documentation</a></h4>
-            Find detailed documentation and best practices for common use cases.
-          </div>
-        </div>
-        <div class="panel panel-default" ng-click="loadKeywordsSpottingApp()">
-          <div class="panel-body">
-            <i class="widget-icon fa fa-2x fa-cloud-upload"></i>
-            <h4><a href="">Phrase Spotting Demo App</a></h4>
-            Try out Phrase Spotting by uploading your own content.
-          </div>
-        </div>
-        <div class="panel panel-default" ng-click="loadMediaBrowser()">
-          <div class="panel-body">
-            <i class="widget-icon fa fa-2x fa-search"></i>
-            <h4><a href="">Media Browser</a></h4>
-            Browse previously uploaded media, transcripts, keywords, topics, and predictions.
-          </div>
-        </div>
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <i class="widget-icon fa fa-2x fa-th"></i>
-            <h4>Coming Soon</h4>
-            Additional Developer Portal functionality and examples coming soon.
-          </div>
-        </div>
-      </div>
 
+      <widget-list
+        show-console="true"
+        show-doc="true"
+        show-keywords-groups="true"
+        show-keywords-spotting="true"
+        show-support="true"
+        show-media-browser="true"
+        show-key-manager="true"
+        show-coming-soon="true">
+      </widget-list>
     </div>
   </div>
 
