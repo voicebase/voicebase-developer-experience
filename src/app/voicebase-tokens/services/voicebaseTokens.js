@@ -113,6 +113,15 @@
       tokens = tokensObj;
     };
 
+    var setToken = function (_token) {
+      setTokensObj({
+        tokens: [{
+          token: _token,
+          type: 'Bearer'
+        }]
+      });
+    };
+
     var getTokensObj = function() {
         return tokens;
     };
@@ -120,12 +129,7 @@
     var getTokenFromLocation = function() {
       var params = getParametersFromLocation();
       if(params.access_token) {
-        setTokensObj({
-          tokens: [{
-            token: params.access_token,
-            type: 'Bearer'
-          }]
-        });
+        setToken(params.access_token);
       }
 
       return getCurrentToken();
@@ -148,12 +152,7 @@
     var getTokenFromStorage = function() {
       var tokenFromStorage = localStorage.getItem('voicebaseToken');
       if(tokenFromStorage) {
-        setTokensObj({
-          tokens: [{
-            token: tokenFromStorage,
-            type: 'Bearer'
-          }]
-        });
+        setToken(tokenFromStorage);
       }
       return tokenFromStorage;
     };
@@ -327,6 +326,7 @@
       getTokensObj: getTokensObj,
       getCurrentToken: getCurrentToken,
       setCurrentToken: setCurrentToken,
+      setToken: setToken,
       getTokenFromLocation: getTokenFromLocation,
       getNeedRemember: getNeedRemember,
       setNeedRemember: setNeedRemember,

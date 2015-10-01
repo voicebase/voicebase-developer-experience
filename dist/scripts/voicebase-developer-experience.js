@@ -943,6 +943,7 @@ RAML.Decorators = (function (Decorators) {
       templateUrl: 'keyword-group-widget/directives/keyword-group-widget.tpl.html',
       replace: true,
       scope: {
+        token: '=',
         isPopup: '@'
       },
       controllerAs: 'keywordWidgetCtrl',
@@ -959,6 +960,16 @@ RAML.Decorators = (function (Decorators) {
         me.isPopup = ($scope.isPopup === 'true');
 
         var tokenData;
+
+        if($scope.token) {
+          voicebaseTokensApi.setToken($scope.token);
+        }
+
+        $scope.$watch('token', function (token) {
+          if(token) {
+            voicebaseTokensApi.setToken($scope.token);
+          }
+        });
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getCurrentToken();
@@ -1106,6 +1117,7 @@ RAML.Decorators = (function (Decorators) {
       templateUrl: 'keyword-group-widget/directives/keywords-spotting-widget.tpl.html',
       replace: true,
       scope: {
+        token: '='
       },
       controllerAs: 'keywordsSpottingCtrl',
       controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService) {
@@ -1125,6 +1137,16 @@ RAML.Decorators = (function (Decorators) {
         me.detectGroups = [];
 
         me.uploadFiles = [];
+
+        if($scope.token) {
+          voicebaseTokensApi.setToken($scope.token);
+        }
+
+        $scope.$watch('token', function (token) {
+          if(token) {
+            voicebaseTokensApi.setToken($scope.token);
+          }
+        });
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getCurrentToken();
@@ -1605,6 +1627,7 @@ RAML.Decorators = (function (Decorators) {
       restrict: 'E',
       templateUrl: 'voicebase-media-player/directives/media-browser.tpl.html',
       scope: {
+        token: '='
       },
       controllerAs: 'mediaBroserCtrl',
       controller: function ($scope, $timeout, $compile, voicebaseTokensApi, keywordsSpottingApi, voicebasePlayerService) {
@@ -1616,6 +1639,16 @@ RAML.Decorators = (function (Decorators) {
         var tokenData;
         me.mediaLoaded = false;
         me.media = [];
+
+        if($scope.token) {
+          voicebaseTokensApi.setToken($scope.token);
+        }
+
+        $scope.$watch('token', function (token) {
+          if(token) {
+            voicebaseTokensApi.setToken($scope.token);
+          }
+        });
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getCurrentToken();
@@ -1629,6 +1662,8 @@ RAML.Decorators = (function (Decorators) {
           if(!me.isLogin) {
             return false;
           }
+          me.media = [];
+          me.errorMessage = '';
           me.mediaLoaded = true;
           keywordsSpottingApi.getMedia(tokenData.token)
             .then(function (_media) {
@@ -2237,10 +2272,23 @@ RAML.Decorators = (function (Decorators) {
       restrict: 'E',
       templateUrl: 'voicebase-tokens/directives/voicebase-sign.tpl.html',
       replace: true,
+      scope: {
+        token: '='
+      },
       controller: function($scope, $location, voicebaseTokensApi) {
 
         $scope.signed = false;
         $scope.isLoaded = false;
+
+        if($scope.token) {
+          voicebaseTokensApi.setToken($scope.token);
+        }
+
+        $scope.$watch('token', function (token) {
+          if(token) {
+            voicebaseTokensApi.setToken($scope.token);
+          }
+        });
 
         $scope.signIn = function() {
           if(!$scope.isLoaded) {
@@ -2277,11 +2325,24 @@ RAML.Decorators = (function (Decorators) {
       restrict: 'E',
       templateUrl: 'voicebase-tokens/directives/voicebase-tokens.tpl.html',
       replace: true,
+      scope: {
+        token: '='
+      },
       controller: function($scope, voicebaseTokensApi) {
 
         $scope.isLoaded = false;
         $scope.tokens = [];
         $scope.selectedToken = null;
+
+        if($scope.token) {
+          voicebaseTokensApi.setToken($scope.token);
+        }
+
+        $scope.$watch('token', function (token) {
+          if(token) {
+            voicebaseTokensApi.setToken($scope.token);
+          }
+        });
 
         $scope.$watch(function() {
           return voicebaseTokensApi.getTokensObj();
@@ -2452,6 +2513,15 @@ RAML.Decorators = (function (Decorators) {
       tokens = tokensObj;
     };
 
+    var setToken = function (_token) {
+      setTokensObj({
+        tokens: [{
+          token: _token,
+          type: 'Bearer'
+        }]
+      });
+    };
+
     var getTokensObj = function() {
         return tokens;
     };
@@ -2459,12 +2529,7 @@ RAML.Decorators = (function (Decorators) {
     var getTokenFromLocation = function() {
       var params = getParametersFromLocation();
       if(params.access_token) {
-        setTokensObj({
-          tokens: [{
-            token: params.access_token,
-            type: 'Bearer'
-          }]
-        });
+        setToken(params.access_token);
       }
 
       return getCurrentToken();
@@ -2487,12 +2552,7 @@ RAML.Decorators = (function (Decorators) {
     var getTokenFromStorage = function() {
       var tokenFromStorage = localStorage.getItem('voicebaseToken');
       if(tokenFromStorage) {
-        setTokensObj({
-          tokens: [{
-            token: tokenFromStorage,
-            type: 'Bearer'
-          }]
-        });
+        setToken(tokenFromStorage);
       }
       return tokenFromStorage;
     };
@@ -2666,6 +2726,7 @@ RAML.Decorators = (function (Decorators) {
       getTokensObj: getTokensObj,
       getCurrentToken: getCurrentToken,
       setCurrentToken: setCurrentToken,
+      setToken: setToken,
       getTokenFromLocation: getTokenFromLocation,
       getNeedRemember: getNeedRemember,
       setNeedRemember: setNeedRemember,

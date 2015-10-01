@@ -6,11 +6,24 @@
       restrict: 'E',
       templateUrl: 'voicebase-tokens/directives/voicebase-tokens.tpl.html',
       replace: true,
+      scope: {
+        token: '='
+      },
       controller: function($scope, voicebaseTokensApi) {
 
         $scope.isLoaded = false;
         $scope.tokens = [];
         $scope.selectedToken = null;
+
+        if($scope.token) {
+          voicebaseTokensApi.setToken($scope.token);
+        }
+
+        $scope.$watch('token', function (token) {
+          if(token) {
+            voicebaseTokensApi.setToken($scope.token);
+          }
+        });
 
         $scope.$watch(function() {
           return voicebaseTokensApi.getTokensObj();

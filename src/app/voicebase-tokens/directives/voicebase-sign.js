@@ -6,10 +6,23 @@
       restrict: 'E',
       templateUrl: 'voicebase-tokens/directives/voicebase-sign.tpl.html',
       replace: true,
+      scope: {
+        token: '='
+      },
       controller: function($scope, $location, voicebaseTokensApi) {
 
         $scope.signed = false;
         $scope.isLoaded = false;
+
+        if($scope.token) {
+          voicebaseTokensApi.setToken($scope.token);
+        }
+
+        $scope.$watch('token', function (token) {
+          if(token) {
+            voicebaseTokensApi.setToken($scope.token);
+          }
+        });
 
         $scope.signIn = function() {
           if(!$scope.isLoaded) {

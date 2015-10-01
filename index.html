@@ -17,31 +17,50 @@
       display: table;
       width: 100%;
     }
+
+    .content {
+      margin: 15px;
+    }
   </style>
 </head>
 <body ng-app="testApp" ng-cloak>
 
-  <div class="header">
-    <voicebase-sign></voicebase-sign>
+  <div ng-controller="appCtrl" class="content">
+
+    <label>Token: </label>
+    <input type="text" ng-model="token"/>
+    <div class="header">
+      <voicebase-sign token="token"></voicebase-sign>
+    </div>
+    <media-browser token="token"></media-browser>
   </div>
-  <media-browser></media-browser>
 
   <script src="dist/scripts/api-console-vendor.js"></script>
   <script src="dist/scripts/api-console.js"></script>
+  <script src="dist/scripts/voicebase-developer-experience.js"></script>
 
   <!--voicebase media player scripts-->
   <script src="https://app.voicebase.com/js/jwplayer.js"></script>
   <script>jwplayer.key="vFLPC+H45WB60VUizftuSbSFKh7yYxlYh9xwnFu7WTU="</script>
-
   <script src="dist/voicebase-player-lib/js/lib/fuse.min.js"></script>
   <script src="dist/voicebase-player-lib/js/jquery.voicebase.js"></script>
 
-  <script src="dist/scripts/voicebase-developer-experience.js"></script>
   <script>
     $.noConflict();
 
     angular.module('testApp', [
       'ramlVoicebaseConsoleApp'
+    ]);
+
+    angular.module('testApp').controller('appCtrl', [
+      '$scope',
+      function ($scope) {
+        $scope.token = '';
+
+        $scope.$watch('token', function (newToken) {
+          $scope.token = newToken;
+        });
+      }
     ]);
 
   </script>

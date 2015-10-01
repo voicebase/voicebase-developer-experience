@@ -7,6 +7,7 @@
       templateUrl: 'keyword-group-widget/directives/keywords-spotting-widget.tpl.html',
       replace: true,
       scope: {
+        token: '='
       },
       controllerAs: 'keywordsSpottingCtrl',
       controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService) {
@@ -26,6 +27,16 @@
         me.detectGroups = [];
 
         me.uploadFiles = [];
+
+        if($scope.token) {
+          voicebaseTokensApi.setToken($scope.token);
+        }
+
+        $scope.$watch('token', function (token) {
+          if(token) {
+            voicebaseTokensApi.setToken($scope.token);
+          }
+        });
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getCurrentToken();

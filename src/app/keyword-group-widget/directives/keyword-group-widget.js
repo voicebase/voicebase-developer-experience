@@ -7,6 +7,7 @@
       templateUrl: 'keyword-group-widget/directives/keyword-group-widget.tpl.html',
       replace: true,
       scope: {
+        token: '=',
         isPopup: '@'
       },
       controllerAs: 'keywordWidgetCtrl',
@@ -23,6 +24,16 @@
         me.isPopup = ($scope.isPopup === 'true');
 
         var tokenData;
+
+        if($scope.token) {
+          voicebaseTokensApi.setToken($scope.token);
+        }
+
+        $scope.$watch('token', function (token) {
+          if(token) {
+            voicebaseTokensApi.setToken($scope.token);
+          }
+        });
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getCurrentToken();

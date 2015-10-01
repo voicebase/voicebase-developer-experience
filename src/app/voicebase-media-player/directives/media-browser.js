@@ -6,6 +6,7 @@
       restrict: 'E',
       templateUrl: 'voicebase-media-player/directives/media-browser.tpl.html',
       scope: {
+        token: '='
       },
       controllerAs: 'mediaBroserCtrl',
       controller: function ($scope, $timeout, $compile, voicebaseTokensApi, keywordsSpottingApi, voicebasePlayerService) {
@@ -17,6 +18,16 @@
         var tokenData;
         me.mediaLoaded = false;
         me.media = [];
+
+        if($scope.token) {
+          voicebaseTokensApi.setToken($scope.token);
+        }
+
+        $scope.$watch('token', function (token) {
+          if(token) {
+            voicebaseTokensApi.setToken($scope.token);
+          }
+        });
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getCurrentToken();
@@ -30,6 +41,8 @@
           if(!me.isLogin) {
             return false;
           }
+          me.media = [];
+          me.errorMessage = '';
           me.mediaLoaded = true;
           keywordsSpottingApi.getMedia(tokenData.token)
             .then(function (_media) {
