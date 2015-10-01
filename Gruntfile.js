@@ -9,12 +9,39 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
     src: {
       js: ['src/app/voicebaseApp.js', 'src/app/**/*.js'],
+      jsMainVendors: [
+        'bower_components/jquery/dist/jquery.min.js',
+        'bower_components/velocity/velocity.min.js',
+        'bower_components/angular/angular.min.js',
+        'bower_components/raml-js-parser/dist/raml-parser.min.js'
+      ],
+      jsApiConsoleVendors: [
+        'bower_components/marked/marked.min.js',
+        'bower_components/highlightjs/highlight.pack.js',
+        'bower_components/vkbeautify/vkbeautify.js',  // no minify version
+        'bower_components/crypto-js/rollups/hmac-sha1.js',
+        'bower_components/crypto-js/components/enc-base64-min.js',
+        'bower_components/codemirror/lib/codemirror.js', // no minify version
+        'bower_components/codemirror/mode/javascript/javascript.js', // no minify version
+        'bower_components/codemirror/mode/xml/xml.js', // no minify version
+        'bower_components/codemirror/mode/yaml/yaml.js', // no minify version
+        'bower_components/codemirror/addon/dialog/dialog.js', // no minify version
+        'bower_components/codemirror/addon/search/search.js', // no minify version
+        'bower_components/codemirror/addon/search/searchcursor.js', // no minify version
+        'bower_components/codemirror/addon/lint/lint.js', // no minify version
+        'bower_components/angular-ui-codemirror/ui-codemirror.min.js',
+        'bower_components/angular-marked/angular-marked.min.js',
+        'bower_components/angular-highlightjs/angular-highlightjs.min.js',
+        'bower_components/jszip/jszip.js', // no minify version
+        'bower_components/slug/slug.js', // no minify version
+        'bower_components/FileSaver/FileSaver.min.js',
+        'bower_components/raml-client-generator/dist/raml-client-generator.min.js'
+      ],
       jsVendor: [
-        'bower_components/api-console-voicebase/dist/scripts/api-console-vendor.js',
         'dist/bootstrap/javascripts/bootstrap.min.js',
-        'bower_components/angular-route/angular-route.js',
+        'bower_components/angular-route/angular-route.min.js',
         'bower_components/angular-sanitize/angular-sanitize.min.js',
-        'bower_components/angular-modal-service/dst/angular-modal-service.js',
+        'bower_components/angular-modal-service/dst/angular-modal-service.min.js',
         'bower_components/angular-utils-pagination/dirPagination.js',
         'bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js',
         'bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js',
@@ -256,9 +283,19 @@ module.exports = function (grunt) {
         ]
       },
 
+      jsMainVendors: {
+        src: '<%= src.jsMainVendors %>',
+        dest: '<%= distdir %>/scripts/voicebase-main-vendor.js'
+      },
+
+      jsApiConsoleVendors: {
+        src: '<%= src.jsApiConsoleVendors %>',
+        dest: '<%= distdir %>/scripts/api-console-vendor.js'
+      },
+
       vendor: {
         src: '<%= src.jsVendor %>',
-        dest: '<%= distdir %>/scripts/api-console-vendor.js'
+        dest: '<%= distdir %>/scripts/voicebase-developer-experience-vendor.js'
       }
 
     },
@@ -266,6 +303,8 @@ module.exports = function (grunt) {
     concurrent: {
       build: [
         'build:scripts',
+        'concat:jsMainVendors',
+        'concat:jsApiConsoleVendors',
         'concat:vendor',
         'concat:index',
         'copy:assets',
