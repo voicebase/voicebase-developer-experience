@@ -1,7 +1,9 @@
 (function () {
   'use strict';
 
-  window.voicebasePortal = {};
+  window.voicebasePortal = {
+    localSearchUrl: 'voicebase-player-lib/js/workers/'
+  };
 
   angular.module('voicebaseVendorsModule', [
     'ngRoute',
@@ -1856,7 +1858,7 @@ voicebasePortal.Decorators = (function (Decorators) {
             apiVersion: '2.0',
             mediaTypeOverride: checkType(),
             localSearch: true,
-            localSearchHelperUrl: 'voicebase-player-lib/js/workers/',
+            localSearchHelperUrl: voicebasePortal.localSearchUrl,
             keywordsGroups: true,
             showPredictionsBlock: true,
             actionFlag: {

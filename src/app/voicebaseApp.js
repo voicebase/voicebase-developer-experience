@@ -1,7 +1,9 @@
 (function () {
   'use strict';
 
-  window.voicebasePortal = {};
+  window.voicebasePortal = {
+    localSearchUrl: 'voicebase-player-lib/js/workers/'
+  };
 
   angular.module('voicebaseVendorsModule', [
     'ngRoute',

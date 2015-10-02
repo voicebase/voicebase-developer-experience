@@ -43,7 +43,7 @@
             apiVersion: '2.0',
             mediaTypeOverride: checkType(),
             localSearch: true,
-            localSearchHelperUrl: 'voicebase-player-lib/js/workers/',
+            localSearchHelperUrl: voicebasePortal.localSearchUrl,
             keywordsGroups: true,
             showPredictionsBlock: true,
             actionFlag: {
