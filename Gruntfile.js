@@ -12,10 +12,11 @@ module.exports = function (grunt) {
       jsMainVendors: [
         'bower_components/jquery/dist/jquery.min.js',
         'bower_components/velocity/velocity.min.js',
-        'bower_components/angular/angular.min.js',
-        'bower_components/raml-js-parser/dist/raml-parser.min.js'
+        'bower_components/angular/angular.min.js'
       ],
       jsApiConsoleVendors: [
+        'bower_components/raml-js-parser/dist/raml-parser.min.js',
+        'bower_components/raml-client-generator/dist/raml-client-generator.min.js',
         'bower_components/marked/marked.min.js',
         'bower_components/highlightjs/highlight.pack.js',
         'bower_components/vkbeautify/vkbeautify.js',  // no minify version
@@ -34,8 +35,7 @@ module.exports = function (grunt) {
         'bower_components/angular-highlightjs/angular-highlightjs.min.js',
         'bower_components/jszip/jszip.js', // no minify version
         'bower_components/slug/slug.js', // no minify version
-        'bower_components/FileSaver/FileSaver.min.js',
-        'bower_components/raml-client-generator/dist/raml-client-generator.min.js'
+        'bower_components/FileSaver/FileSaver.min.js'
       ],
       jsVendor: [
         'dist/bootstrap/javascripts/bootstrap.min.js',
@@ -196,7 +196,7 @@ module.exports = function (grunt) {
     ngtemplates: {
       ramlConsole: {
         options: {
-          module: 'ramlConsoleApp'
+          module: 'ramlVoicebaseConsoleApp'
         },
 
         cwd: 'src/app',

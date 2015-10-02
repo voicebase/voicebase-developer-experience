@@ -1,22 +1,16 @@
 (function () {
   'use strict';
 
+  window.voicebasePortal = {};
+
   angular.module('voicebaseVendorsModule', [
     'ngRoute',
-    'RAML.Directives',
-    'RAML.Services',
-    'RAML.Security',
-    'hc.marked',
-    'ui.codemirror',
-    'hljs',
     'frapontillo.bootstrap-switch',
-
     'angularModalService',
     'angularUtils.directives.dirPagination',
     'ngFileUpload',
     'ui.select',
     'ngSanitize',
-
     'cssSpinnerModule',
     'formValidateModule'
   ]);
@@ -30,20 +24,27 @@
     'voicebasePlayerModule'
   ]);
 
-  angular.module('ramlVoicebaseConsoleApp', [
+  var voicebaseConsoleModules = [
     'voicebaseVendorsModule',
-    'ramlConsoleApp',
     'voicebaseTokensModule',
     'voicebasePlayerModule',
     'vbsKeywordGroupWidget'
-  ]).config(function ($provide, $routeProvider) {
-    //RAML.Decorators.ramlConsole($provide);
-    RAML.Decorators.ramlSidebar($provide);
-    RAML.Decorators.ramlField($provide);
-    RAML.Decorators.namedParameters($provide); // custom headers can't be empty
+  ];
 
-    // for support custom scheme x-OAuth 2 Bearer
-    RAML.Decorators.AuthStrategies();
+  if(typeof RAML !== 'undefined') {
+    voicebaseConsoleModules.push('ramlConsoleApp');
+  }
+
+  angular.module('ramlVoicebaseConsoleApp', voicebaseConsoleModules).config(function ($provide, $routeProvider) {
+    if(typeof RAML !== 'undefined') {
+      //voicebasePortal.Decorators.ramlConsole($provide);
+      voicebasePortal.Decorators.ramlSidebar($provide);
+      voicebasePortal.Decorators.ramlField($provide);
+      voicebasePortal.Decorators.namedParameters($provide); // custom headers can't be empty
+
+      // for support custom scheme x-OAuth 2 Bearer
+      voicebasePortal.Decorators.AuthStrategies();
+    }
 
     $routeProvider
       .when('/', {
