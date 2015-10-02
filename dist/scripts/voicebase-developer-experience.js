@@ -1,22 +1,16 @@
 (function () {
   'use strict';
 
+  window.voicebasePortal = {};
+
   angular.module('voicebaseVendorsModule', [
     'ngRoute',
-    'RAML.Directives',
-    'RAML.Services',
-    'RAML.Security',
-    'hc.marked',
-    'ui.codemirror',
-    'hljs',
     'frapontillo.bootstrap-switch',
-
     'angularModalService',
     'angularUtils.directives.dirPagination',
     'ngFileUpload',
     'ui.select',
     'ngSanitize',
-
     'cssSpinnerModule',
     'formValidateModule'
   ]);
@@ -30,20 +24,27 @@
     'voicebasePlayerModule'
   ]);
 
-  angular.module('ramlVoicebaseConsoleApp', [
+  var voicebaseConsoleModules = [
     'voicebaseVendorsModule',
-    'ramlConsoleApp',
     'voicebaseTokensModule',
     'voicebasePlayerModule',
     'vbsKeywordGroupWidget'
-  ]).config(function ($provide, $routeProvider) {
-    //RAML.Decorators.ramlConsole($provide);
-    RAML.Decorators.ramlSidebar($provide);
-    RAML.Decorators.ramlField($provide);
-    RAML.Decorators.namedParameters($provide); // custom headers can't be empty
+  ];
 
-    // for support custom scheme x-OAuth 2 Bearer
-    RAML.Decorators.AuthStrategies();
+  if(typeof RAML !== 'undefined') {
+    voicebaseConsoleModules.push('ramlConsoleApp');
+  }
+
+  angular.module('ramlVoicebaseConsoleApp', voicebaseConsoleModules).config(function ($provide, $routeProvider) {
+    if(typeof RAML !== 'undefined') {
+      //voicebasePortal.Decorators.ramlConsole($provide);
+      voicebasePortal.Decorators.ramlSidebar($provide);
+      voicebasePortal.Decorators.ramlField($provide);
+      voicebasePortal.Decorators.namedParameters($provide); // custom headers can't be empty
+
+      // for support custom scheme x-OAuth 2 Bearer
+      voicebasePortal.Decorators.AuthStrategies();
+    }
 
     $routeProvider
       .when('/', {
@@ -142,37 +143,39 @@
     }]);
 })();
 
-RAML.Decorators = (function (Decorators) {
+voicebasePortal.Decorators = (function (Decorators) {
   'use strict';
 
   Decorators.AuthStrategies = function () {
-    RAML.Client.AuthStrategies.for = function(scheme, credentials) {
-      if (!scheme) {
-        return RAML.Client.AuthStrategies.anonymous();
-      }
+    if(RAML && RAML.Client &&  RAML.Client.AuthStrategies) {
+      RAML.Client.AuthStrategies.for = function(scheme, credentials) {
+        if (!scheme) {
+          return RAML.Client.AuthStrategies.anonymous();
+        }
 
-      switch(scheme.type) {
-        case 'Basic Authentication':
-          return new RAML.Client.AuthStrategies.Basic(scheme, credentials);
-        case 'OAuth 2.0':
-          return new RAML.Client.AuthStrategies.Oauth2(scheme, credentials);
-        case 'OAuth 1.0':
-          return new RAML.Client.AuthStrategies.Oauth1(scheme, credentials);
-        case 'x-custom':
-          return RAML.Client.AuthStrategies.anonymous();
-        case 'Anonymous':
-          return RAML.Client.AuthStrategies.anonymous();
-        default:
-          return RAML.Client.AuthStrategies.anonymous();
-      }
-    };
+        switch(scheme.type) {
+          case 'Basic Authentication':
+            return new RAML.Client.AuthStrategies.Basic(scheme, credentials);
+          case 'OAuth 2.0':
+            return new RAML.Client.AuthStrategies.Oauth2(scheme, credentials);
+          case 'OAuth 1.0':
+            return new RAML.Client.AuthStrategies.Oauth1(scheme, credentials);
+          case 'x-custom':
+            return RAML.Client.AuthStrategies.anonymous();
+          case 'Anonymous':
+            return RAML.Client.AuthStrategies.anonymous();
+          default:
+            return RAML.Client.AuthStrategies.anonymous();
+        }
+      };
+    }
   };
 
   return Decorators;
 
-})(RAML.Decorators || {});
+})(voicebasePortal.Decorators || {});
 
-RAML.Decorators = (function (Decorators) {
+voicebasePortal.Decorators = (function (Decorators) {
   'use strict';
 
   Decorators.namedParameters = function ($provide) {
@@ -188,9 +191,9 @@ RAML.Decorators = (function (Decorators) {
 
   return Decorators;
 
-})(RAML.Decorators || {});
+})(voicebasePortal.Decorators || {});
 
-RAML.Decorators = (function (Decorators) {
+voicebasePortal.Decorators = (function (Decorators) {
   'use strict';
 
   Decorators.ramlConsole = function ($provide) {
@@ -222,9 +225,9 @@ RAML.Decorators = (function (Decorators) {
 
   return Decorators;
 
-})(RAML.Decorators || {});
+})(voicebasePortal.Decorators || {});
 
-RAML.Decorators = (function (Decorators) {
+voicebasePortal.Decorators = (function (Decorators) {
   'use strict';
 
   Decorators.ramlField = function ($provide) {
@@ -298,9 +301,9 @@ RAML.Decorators = (function (Decorators) {
 
   return Decorators;
 
-})(RAML.Decorators || {});
+})(voicebasePortal.Decorators || {});
 
-RAML.Decorators = (function (Decorators) {
+voicebasePortal.Decorators = (function (Decorators) {
   'use strict';
 
   Decorators.ramlInitializer = function ($provide) {
@@ -321,9 +324,9 @@ RAML.Decorators = (function (Decorators) {
 
   return Decorators;
 
-})(RAML.Decorators || {});
+})(voicebasePortal.Decorators || {});
 
-RAML.Decorators = (function (Decorators) {
+voicebasePortal.Decorators = (function (Decorators) {
   'use strict';
 
   Decorators.ramlSidebar = function ($provide) {
@@ -388,7 +391,7 @@ RAML.Decorators = (function (Decorators) {
 
   return Decorators;
 
-})(RAML.Decorators || {});
+})(voicebasePortal.Decorators || {});
 
 (function() {
   'use strict';
@@ -413,7 +416,7 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  RAML.Directives.mainLogin = function($location, $timeout, voicebaseTokensApi) {
+  var MainLogin = function($location, $timeout, voicebaseTokensApi) {
     return {
       restrict: 'E',
       templateUrl: 'console/directives/main-login.tpl.html',
@@ -476,15 +479,15 @@ RAML.Decorators = (function (Decorators) {
     };
   };
 
-  angular.module('RAML.Directives')
-    .directive('mainLogin', RAML.Directives.mainLogin);
+  angular.module('ramlVoicebaseConsoleApp')
+    .directive('mainLogin', MainLogin);
 
 })();
 
 (function () {
   'use strict';
 
-  angular.module('RAML.Directives').directive('validInputFile', function () {
+  angular.module('ramlVoicebaseConsoleApp').directive('validInputFile', function () {
     return {
       require: 'ngModel',
       link: function (scope, el, attrs, ngModel) {
@@ -512,7 +515,7 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  RAML.Directives.waitListForm = function() {
+  var waitListForm = function() {
     return {
       restrict: 'E',
       templateUrl: 'console/directives/wait-list-form.tpl.html',
@@ -550,8 +553,8 @@ RAML.Decorators = (function (Decorators) {
     };
   };
 
-  angular.module('RAML.Directives')
-    .directive('waitListForm', RAML.Directives.waitListForm);
+  angular.module('ramlVoicebaseConsoleApp')
+    .directive('waitListForm', waitListForm);
 
 })();
 
@@ -633,7 +636,7 @@ RAML.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  RAML.Services.resourceHelper = function () {
+  var resourceHelper = function () {
 
     var findResourceByUrl = function (raml, url) {
       var resource = null;
@@ -661,15 +664,15 @@ RAML.Decorators = (function (Decorators) {
     };
   };
 
-  angular.module('RAML.Services')
-    .service('resourceHelper', RAML.Services.resourceHelper);
+  angular.module('ramlVoicebaseConsoleApp')
+    .service('resourceHelper', resourceHelper);
 
 })();
 
 (function () {
   'use strict';
 
-  RAML.Services.waitList = function($http, $q, voicebaseUrl) {
+  var waitList = function($http, $q, voicebaseUrl) {
 
     var baseUrl = voicebaseUrl.getBaseUrl();
 
@@ -692,8 +695,8 @@ RAML.Decorators = (function (Decorators) {
 
   };
 
-  angular.module('RAML.Services')
-    .service('waitList', RAML.Services.waitList);
+  angular.module('ramlVoicebaseConsoleApp')
+    .service('waitList', waitList);
 
 })();
 
@@ -2799,7 +2802,7 @@ RAML.Decorators = (function (Decorators) {
 
 })();
 
-angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache) {
+angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('console/directives/main-login.tpl.html',
