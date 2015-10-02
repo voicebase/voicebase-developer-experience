@@ -39,6 +39,7 @@
     "beforeEach": true,
     "afterEach": true,
     "vkbeautify": true,
-    "jwplayer": true
+    "jwplayer": true,
+    "voicebasePortal": true
   }
 }

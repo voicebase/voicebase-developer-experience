@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('RAML.Directives').directive('validInputFile', function () {
+  angular.module('ramlVoicebaseConsoleApp').directive('validInputFile', function () {
     return {
       require: 'ngModel',
       link: function (scope, el, attrs, ngModel) {

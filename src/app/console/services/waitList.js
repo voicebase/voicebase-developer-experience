@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  RAML.Services.waitList = function($http, $q, voicebaseUrl) {
+  var waitList = function($http, $q, voicebaseUrl) {
 
     var baseUrl = voicebaseUrl.getBaseUrl();
 
@@ -24,8 +24,8 @@
 
   };
 
-  angular.module('RAML.Services')
-    .service('waitList', RAML.Services.waitList);
+  angular.module('ramlVoicebaseConsoleApp')
+    .service('waitList', waitList);
 
 })();
 

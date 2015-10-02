@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  RAML.Directives.mainLogin = function($location, $timeout, voicebaseTokensApi) {
+  var MainLogin = function($location, $timeout, voicebaseTokensApi) {
     return {
       restrict: 'E',
       templateUrl: 'console/directives/main-login.tpl.html',
@@ -64,7 +64,7 @@
     };
   };
 
-  angular.module('RAML.Directives')
-    .directive('mainLogin', RAML.Directives.mainLogin);
+  angular.module('ramlVoicebaseConsoleApp')
+    .directive('mainLogin', MainLogin);
 
 })();

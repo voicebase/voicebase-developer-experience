@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  RAML.Services.resourceHelper = function () {
+  var resourceHelper = function () {
 
     var findResourceByUrl = function (raml, url) {
       var resource = null;
@@ -29,7 +29,7 @@
     };
   };
 
-  angular.module('RAML.Services')
-    .service('resourceHelper', RAML.Services.resourceHelper);
+  angular.module('ramlVoicebaseConsoleApp')
+    .service('resourceHelper', resourceHelper);
 
 })();

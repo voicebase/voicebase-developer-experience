@@ -1,4 +1,4 @@
-RAML.Decorators = (function (Decorators) {
+voicebasePortal.Decorators = (function (Decorators) {
   'use strict';
 
   Decorators.ramlSidebar = function ($provide) {
@@ -63,4 +63,4 @@ RAML.Decorators = (function (Decorators) {
 
   return Decorators;
 
-})(RAML.Decorators || {});
+})(voicebasePortal.Decorators || {});

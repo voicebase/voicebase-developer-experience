@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  RAML.Directives.waitListForm = function() {
+  var waitListForm = function() {
     return {
       restrict: 'E',
       templateUrl: 'console/directives/wait-list-form.tpl.html',
@@ -39,7 +39,7 @@
     };
   };
 
-  angular.module('RAML.Directives')
-    .directive('waitListForm', RAML.Directives.waitListForm);
+  angular.module('ramlVoicebaseConsoleApp')
+    .directive('waitListForm', waitListForm);
 
 })();
