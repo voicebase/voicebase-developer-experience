@@ -16,21 +16,36 @@
     .header {
       display: table;
       width: 100%;
+      padding: 15px;
     }
 
     .content {
       margin: 15px;
     }
+
+    .token-input-container {
+      margin-top: 12px;
+      margin-left: 20px;
+    }
+
+    .token-input {
+      width: 780px;
+    }
+
   </style>
 </head>
 <body ng-app="testApp" ng-cloak>
 
   <div ng-controller="appCtrl" class="content">
 
-    <label>Token: </label>
-    <input type="text" ng-model="token"/>
-    <div class="header">
-      <voicebase-sign token="token"></voicebase-sign>
+    <div class="header panel panel-default">
+      <div class="pull-left">
+        <voicebase-sign token="token"></voicebase-sign>
+      </div>
+      <div class="pull-left token-input-container">
+        <label>or enter your Bearer token: </label>
+        <input type="text" ng-model="token" class="token-input"/>
+      </div>
     </div>
     <media-browser token="token"></media-browser>
   </div>
@@ -54,11 +69,18 @@
 
     angular.module('testApp').controller('appCtrl', [
       '$scope',
-      function ($scope) {
+      'voicebaseTokensApi',
+      function ($scope, voicebaseTokensApi) {
         $scope.token = '';
 
         $scope.$watch('token', function (newToken) {
           $scope.token = newToken;
+        });
+
+        $scope.$watch(function () {
+            return voicebaseTokensApi.getCurrentToken();
+        }, function (tokenData) {
+          $scope.token = (tokenData) ? tokenData.token : '';
         });
       }
     ]);
