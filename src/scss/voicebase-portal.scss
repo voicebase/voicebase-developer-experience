@@ -1,8 +1,6 @@
 .dashboard-page,
-.keyword-config-page,
+.widget-page,
 .keywords-spotting,
-.key-manager-page,
-.media-browser-page,
 .media-browser {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
@@ -107,15 +105,12 @@
     color: #777;
   }
 
-
 }
 
 @media (min-width: 768px) {
   .dashboard-page,
-  .keyword-config-page,
+  .widget-page,
   .keywords-spotting,
-  .key-manager-page,
-  .media-browser-page,
   .media-browser {
     padding-top: 110px;
 
@@ -128,10 +123,8 @@
 
 @media (max-width: 767px) {
   .dashboard-page,
-  .keyword-config-page,
+  .widget-page,
   .keywords-spotting,
-  .key-manager-page,
-  .media-browser-page,
   .media-browser {
 
     .panel {
@@ -162,37 +155,6 @@
   }
 }
 
-.keyword-config-page {
-  .raml-console-vbs-keyword-group-widget-container {
-    float: none;
-
-    .raml-console-vbs-popup {
-      border: 0;
-      background: transparent;
-      box-shadow: none;
-      position: relative;
-      top: 0;
-      left: 0;
-      width: 100%;
-
-      .raml-console-vbs-popup-body {
-        padding: 0;
-      }
-    }
-
-    h4 {
-      font-size: 18px;
-      margin-top: 5px;
-    }
-
-    h3 {
-      font-size: 16px;
-    }
-
-  }
-
-}
-
 .tooltip {
   font-size: 13px;
 }
@@ -210,7 +172,6 @@
 
 .vbs-portal-navbar.navbar {
     background: #333;
-
 }
 
 @media (min-width: 768px) {

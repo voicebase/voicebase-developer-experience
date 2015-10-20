@@ -47,6 +47,7 @@
 
 .vbs-token-auth-form, .vbs-tokens-error {
   @extend .vbs-popup;
+  z-index: 110;
   width: 400px;
 
   .vbs-auth-form-btns {

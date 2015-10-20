@@ -1,17 +1,36 @@
 .vbs-keyword-group-widget-container {
-  float: left;
+  float: none;
   position: relative;
 
   .vbs-popup {
-    width: 400px;
-    height: auto;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
 
     .vbs-popup-body {
-      padding: 15px;
+      padding: 0;
+
       .panel {
         margin: 0;
       }
     }
+  }
+
+  h4 {
+    margin-top: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.1;
   }
 
   .spinner {
@@ -24,6 +43,8 @@
 
   .error-message {
     color: $color-console-tab-delete;
+    font-size: 18px;
+    padding: 15px;
   }
 
   .item-heading {
