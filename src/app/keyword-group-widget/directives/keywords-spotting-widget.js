@@ -130,6 +130,7 @@
         };
 
         var postMedia = function (file) {
+          me.errorMessage = '';
           keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups)
             .then(function (mediaStatus) {
               me.isLoaded = false;
@@ -179,6 +180,7 @@
               else if(data.media && data.media.status === 'failed') {
                 me.pingProcess = false;
                 me.showStartOverBtn = true;
+                me.errorMessage = 'Upload failed!';
                 $interval.cancel(checker);
               }
             }, function () {
