@@ -21,6 +21,8 @@
 
   angular.module('voicebasePlayerModule', []);
 
+  angular.module('dagModule', []);
+
   angular.module('vbsKeywordGroupWidget', [
     'voicebaseVendorsModule',
     'voicebasePlayerModule'
@@ -30,7 +32,8 @@
     'voicebaseVendorsModule',
     'voicebaseTokensModule',
     'voicebasePlayerModule',
-    'vbsKeywordGroupWidget'
+    'vbsKeywordGroupWidget',
+    'dagModule'
   ];
 
   if(typeof RAML !== 'undefined') {
@@ -79,6 +82,10 @@
       })
       .when('/media-browser', {
         templateUrl: 'pages/mediaBrowserPage.html',
+        reloadOnSearch: false
+      })
+      .when('/dag', {
+        templateUrl: 'pages/dagPage.html',
         reloadOnSearch: false
       })
       .when('/wait', {

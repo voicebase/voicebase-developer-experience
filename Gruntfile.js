@@ -46,7 +46,8 @@ module.exports = function (grunt) {
         'bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js',
         'bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js',
         'bower_components/ng-file-upload/ng-file-upload.min.js',
-        'bower_components/angular-ui-select/dist/select.min.js'
+        'bower_components/angular-ui-select/dist/select.min.js',
+        'bower_components/vis/dist/vis.min.js'
       ],
       jsApiConsole: [
         'bower_components/api-console-voicebase/dist/scripts/api-console.js'
@@ -64,7 +65,8 @@ module.exports = function (grunt) {
         'bower_components/api-console-voicebase/src/assets/styles/error.css',
         'bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css',
         'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-dark.css',
-        'bower_components/angular-ui-select/dist/select.min.css'
+        'bower_components/angular-ui-select/dist/select.min.css',
+        'bower_components/vis/dist/vis.min.css'
       ],
       scssWatch: ['src/scss/**/*.scss'],
       test: ['test/**/*.js']

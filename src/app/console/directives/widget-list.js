@@ -17,6 +17,7 @@
           showSupport: '@',
           showMediaBrowser: '@',
           showKeyManager: '@',
+          showDag: '@',
           showComingSoon: '@'
         },
         controller: function($scope) {
@@ -46,6 +47,10 @@
 
           $scope.loadDoc = function() {
             $location.path('/documentation');
+          };
+
+          $scope.loadDag = function() {
+            $location.path('/dag');
           };
         }
       };
