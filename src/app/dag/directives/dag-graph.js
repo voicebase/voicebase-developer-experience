@@ -52,6 +52,7 @@
             $scope.nodes.forEach(function (node) {
               node.shape = 'box';
               node.font = '18px';
+              node.fixed = true;
             });
 
             drawGraph();
@@ -69,28 +70,25 @@
             var options = {
               width: '100%',
               height: '500px',
-              //physics: {
-              //  enabled: false,
-              //  stabilization: {
-              //    enabled: true
-              //  }
-              //},
+              physics: {
+                enabled: false
+              },
               edges: {
                 arrows: 'to'
               },
               layout: {
                 randomSeed: 1,
                 hierarchical: {
-                  enabled: false,
+                  enabled: true,
                   sortMethod: 'directed',
-                  direction: 'LR'
+                  direction: 'UD'
                 }
               }
             };
             var network = new vis.Network(container, data, options);
-            network.on("selectNode", function(params) {
-              if (params.nodes.length == 1) {
-                if (network.isCluster(params.nodes[0]) == true) {
+            network.on('selectNode', function(params) {
+              if (params.nodes.length === 1) {
+                if (network.isCluster(params.nodes[0]) === true) {
                   network.openCluster(params.nodes[0]);
                 }
               }
@@ -106,7 +104,7 @@
                   return nodeOptions.clusterIds && nodeOptions.clusterIds.indexOf(cluster.id) !== -1;
                 },
                 processProperties: function (clusterOptions, childNodes) {
-                  clusterOptions.label = "[ Cluster #" + cluster.id + "]";
+                  clusterOptions.label = '[ Cluster #' + cluster.id + ']';
                   return clusterOptions;
                 },
                 clusterNodeProperties: {borderWidth: 3, shape: 'box', font: {size: 30}}

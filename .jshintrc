@@ -40,6 +40,10 @@
     "afterEach": true,
     "vkbeautify": true,
     "jwplayer": true,
-    "voicebasePortal": true
+    "voicebasePortal": true,
+    "dagreD3": true,
+    "d3": true,
+    "cytoscape": true,
+    "vis": true
   }
 }

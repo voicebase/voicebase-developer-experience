@@ -46,11 +46,18 @@ module.exports = function (grunt) {
         'bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js',
         'bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js',
         'bower_components/ng-file-upload/ng-file-upload.min.js',
-        'bower_components/angular-ui-select/dist/select.min.js',
-        'bower_components/vis/dist/vis.min.js'
+        'bower_components/angular-ui-select/dist/select.min.js'
       ],
       jsApiConsole: [
         'bower_components/api-console-voicebase/dist/scripts/api-console.js'
+      ],
+      jsGraphVendors: [
+        //'bower_components/vis/dist/vis.min.js',
+        'bower_components/cytoscape/dist/cytoscape.min.js',
+        //'bower_components/lodash/lodash.min.js',
+        //'bower_components/graphlib/dist/graphlib.core.js',
+        //'bower_components/dagre/dist/dagre.core.js',
+        //'bower_components/dagre-d3/dist/dagre-d3.core.js'
       ],
       html: ['src/index.html'],
       scss: [
@@ -74,7 +81,7 @@ module.exports = function (grunt) {
 
     connect: {
       options: {
-        hostname: '0.0.0.0',
+        hostname: 'localhost',
         port: 9000
       },
 
@@ -295,6 +302,11 @@ module.exports = function (grunt) {
         dest: '<%= distdir %>/scripts/api-console-vendor.js'
       },
 
+      jsGraphVendors: {
+        src: '<%= src.jsGraphVendors %>',
+        dest: '<%= distdir %>/scripts/voicebase-graph-vendor.js'
+      },
+
       vendor: {
         src: '<%= src.jsVendor %>',
         dest: '<%= distdir %>/scripts/voicebase-developer-experience-vendor.js'
@@ -307,6 +319,7 @@ module.exports = function (grunt) {
         'build:scripts',
         'concat:jsMainVendors',
         'concat:jsApiConsoleVendors',
+        'concat:jsGraphVendors',
         'concat:vendor',
         'concat:index',
         'copy:assets',
