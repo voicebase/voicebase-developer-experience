@@ -42,8 +42,6 @@
     "jwplayer": true,
     "voicebasePortal": true,
     "dagreD3": true,
-    "d3": true,
-    "cytoscape": true,
-    "vis": true
+    "d3": true
   }
 }
