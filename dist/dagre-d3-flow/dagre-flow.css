@@ -1,0 +1,96 @@
+.svg-dag .clusters rect {
+  fill: #FFF;
+  stroke: #4cae4c;
+  stroke-width: 1.25;
+  rx: 3px;
+  ry: 3px;
+}
+
+.svg-dag text {
+  font-weight: 300;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serf, serif;
+  font-size: 14px;
+}
+
+.svg-dag .node rect {
+  rx: 3px;
+  ry: 3px;
+  fill: #DDD;
+  stroke: #CCC;
+}
+
+.svg-dag .node:hover rect {
+  fill-opacity: 0.7;
+  cursor: pointer;
+}
+
+.svg-dag .node text {
+  fill: #000;
+}
+
+.svg-dag .node.SUCCESS rect {
+  fill: #5cb85c;
+  stroke: #4cae4c;
+}
+
+.svg-dag .node.SUCCESS text {
+  fill: #FFF;
+}
+
+.svg-dag .node.FAILED rect {
+  fill: #d2322d;
+  stroke: #d2322d;
+}
+
+.svg-dag .node.FAILED text {
+  fill: #FFF;
+}
+
+.svg-dag .node.PENDING rect {
+  fill: #DDD;
+  stroke: #CCC;
+}
+
+.svg-dag .node.PENDING text {
+  fill: #000;
+}
+
+.svg-dag .node.RUNNING rect {
+  fill: #39b3d7;
+  stroke: #39b3d7;
+}
+
+.svg-dag .node.RUNNING text {
+  fill: #FFF;
+}
+
+.svg-dag .toggle-link {
+  cursor: pointer;
+  stroke: #4cae4c;
+}
+
+.svg-dag .toggle-link.expanded {
+  fill: #ccc;
+}
+
+.svg-dag .toggle-link.expanded:hover {
+  fill: #5cb85c;
+}
+
+.svg-dag .toggle-link.collapsed {
+  fill: #fff;
+}
+
+.svg-dag .toggle-link.collapsed:hover {
+  fill: #5cb85c;
+}
+
+.svg-dag .edgePath path {
+  stroke: #CCC;
+  stroke-width: 1.5;
+}
+
+.svg-dag .edgePath defs marker {
+  fill: #CCC;
+}
+/*# sourceMappingURL=dagre-flow.css.map */

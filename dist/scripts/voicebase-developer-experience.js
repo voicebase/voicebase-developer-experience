@@ -741,121 +741,118 @@ voicebasePortal.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  angular.module('dagModule').directive('dagGraph', [
+  angular.module('dagModule').directive('d3DagGraph', [
     function () {
       return {
         restrict: 'E',
         templateUrl: 'dag/directives/dag-graph.tpl.html',
-        scope: {
-        },
-        controller: function ($scope) {
-          $scope.nodes = [];
-          $scope.edges = [];
+        scope: {},
+        controllerAs: 'dagCtrl',
+        controller: function ($scope, $timeout, jobApi) {
+          var me = this;
 
-          var init = function () {
-            $scope.clusters = [
-              {id: 1},
-              {id: 2},
-              {id: 3}
-            ];
+          me.job = null;
+          me.graph = null;
 
-            $scope.nodes = [
-              {id: 1, label: 'Task 1'},
-              {id: 2, label: 'Task 2'},
-              {id: 3, label: 'Task 3', clusterIds: [1]},
-              {id: 4, label: 'Task 4', clusterIds: [1]},
-              {id: 5, label: 'Task 5', clusterIds: [1, 3]},
-              {id: 6, label: 'Task 6', clusterIds: [1, 3]},
-              {id: 7, label: 'Task 7', clusterIds: [1, 3]},
-              {id: 8, label: 'Task 8', clusterIds: [2]},
-              {id: 9, label: 'Task 9', clusterIds: [2]},
-              {id: 10, label: 'Task 10', clusterIds: [2]},
-              {id: 11, label: 'Task 11'}
-            ];
+          $scope.$watch(function () {
+            return jobApi.getActiveJob();
+          }, function (job) {
+            me.job = job;
+            $timeout(function () {
+              me.renderJob();
+            }, 0);
+          });
 
-            $scope.edges = [
-              {from: 1, to: 2},
-              {from: 2, to: 3},
-              {from: 3, to: 4},
-              {from: 4, to: 5},
-              {from: 4, to: 6},
-              {from: 5, to: 7},
-              {from: 6, to: 7},
-              {from: 2, to: 8},
-              {from: 2, to: 9},
-              {from: 8, to: 10},
-              {from: 9, to: 10},
-              {from: 10, to: 11},
-              {from: 7, to: 11}
-            ];
+          me.renderJob = function () {
+            if(!me.job) {
+              return false;
+            }
 
-            $scope.nodes.forEach(function (node) {
-              node.shape = 'box';
-              node.font = '18px';
-            });
+            me.graph = new dagreD3.graphlib.Graph({compound:true})
+              .setGraph({})
+              .setDefaultEdgeLabel(function() { return {}; });
 
-            drawGraph();
+            var tasks = me.job.tasks;
+            var phases = initNodesAndPhases(tasks);
+            initEdges(tasks);
+            initClusters(phases);
+
+            var svg = d3.select('svg');
+            var svgGroup = svg.append('g');
+            DagreFlow.init(svg, me.graph);
+            DagreFlow.render();
           };
 
-          var drawGraph = function () {
-            var nodes = new vis.DataSet($scope.nodes);
-            var edges = new vis.DataSet($scope.edges);
+          var initNodesAndPhases = function (tasks) {
+            var phases = {};
+            for (var taskId in tasks) {
+              if(tasks.hasOwnProperty(taskId)) {
+                var task = tasks[taskId];
+                createNode(taskId, getStatus(task));
+                if(!phases[task.phase]) {
+                  phases[task.phase] = {name: '', contents: []};
+                }
+                phases[task.phase].name = task.display;
+                phases[task.phase].contents.push(taskId);
+              }
+            }
+            return phases;
+          };
 
-            var container = jQuery('.graph-network')[0];
-            var data = {
-              nodes: nodes,
-              edges: edges
-            };
-            var options = {
-              width: '100%',
-              height: '500px',
-              //physics: {
-              //  enabled: false,
-              //  stabilization: {
-              //    enabled: true
-              //  }
-              //},
-              edges: {
-                arrows: 'to'
-              },
-              layout: {
-                randomSeed: 1,
-                hierarchical: {
-                  enabled: false,
-                  sortMethod: 'directed',
-                  direction: 'LR'
+          var initEdges = function (tasks) {
+            for (var taskId in tasks) {
+              if(tasks.hasOwnProperty(taskId)) {
+                var task = tasks[taskId];
+                for (var i = 0; i < task.dependents.length; i++) {
+                  var childId = task.dependents[i];
+                  var child = me.job.tasks[childId];
+                  if (child) {
+                    me.graph.setEdge(taskId, childId);
+                  }
                 }
               }
-            };
-            var network = new vis.Network(container, data, options);
-            network.on("selectNode", function(params) {
-              if (params.nodes.length == 1) {
-                if (network.isCluster(params.nodes[0]) == true) {
-                  network.openCluster(params.nodes[0]);
+            }
+          };
+
+          var initClusters = function (phases) {
+            for (var phaseId in phases) {
+              if(phases.hasOwnProperty(phaseId)) {
+                var phase = phases[phaseId];
+                me.graph.setNode(phaseId, {
+                  label: phase.name
+                });
+                for (var i = 0; i < phase.contents.length; i++) {
+                  var childId = phase.contents[i];
+                  me.graph.setParent(childId, phaseId);
                 }
               }
-            });
+            }
+          };
 
-            network.on('context', function (params) {
-              //a = 0;
-            });
-
-            $scope.clusters.forEach(function (cluster) {
-              var clusterOptionsByData = {
-                joinCondition: function (nodeOptions) {
-                  return nodeOptions.clusterIds && nodeOptions.clusterIds.indexOf(cluster.id) !== -1;
-                },
-                processProperties: function (clusterOptions, childNodes) {
-                  clusterOptions.label = "[ Cluster #" + cluster.id + "]";
-                  return clusterOptions;
-                },
-                clusterNodeProperties: {borderWidth: 3, shape: 'box', font: {size: 30}}
-              };
-              network.cluster(clusterOptionsByData);
+          var createNode = function (taskId, status) {
+            me.graph.setNode(taskId, {
+              label: taskId,
+              status: status
             });
           };
 
-          init();
+          var getStatus = function (task) {
+            var status = 'PENDING';
+            if(task.status === 'finished') {
+              status = 'SUCCESS';
+            }
+            else if(task.status === 'running') {
+              status = 'RUNNING';
+            }
+            else if(task.status === 'failed') {
+              status = 'FAILED';
+            }
+            else {
+              status = 'PENDING';
+            }
+            return status;
+          };
+
         }
 
       };
@@ -864,6 +861,247 @@ voicebasePortal.Decorators = (function (Decorators) {
 
 })();
 
+
+(function () {
+  'use strict';
+
+  angular.module('dagModule').directive('voicebaseJobs', [
+    function () {
+      return {
+        restrict: 'E',
+        templateUrl: 'dag/directives/voicebase-jobs.tpl.html',
+        scope: {},
+        controllerAs: 'jobCtrl',
+        controller: function ($scope, jobApi) {
+          var me = this;
+          me.jobs = [];
+          me.selectedJob = null;
+
+          var getJobs = function () {
+            jobApi.getJobs()
+              .then(function (jobs) {
+                me.jobs = jobs;
+                if(me.jobs.length > 0) {
+                  me.selectedJob = me.jobs[0];
+                  me.changeJob(me.jobs[0]);
+                }
+              });
+          };
+
+          me.changeJob = function (job) {
+            jobApi.setActiveJob(job);
+          };
+
+          getJobs();
+        }
+
+      };
+    }
+  ]);
+
+})();
+
+
+(function () {
+  'use strict';
+
+  var testJobs = [
+    {
+      'jobId' : '954ced1a-3882-4c9e-ba15-bc15e8079cc6',
+      'status' : 'running',
+      'start' : 'ec7967aa-0e6b-4691-be99-d5e015f5abbf',
+      'finish' : '9100ad59-e35f-4b83-9134-7534fbbd1d51',
+      'tasks' : {
+        'ec7967aa-0e6b-4691-be99-d5e015f5abbf' : {
+          'taskId' : 'ec7967aa-0e6b-4691-be99-d5e015f5abbf',
+          'display' : 'Ingest',
+          'phase' : 'ingest',
+          'status' : 'finished',
+          'dependencies' : [],
+          'dependents' : [
+            '1cf6aaee-599a-4a9f-9546-984136f3fd6c',
+            '99ad7676-3578-4236-b278-4ac58398a59c',
+            'a6e0addd-e262-4493-84d1-c27379bb0166'
+          ]
+        },
+        '1cf6aaee-599a-4a9f-9546-984136f3fd6c' : {
+          'taskId' : '1cf6aaee-599a-4a9f-9546-984136f3fd6c',
+          'display' : 'Transcripts',
+          'phase' : 'transcripts',
+          'status' : 'finished',
+          'generator' : 'a628bc5b-9cdf-4bd7-a543-398d7d26adbd',
+          'dependencies' : [
+            'ec7967aa-0e6b-4691-be99-d5e015f5abbf'
+          ],
+          'dependents' : [
+            '556464be-710c-46a1-9638-63f047b80fe0'
+          ]
+        },
+        '99ad7676-3578-4236-b278-4ac58398a59c' : {
+          'taskId' : '1cf6aaee-599a-4a9f-9546-984136f3fd6c',
+          'display' : 'Transcripts',
+          'phase' : 'transcripts',
+          'status' : 'running',
+          'generator' : 'a628bc5b-9cdf-4bd7-a543-398d7d26adbd',
+          'dependencies' : [
+            'ec7967aa-0e6b-4691-be99-d5e015f5abbf'
+          ],
+          'dependents' : [
+            '556464be-710c-46a1-9638-63f047b80fe0'
+          ]
+        },
+        'a6e0addd-e262-4493-84d1-c27379bb0166' : {
+          'taskId' : '1cf6aaee-599a-4a9f-9546-984136f3fd6c',
+          'display' : 'Transcripts',
+          'phase' : 'transcripts',
+          'status' : 'pending',
+          'generator' : 'a628bc5b-9cdf-4bd7-a543-398d7d26adbd',
+          'dependencies' : [
+            'ec7967aa-0e6b-4691-be99-d5e015f5abbf'
+          ],
+          'dependents' : [
+            '556464be-710c-46a1-9638-63f047b80fe0'
+          ]
+        },
+        '556464be-710c-46a1-9638-63f047b80fe0' : {
+          'taskId' : '556464be-710c-46a1-9638-63f047b80fe0',
+          'display' : 'Transcripts',
+          'phase' : 'transcripts',
+          'status' : 'pending',
+          'dependencies' : [
+            '1cf6aaee-599a-4a9f-9546-984136f3fd6c',
+            '99ad7676-3578-4236-b278-4ac58398a59c',
+            'a6e0addd-e262-4493-84d1-c27379bb0166'
+          ],
+          'dependents' : [
+            'f90eb66b-2fc3-4521-a132-183313e5bc4f'
+          ]
+        },
+        'f90eb66b-2fc3-4521-a132-183313e5bc4f' : {
+          'taskId' : 'f90eb66b-2fc3-4521-a132-183313e5bc4f',
+          'display' : 'Transcripts',
+          'phase' : 'transcripts',
+          'transactionId' : '954ced1a-3882-4c9e-ba15-bc15e8079cc6',
+          'dependencies' : [
+            '556464be-710c-46a1-9638-63f047b80fe0'
+          ],
+          'dependents' : [
+            '9100ad59-e35f-4b83-9134-7534fbbd1d51'
+          ]
+        },
+        '9100ad59-e35f-4b83-9134-7534fbbd1d51' : {
+          'taskId' : '9100ad59-e35f-4b83-9134-7534fbbd1d51',
+          'display' : 'Keywords',
+          'phase' : 'keywords',
+          'dependencies' : [
+            'f90eb66b-2fc3-4521-a132-183313e5bc4f'
+          ],
+          'dependents' : []
+        }
+      }
+    },
+    {
+      'jobId' : '954ced1a-3882-4c9e-ba15-bc15e8079cc6',
+      'status' : 'running',
+      'start' : 'ec7967aa-0e6b-4691-be99-d5e015f5abbf',
+      'finish' : '9100ad59-e35f-4b83-9134-7534fbbd1d51',
+      'tasks' : {
+        'ec7967aa-0e6b-4691-be99-d5e015f5abbf' : {
+          'taskId' : 'ec7967aa-0e6b-4691-be99-d5e015f5abbf',
+          'display' : 'Ingest',
+          'phase' : 'ingest',
+          'status' : 'finished',
+          'dependencies' : [],
+          'dependents' : [
+            '1cf6aaee-599a-4a9f-9546-984136f3fd6c'
+          ]
+        },
+        'a628bc5b-9cdf-4bd7-a543-398d7d26adbd' : {
+          'taskId' : 'a628bc5b-9cdf-4bd7-a543-398d7d26adbd',
+          'display' : 'Transcripts...',
+          'phase' : 'transcripts',
+          'status' : 'pending',
+          'jit' : true,
+          'dependencies' : [
+            'ec7967aa-0e6b-4691-be99-d5e015f5abbf'
+          ],
+          'dependents' : [
+            '556464be-710c-46a1-9638-63f047b80fe0'
+          ]
+        },
+        '556464be-710c-46a1-9638-63f047b80fe0' : {
+          'taskId' : '556464be-710c-46a1-9638-63f047b80fe0',
+          'display' : 'Transcripts',
+          'phase' : 'transcripts',
+          'status' : 'pending',
+          'dependencies' : [
+            '1cf6aaee-599a-4a9f-9546-984136f3fd6c'
+          ],
+          'dependents' : [
+            'f90eb66b-2fc3-4521-a132-183313e5bc4f'
+          ]
+        },
+        'f90eb66b-2fc3-4521-a132-183313e5bc4f' : {
+          'taskId' : 'f90eb66b-2fc3-4521-a132-183313e5bc4f',
+          'display' : 'Transcripts',
+          'phase' : 'transcripts',
+          'transactionId' : '954ced1a-3882-4c9e-ba15-bc15e8079cc6',
+          'dependencies' : [
+            '556464be-710c-46a1-9638-63f047b80fe0'
+          ],
+          'dependents' : [
+            '9100ad59-e35f-4b83-9134-7534fbbd1d51'
+          ]
+        },
+        '9100ad59-e35f-4b83-9134-7534fbbd1d51' : {
+          'taskId' : '9100ad59-e35f-4b83-9134-7534fbbd1d51',
+          'display' : 'Keywords',
+          'phase' : 'keywords',
+          'dependencies' : [
+            'f90eb66b-2fc3-4521-a132-183313e5bc4f'
+          ],
+          'dependents' : []
+        }
+      }
+    }
+  ];
+
+  var jobApi = function($http, $q, voicebaseUrl) {
+
+    var url = voicebaseUrl.getBaseUrl();
+
+    var activeJob = null;
+
+    var setActiveJob = function (_activeJob) {
+      activeJob = _activeJob;
+    };
+
+    var getActiveJob = function() {
+      return activeJob;
+    };
+
+    var getJobs = function() {
+      var deferred = $q.defer();
+
+      setTimeout(function () {
+        deferred.resolve(testJobs);
+      }, 0);
+
+      return deferred.promise;
+    };
+
+    return {
+      getJobs: getJobs,
+      setActiveJob: setActiveJob,
+      getActiveJob: getActiveJob
+    };
+
+  };
+
+  angular.module('dagModule')
+    .service('jobApi', jobApi);
+
+})();
 
 (function () {
   'use strict';
@@ -3256,8 +3494,25 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
 
 
   $templateCache.put('dag/directives/dag-graph.tpl.html',
+    "<div class=\"dag-graph\">\n" +
+    "  <div ng-if=\"dagCtrl.job\">\n" +
+    "    <svg id=\"svg-canvas\" class=\"svg-dag\" width=\"750\" height=\"600\"></svg>\n" +
+    "  </div>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('dag/directives/voicebase-jobs.tpl.html',
     "<div class=\"panel panel-default raml-console-panel dag-graph\">\n" +
-    "  <div class=\"graph-network\"></div>\n" +
+    "\n" +
+    "  <select class=\"\"\n" +
+    "          ng-model=\"jobCtrl.selectedJob\"\n" +
+    "          ng-options=\"job as job.jobId for job in jobCtrl.jobs\"\n" +
+    "          ng-change=\"jobCtrl.changeJob(jobCtrl.selectedJob)\">\n" +
+    "  </select>\n" +
+    "\n" +
+    "  <d3-dag-graph></d3-dag-graph>\n" +
+    "\n" +
     "</div>\n"
   );
 
