@@ -1,0 +1,11 @@
+<div class="panel panel-default raml-console-panel dag-graph">
+
+  <select class=""
+          ng-model="jobCtrl.selectedJob"
+          ng-options="job as job.jobId for job in jobCtrl.jobs"
+          ng-change="jobCtrl.changeJob(jobCtrl.selectedJob)">
+  </select>
+
+  <d3-dag-graph></d3-dag-graph>
+
+</div>

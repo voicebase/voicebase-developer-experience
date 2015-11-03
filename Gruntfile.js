@@ -56,7 +56,8 @@ module.exports = function (grunt) {
         'bower_components/d3/d3.min.js',
         'bower_components/graphlib/dist/graphlib.core.js',
         'bower_components/dagre/dist/dagre.core.js',
-        'bower_components/dagre-d3/dist/dagre-d3.core.js'
+        'bower_components/dagre-d3/dist/dagre-d3.core.js',
+        'src/vendor/dagre-d3-flow/dagre-flow.min.js'
       ],
       html: ['src/index.html'],
       scss: [
@@ -72,7 +73,7 @@ module.exports = function (grunt) {
         'bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css',
         'bower_components/api-console-voicebase/src/assets/styles/vendor/codemirror-dark.css',
         'bower_components/angular-ui-select/dist/select.min.css',
-        'bower_components/vis/dist/vis.min.css'
+        'src/vendor/dagre-d3-flow/dagre-flow.css'
       ],
       scssWatch: ['src/scss/**/*.scss'],
       test: ['test/**/*.js']
