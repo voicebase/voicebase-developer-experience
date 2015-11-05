@@ -19,7 +19,7 @@
               <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" ng-attr-data-index="{{ $index }}" href="javascript:void(0)"
                    ng-click="mediaBroserCtrl.loadMedia($event, media)">
-                  {{ media.mediaId }}
+                  {{ mediaBroserCtrl.getMediaTitle(media) }}
                 </a>
               </h4>
             </div>

@@ -2072,6 +2072,17 @@ voicebasePortal.Decorators = (function (Decorators) {
           }
         };
 
+        me.getMediaTitle = function (media) {
+          var title = media.mediaId;
+          if(media.external && media.external.id) {
+            title = media.external.id;
+          }
+          if(media.title) {
+            title = media.title;
+          }
+          return title;
+        };
+
         me.toggleAccordionPane = function (event, media) {
           var $panel = jQuery(event.target).closest('.panel').find('.panel-collapse');
           var isOpen = $panel.hasClass('in');
@@ -3880,7 +3891,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "              <h4 class=\"panel-title\">\n" +
     "                <a role=\"button\" data-toggle=\"collapse\" ng-attr-data-index=\"{{ $index }}\" href=\"javascript:void(0)\"\n" +
     "                   ng-click=\"mediaBroserCtrl.loadMedia($event, media)\">\n" +
-    "                  {{ media.mediaId }}\n" +
+    "                  {{ mediaBroserCtrl.getMediaTitle(media) }}\n" +
     "                </a>\n" +
     "              </h4>\n" +
     "            </div>\n" +

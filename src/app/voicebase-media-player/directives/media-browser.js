@@ -67,6 +67,17 @@
           }
         };
 
+        me.getMediaTitle = function (media) {
+          var title = media.mediaId;
+          if(media.external && media.external.id) {
+            title = media.external.id;
+          }
+          if(media.title) {
+            title = media.title;
+          }
+          return title;
+        };
+
         me.toggleAccordionPane = function (event, media) {
           var $panel = jQuery(event.target).closest('.panel').find('.panel-collapse');
           var isOpen = $panel.hasClass('in');
