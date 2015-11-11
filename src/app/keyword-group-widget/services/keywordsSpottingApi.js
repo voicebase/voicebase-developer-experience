@@ -53,7 +53,7 @@
 
       jQuery.ajax({
         type: 'GET',
-        url: url + '/media',
+        url: url + '/media?include=metadata',
         headers: {
           'Authorization': 'Bearer ' + token
         },

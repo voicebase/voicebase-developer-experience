@@ -69,11 +69,12 @@
 
         me.getMediaTitle = function (media) {
           var title = media.mediaId;
-          if(media.external && media.external.id) {
-            title = media.external.id;
+          var _metadata = media.metadata;
+          if(_metadata && _metadata.external && _metadata.external.id) {
+            title = _metadata.external.id;
           }
-          if(media.title) {
-            title = media.title;
+          if(_metadata && _metadata.title) {
+            title = _metadata.title;
           }
           return title;
         };
