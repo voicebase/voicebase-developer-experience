@@ -91,7 +91,8 @@ var voiceBase = (function($) {
         commentsBlock: 'vbs-comments',
         humanOnly: !1,
         animation: !0,
-        localApp: !1,
+        localYoutubeApp: !1,
+        localData: !1,
         localSearch: !1,
         localSearchHelperUrl: 'js/workers/',
         colors: ['#78c361', '#9932cc', '#ff69b4', '#6495ed', '#ffd700', '#f6a7a1', '#7fb397', '#009999'],
@@ -316,10 +317,13 @@ var voiceBase = (function($) {
         setProperty(s, 'keywordsColumns');
         setProperty(s, 'keywordsResizable');
         setProperty(s, 'editKeywords');
-        setProperty(s, 'localApp');
+        setProperty(s, 'localData');
+        setProperty(s, 'localYoutubeApp');
         setProperty(s, 'localSearch');
-        if(VB.settings.localApp && typeof Fuse != 'undefined'){
-            VB.settings.localSearch = true;
+        if(VB.settings.localYoutubeApp || VB.settings.localData){
+            if(typeof Fuse != 'undefined') {
+                VB.settings.localSearch = true;
+            }
             VB.settings.showCommentsBlock = false;
             VB.settings.vbsButtons.edit = false;
             VB.settings.vbsButtons.downloadMedia = false;
@@ -328,6 +332,9 @@ var voiceBase = (function($) {
             VB.settings.vbsButtons.remove = false;
             VB.settings.vbsButtons.share = false;
             VB.settings.vbsButtons.orderTranscript = false;
+        }
+        if(VB.settings.localData) {
+            VB.settings.apiVersion = '2.0';
         }
         if(typeof Fuse == 'undefined'){
             VB.settings.localSearch = false;
@@ -454,7 +461,7 @@ var voiceBase = (function($) {
         isSaving: false,
         searcht: null,
         searchHits: null,
-        localData: {},
+        localYoutubeData: {},
         isMobile: false,
         keywordClickEvent: null,
         playlist_meta: null,
@@ -596,7 +603,12 @@ voiceBase = (function(VB, $) {
                             }
                         }
                         else if(VB.helper.isApi2_0()) {
-                            VB.api2_0.getMetaData();
+                            if(!VB.settings.localData) {
+                                VB.api2_0.getMetaData();
+                            }
+                            else {
+                                VB.api2_0.setMetaData(VB.settings.localData);
+                            }
                         }
                         else {
                             var _parameters = {};
@@ -636,6 +648,9 @@ voiceBase = (function(VB, $) {
                 if (VB.settings.playerType == 'jwplayer') {
                     VB.data.playerDom = (VB.PlayerApi.getRenderingMode() === 'flash') ? $player.parent() : $player;
                     VB.data.playerDom.addClass('vbs-player-wrapper vbs-' + VB.helper.randId());
+                    if(!VB.helper.isMediaTypeEqualVideo()) {
+                        VB.data.playerDom.parent().addClass('vbs-media-audio');
+                    }
                 }
                 else if(VB.settings.playerType == 'kaltura'){
                     VB.data.playerDom = $('#' + VB.settings.playerId);
@@ -776,8 +791,8 @@ voiceBase = (function(VB, $) {
             VB.PlayerApi.loadFile(_list);
         },
         setLocalMetaData: function(){
-            VB.data.localData['metadata'] = VB.api.createMetaData();
-            VB.api.setMetaData(VB.data.localData['metadata']);
+            VB.data.localYoutubeData['metadata'] = VB.api.createMetaData();
+            VB.api.setMetaData(VB.data.localYoutubeData['metadata']);
         },
         createMetaData: function(){
             var duration = VB.PlayerApi.getDuration() * 1000;
@@ -1684,56 +1699,60 @@ voiceBase = (function(VB, $) {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + VB.settings.token);
                 },
                 success: function(data) {
-                    var media = data.media;
-
-                    var metadata = {
-                        requestStatus: "PLUGIN"
-                    };
-                    if(media && media.metadata && media.metadata.length) {
-                        metadata = {
-                            requestStatus: "SUCCESS",
-                            response: {
-                                lengthMs: media.metadata.length.milliseconds
-                            }
-                        };
-                    }
-                    VB.api.setMetaData(metadata);
-
-                    if(media) {
-                        if(media.keywords && media.keywords.latest) {
-                            var keywords = media.keywords.latest;
-                            var keywordsData = {
-                                requestStatus: "SUCCESS",
-                                keywords: keywords.words || [],
-                                categories: keywords.categories || {},
-                                groups: keywords.groups || []
-                            };
-                            VB.api.setKeywords(keywordsData);
-                        }
-                        if(media.transcripts && media.transcripts.latest) {
-                            var transcript = media.transcripts.latest;
-                            var transcriptsData = {
-                                requestStatus: "SUCCESS",
-                                transcriptType: transcript.type,
-                                transcript: transcript.words
-                            };
-                            VB.api.setTranscript(transcriptsData);
-                        }
-                        if(media.predictions && media.predictions.latest && media.predictions.latest.predictions) {
-                            var predictions = media.predictions.latest.predictions;
-                            var predictionsData = {
-                                requestStatus: "SUCCESS",
-                                predictions: predictions
-                            };
-                            VB.api.setPredictions(predictionsData);
-                        }
-                        VB.api.ready.comments = true; // TODO comments in api 2.0
-                    }
+                    VB.api2_0.setMetaData(data);
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     console.log(errorThrown + ': Error ' + jqXHR.status);
                 }
             });
+        },
+
+        setMetaData: function (data) {
+            var media = data.media;
+
+            var metadata = {
+                requestStatus: "PLUGIN"
+            };
+            if(media && media.metadata && media.metadata.length) {
+                metadata = {
+                    requestStatus: "SUCCESS",
+                    response: {
+                        lengthMs: media.metadata.length.milliseconds
+                    }
+                };
+            }
+            VB.api.setMetaData(metadata);
+
+            if(media) {
+                if(media.keywords && media.keywords.latest) {
+                    var keywords = media.keywords.latest;
+                    var keywordsData = {
+                        requestStatus: "SUCCESS",
+                        keywords: keywords.words || [],
+                        categories: keywords.categories || {},
+                        groups: keywords.groups || []
+                    };
+                    VB.api.setKeywords(keywordsData);
+                }
+                if(media.transcripts && media.transcripts.latest) {
+                    var transcript = media.transcripts.latest;
+                    var transcriptsData = {
+                        requestStatus: "SUCCESS",
+                        transcriptType: transcript.type,
+                        transcript: transcript.words
+                    };
+                    VB.api.setTranscript(transcriptsData);
+                }
+                if(media.predictions && media.predictions.latest && media.predictions.latest.predictions) {
+                    var predictions = media.predictions.latest.predictions;
+                    var predictionsData = {
+                        requestStatus: "SUCCESS",
+                        predictions: predictions
+                    };
+                    VB.api.setPredictions(predictionsData);
+                }
+                VB.api.ready.comments = true; // TODO comments in api 2.0
+            }
         }
 
     };
@@ -3716,7 +3735,7 @@ voiceBase = (function(VB, $) {
                 controlsBlock.append('<a href="javascript:void(0)" class="vbs-reader-exit">Exit</a>').wrap('<div id="vbs-controls-placement"><div class="vbs-controls-wrapper"></div></div>').addClass('vbs-controls-box');
                 VB.view.resizeTimelineElements();
                 var classes = VB.data.vclass;
-                if(VB.settings.localApp) {
+                if(VB.settings.localYoutubeApp) {
                     classes += ' vbs-local-app';
                 }
                 $('body').append('<div id="vbs-reader-wrap" class="' + classes + '"></div>');
@@ -5677,10 +5696,10 @@ voiceBase = (function(VB, $) {
             window.onYouTubePlayerReady = function(playerId){
                 if(!me.instance.player_ready){
                     me.instance.player_ready = true;
-                    if(VB.settings.localApp) {
+                    if(VB.settings.localYoutubeApp) {
                         YSP.api.init('ytplayer');
                         YSP.api.getLanguages(function(data){
-                            VB.data.localData.languages = data.languages;
+                            VB.data.localYoutubeData.languages = data.languages;
                             VB.view.initApi();
                         });
                     }
@@ -6477,7 +6496,7 @@ voiceBase = (function(VB, $) {
         },
 
         filterSpeakersList: function(speakers) {
-            VB.helper.find('.vbs-select-dropdown li').removeClass('vbs-disabled').each(function(){
+            VB.helper.find('.vbs-speaker-dropdown li').removeClass('vbs-disabled').each(function(){
                 var $this = $(this);
                 var sp = $this.attr('data-speaker');
                 if(speakers.indexOf(sp) < 0 && sp != 'all') {
@@ -7019,7 +7038,7 @@ voiceBase = (function(VB, $) {
                     }
                     tmpl += '<div class="vbs-select-speaker-wrapper">\n\
                         <div class="vbs-select-speaker">Select speaker...</div>\n\
-                        <ul class="vbs-select-dropdown"></ul>\n\
+                        <ul class="vbs-speaker-dropdown vbs-select-dropdown"></ul>\n\
                     </div>';
                     tmpl += '</div>';
                     // keywords buttons
@@ -7450,7 +7469,7 @@ voiceBase = (function(VB, $) {
                                 <div class="vbs-select-title vbs-select-insert-speaker vbs-new-speaker">\
                                     <div class="vbs-speaker-selected">Insert new speaker</div>\
                                 </div>\n\
-                                <ul class="vbs-select-dropdown"></ul>\n\
+                                <ul class="vbs-speaker-dropdown vbs-select-dropdown"></ul>\n\
                             </div>\n\
                             <div class="vbs-speaker-input-wrapper">\
                                 <input type="text" data-vbs-validate="required,ignore[invisible]" class="vbs-insert-speaker-input" value="" placeholder="Enter speaker name"/>\
@@ -7687,7 +7706,7 @@ voiceBase = (function(VB, $) {
                     tmpl = '' +
                         '<div class="vbs-select-wrapper vbs-select-language-wrapper">\n\
                             <div class="vbs-select-title vbs-select-language">Select language...</div>\n\
-                            <ul class="vbs-select-dropdown"></ul>\n\
+                            <ul class="vbs-language-dropdown vbs-select-dropdown"></ul>\n\
                         </div>';
                     return tmpl;
 
@@ -7947,7 +7966,7 @@ voiceBase = (function(VB, $) {
         pluginDiv: null,
         init: function(elem) {
             this.initMainElem(elem);
-            if(!VB.settings.hasPlaylist && !VB.settings.localApp){ // else initializing after player ready event
+            if(!VB.settings.hasPlaylist && !VB.settings.localYoutubeApp){ // else initializing after player ready event
                 this.initApi();
             }
             if(VB.helper.isMobile()) {
@@ -7964,9 +7983,9 @@ voiceBase = (function(VB, $) {
         },
         initApi: function(){
             VB.api.init();
-            if (!VB.settings.token && !VB.settings.example && !VB.settings.localApp) {
+            if (!VB.settings.token && !VB.settings.example && !VB.settings.localYoutubeApp && !VB.settings.localData) {
                 VB.api.getToken(VB.settings.tokenTimeOut);
-            } else if (VB.settings.example && !VB.settings.localApp) {
+            } else if (VB.settings.example && !VB.settings.localYoutubeApp && !VB.settings.localData) {
                 VB.api.getExampleToken();
             } else {
                 VB.view.initWithToken();
@@ -7977,7 +7996,7 @@ voiceBase = (function(VB, $) {
             $('.vbs-white-popup-overlay').remove();
             $('.vbs-text-error-message').remove();
             VB.view.renderMediaBlock();
-            if(!VB.settings.localApp){
+            if(!VB.settings.localYoutubeApp){
                 VB.api.getMetaData();
             }
             else {
@@ -7988,7 +8007,7 @@ voiceBase = (function(VB, $) {
 
             if(VB.settings.showKeywordsBlock){
                 VB.view.renderKeywordsBlock();
-                if(!VB.settings.localApp && !VB.helper.isApi2_0()) {
+                if(!VB.settings.localYoutubeApp && !VB.helper.isApi2_0()) {
                     VB.api.getKeywords();
                 }
             }
@@ -7998,7 +8017,7 @@ voiceBase = (function(VB, $) {
 
             if(VB.settings.showTranscriptBlock){
                 VB.view.renderTranscriptBlock();
-                if(!VB.settings.localApp && !VB.helper.isApi2_0()) {
+                if(!VB.settings.localYoutubeApp && !VB.helper.isApi2_0()) {
                     VB.api.getTranscript();
                 }
             }
@@ -8016,7 +8035,7 @@ voiceBase = (function(VB, $) {
                 VB.api.ready.comments = true;
             }
 
-            if(VB.settings.localApp) {
+            if(VB.settings.localYoutubeApp) {
                 VB.view.renderLanguageBlock();
             }
 
@@ -8042,31 +8061,31 @@ voiceBase = (function(VB, $) {
             }, 100);
             VB.events.registerEvents();
         },
-        initLocalData: function(){
-            var lang_code = VB.data.localData.selected_language;
+        initLocalYoutubeData: function(){
+            var lang_code = VB.data.localYoutubeData.selected_language;
 
             var $keywordsBlock = $("#" + VB.settings.keywordsBlock);
             var $transcriptBlock = $("#" + VB.settings.transcriptBlock);
-            if(!VB.data.localData.keywords) {
+            if(!VB.data.localYoutubeData.keywords) {
                 YSP.api.getKeywords(function(data){
-                    VB.data.localData.keywords = data.keywords;
+                    VB.data.localYoutubeData.keywords = data.keywords;
                     $keywordsBlock.removeClass('vbs-loading');
-                    VB.api.setKeywords(VB.data.localData.keywords[VB.data.localData.selected_language]);
+                    VB.api.setKeywords(VB.data.localYoutubeData.keywords[VB.data.localYoutubeData.selected_language]);
                 });
             }
             else{
-                VB.api.setKeywords(VB.data.localData.keywords[lang_code]);
+                VB.api.setKeywords(VB.data.localYoutubeData.keywords[lang_code]);
             }
 
-            if(!VB.data.localData.transcripts) {
+            if(!VB.data.localYoutubeData.transcripts) {
                 YSP.api.getTranscript(function(data){
-                    VB.data.localData.transcripts = data.transcripts;
+                    VB.data.localYoutubeData.transcripts = data.transcripts;
                     $transcriptBlock.removeClass('vbs-loading');
-                    VB.api.setTranscript(VB.data.localData.transcripts[VB.data.localData.selected_language]);
+                    VB.api.setTranscript(VB.data.localYoutubeData.transcripts[VB.data.localYoutubeData.selected_language]);
                 });
             }
             else{
-                VB.api.setTranscript(VB.data.localData.transcripts[lang_code]);
+                VB.api.setTranscript(VB.data.localYoutubeData.transcripts[lang_code]);
             }
         },
         renderControlsBlock: function(){
@@ -8120,7 +8139,7 @@ voiceBase = (function(VB, $) {
             if(VB.settings.markersInNativeTimeline) {
                 VB.view.renderControlsAfterSearchBar();
             }
-            if(VB.settings.localApp) {
+            if(VB.settings.localYoutubeApp) {
                 $keywordsBlock.addClass('vbs-local-app vbs-loading');
                 $keywordsBlock.find('.vbs-section-title').attr('data-title', 'Loading keywords');
             }
@@ -8194,7 +8213,7 @@ voiceBase = (function(VB, $) {
             var $transcriptBlock = $("#" + VB.settings.transcriptBlock);
             $transcriptBlock.addClass(VB.data.vclass).empty().html(VB.templates.get('vbs-transcript')).css({width: VB.settings.transcriptWidth});
             VB.view.setResponsiveClass($transcriptBlock);
-            if(VB.settings.localApp) {
+            if(VB.settings.localYoutubeApp) {
                 $transcriptBlock.addClass('vbs-local-app vbs-loading');
                 $transcriptBlock.find('.vbs-section-title').attr('data-title', 'Loading transcript');
             }
@@ -8221,7 +8240,7 @@ voiceBase = (function(VB, $) {
             VB.view.setResponsiveClass($predictionsBlock);
         },
         renderLanguageBlock: function(){
-            if(VB.data.localData.languages && VB.data.localData.languages.length > 0){
+            if(VB.data.localYoutubeData.languages && VB.data.localYoutubeData.languages.length > 0){
                 var $mediaBlock = $("#" + VB.settings.mediaBlock);
                 var $controls = $mediaBlock.find('.vbs-section-header .vbs-section-btns');
                 $controls.after(VB.templates.get('languageSelect'));
@@ -8229,8 +8248,8 @@ voiceBase = (function(VB, $) {
 
                 var english = [];
                 var sem = '';
-                for (var i = 0; i < VB.data.localData.languages.length; i++) {
-                    var lang = VB.data.localData.languages[i];
+                for (var i = 0; i < VB.data.localYoutubeData.languages.length; i++) {
+                    var lang = VB.data.localYoutubeData.languages[i];
                     var lang_code = Object.keys(lang)[0];
                     var lang_name = lang[lang_code];
                     var lang_obj = {
@@ -8247,7 +8266,7 @@ voiceBase = (function(VB, $) {
                     VB.view.selectLanguage(english[0]);
                 }
                 else {
-                    VB.view.selectLanguage(VB.data.localData.languages[0]);
+                    VB.view.selectLanguage(VB.data.localYoutubeData.languages[0]);
                 }
             }
         },
@@ -8255,8 +8274,8 @@ voiceBase = (function(VB, $) {
             var $langTitle = $('.vbs-select-language-wrapper').find('.vbs-select-language');
             var lang_code = lang_obj.lang_code;
             $langTitle.removeClass('vbs-s-show').html(lang_obj.lang_name).attr(lang_code);
-            VB.data.localData.selected_language = lang_code;
-            VB.view.initLocalData();
+            VB.data.localYoutubeData.selected_language = lang_code;
+            VB.view.initLocalYoutubeData();
         },
         checkResponsive: function(){
             var blocks = [

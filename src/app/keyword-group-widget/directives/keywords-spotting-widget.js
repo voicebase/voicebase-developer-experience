@@ -146,35 +146,16 @@
 
         me.checkMediaFinish = function (mediaId, file) {
           me.pingProcess = true;
-          var url = window.URL.createObjectURL(file);
           var checker = $interval(function () {
-            checkMediaHandler(checker, url, mediaId, file);
+            checkMediaHandler(checker, mediaId, file);
           }, 5000);
-
-          keywordsSpottingApi.getMediaUrl(tokenData.token, mediaId)
-            .then(function (_url) {
-              url = _url;
-            });
         };
 
-        var checkMediaHandler = function (checker, url, mediaId, file) {
+        var checkMediaHandler = function (checker, mediaId, file) {
           keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
             .then(function (data) {
               if (data.media && data.media.status === 'finished') {
-                me.finishedUpload = true;
-                me.uploadedData.push({
-                  uploadedMedia: data.media,
-                  uploadedMediaGroups: data.media.keywords.latest.groups,
-                  token: tokenData.token,
-                  mediaUrl: url,
-                  mediaType: file.type,
-                  mediaName: file.name,
-                  hasSpottedWords: getHasSpottedWords(data.media.keywords.latest.groups)
-                });
-                if(me.uploadedData.length === countUploadedFiles) {
-                  me.pingProcess = false;
-                  me.showStartOverBtn = true;
-                }
+                finishMedia(data, file);
                 $interval.cancel(checker);
               }
               else if(data.media && data.media.status === 'failed') {
@@ -186,6 +167,30 @@
             }, function () {
               me.errorMessage = 'Error of getting file!';
             });
+        };
+
+        var finishMedia = function (data, file) {
+          getMediaUrl(data.media.mediaId)
+            .then(function (url) {
+              me.finishedUpload = true;
+              me.uploadedData.push({
+                uploadedMedia: data.media,
+                uploadedMediaGroups: data.media.keywords.latest.groups,
+                token: tokenData.token,
+                mediaUrl: url,
+                mediaType: file.type,
+                mediaName: file.name,
+                hasSpottedWords: getHasSpottedWords(data.media.keywords.latest.groups)
+              });
+              if(me.uploadedData.length === countUploadedFiles) {
+                me.pingProcess = false;
+                me.showStartOverBtn = true;
+              }
+            });
+        };
+
+        var getMediaUrl = function (mediaId) {
+          return keywordsSpottingApi.getMediaUrl(tokenData.token, mediaId);
         };
 
         var getHasSpottedWords = function (groups) {
