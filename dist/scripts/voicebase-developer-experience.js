@@ -756,11 +756,13 @@ voicebasePortal.Decorators = (function (Decorators) {
 
           $scope.$watch(function () {
             return jobApi.getActiveJob();
-          }, function (job) {
-            me.job = job;
-            $timeout(function () {
-              me.renderJob();
-            }, 0);
+          }, function (newJob, oldJob) {
+            if(!angular.equals(newJob, oldJob)) {
+              me.job = newJob;
+              $timeout(function () {
+                me.renderJob();
+              }, 0);
+            }
           });
 
           me.renderJob = function () {
@@ -779,7 +781,9 @@ voicebasePortal.Decorators = (function (Decorators) {
 
             var svg = d3.select('svg');
             var svgGroup = svg.append('g');
-            DagreFlow.init(svg, me.graph);
+            DagreFlow.init(svg, me.graph, {
+              shortLabels: true
+            });
             DagreFlow.render();
           };
 
@@ -840,6 +844,12 @@ voicebasePortal.Decorators = (function (Decorators) {
             var status = 'PENDING';
             if(task.status === 'finished') {
               status = 'SUCCESS';
+            }
+            else if(task.status === 'completed') {
+              status = 'SUCCESS';
+            }
+            else if(task.status === 'started') {
+              status = 'RUNNING';
             }
             else if(task.status === 'running') {
               status = 'RUNNING';
@@ -1502,7 +1512,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         token: '='
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService) {
+      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService, jobApi) {
         var me = this;
 
         var tokenData;
@@ -1646,11 +1656,19 @@ voicebasePortal.Decorators = (function (Decorators) {
         var checkMediaHandler = function (checker, mediaId, file) {
           keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
             .then(function (data) {
-              if (data.media && data.media.status === 'finished') {
+              if(!data.media) {
+                return false;
+              }
+              if (data.media.status === 'finished') {
                 finishMedia(data, file);
                 $interval.cancel(checker);
               }
-              else if(data.media && data.media.status === 'failed') {
+              else if (data.media.status !== 'failed' && data.media.job) {
+                var job = data.media.job.progress;
+                jobApi.setActiveJob(job);
+
+              }
+              else if(data.media.status === 'failed') {
                 me.pingProcess = false;
                 me.showStartOverBtn = true;
                 me.errorMessage = 'Upload failed!';
@@ -1899,10 +1917,16 @@ voicebasePortal.Decorators = (function (Decorators) {
       var data = new FormData();
       data.append('media', file);
 
+      var groupsConf = {};
       if (groups.length > 0) {
         var groupNames = groups.map(function (group) {
           return group.name;
         });
+        groupsConf = {
+          keywords: {
+            groups: groupNames
+          }
+        };
         var groupsData = {
           configuration: {
             keywords: {
@@ -1910,8 +1934,14 @@ voicebasePortal.Decorators = (function (Decorators) {
             }
           }
         };
-        data.append('configuration', JSON.stringify(groupsData));
       }
+
+      var jobConf = {executor: 'v2'};
+      var sumConf = jQuery.extend(jobConf, groupsConf);
+      var conf = {
+        configuration: sumConf
+      };
+      data.append('configuration', JSON.stringify(conf));
 
       jQuery.ajax({
         url: url + '/media',
@@ -3784,8 +3814,11 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "      <css-spinner></css-spinner>\n" +
     "    </div>\n" +
     "\n" +
-    "    <div ng-if=\"keywordsSpottingCtrl.pingProcess\"  class=\"media-processing-loader\">\n" +
-    "      <css-spinner></css-spinner>\n" +
+    "    <div ng-if=\"keywordsSpottingCtrl.pingProcess\">\n" +
+    "      <div class=\"media-processing-loader\">\n" +
+    "        <css-spinner></css-spinner>\n" +
+    "      </div>\n" +
+    "      <d3-dag-graph></d3-dag-graph>\n" +
     "    </div>\n" +
     "\n" +
     "    <voicebase-accordion uploaded-data=\"keywordsSpottingCtrl.uploadedData\" is-show=\"keywordsSpottingCtrl.finishedUpload\"></voicebase-accordion>\n" +
