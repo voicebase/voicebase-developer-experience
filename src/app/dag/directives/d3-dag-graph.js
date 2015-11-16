@@ -16,11 +16,13 @@
 
           $scope.$watch(function () {
             return jobApi.getActiveJob();
-          }, function (job) {
-            me.job = job;
-            $timeout(function () {
-              me.renderJob();
-            }, 0);
+          }, function (newJob, oldJob) {
+            if(!angular.equals(newJob, oldJob)) {
+              me.job = newJob;
+              $timeout(function () {
+                me.renderJob();
+              }, 0);
+            }
           });
 
           me.renderJob = function () {
@@ -39,7 +41,9 @@
 
             var svg = d3.select('svg');
             var svgGroup = svg.append('g');
-            DagreFlow.init(svg, me.graph);
+            DagreFlow.init(svg, me.graph, {
+              shortLabels: true
+            });
             DagreFlow.render();
           };
 
@@ -100,6 +104,12 @@
             var status = 'PENDING';
             if(task.status === 'finished') {
               status = 'SUCCESS';
+            }
+            else if(task.status === 'completed') {
+              status = 'SUCCESS';
+            }
+            else if(task.status === 'started') {
+              status = 'RUNNING';
             }
             else if(task.status === 'running') {
               status = 'RUNNING';

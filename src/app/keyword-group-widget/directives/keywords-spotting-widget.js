@@ -10,7 +10,7 @@
         token: '='
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService) {
+      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService, jobApi) {
         var me = this;
 
         var tokenData;
@@ -154,11 +154,19 @@
         var checkMediaHandler = function (checker, mediaId, file) {
           keywordsSpottingApi.checkMediaFinish(tokenData.token, mediaId)
             .then(function (data) {
-              if (data.media && data.media.status === 'finished') {
+              if(!data.media) {
+                return false;
+              }
+              if (data.media.status === 'finished') {
                 finishMedia(data, file);
                 $interval.cancel(checker);
               }
-              else if(data.media && data.media.status === 'failed') {
+              else if (data.media.status !== 'failed' && data.media.job) {
+                var job = data.media.job.progress;
+                jobApi.setActiveJob(job);
+
+              }
+              else if(data.media.status === 'failed') {
                 me.pingProcess = false;
                 me.showStartOverBtn = true;
                 me.errorMessage = 'Upload failed!';

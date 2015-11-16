@@ -13,10 +13,16 @@
       var data = new FormData();
       data.append('media', file);
 
+      var groupsConf = {};
       if (groups.length > 0) {
         var groupNames = groups.map(function (group) {
           return group.name;
         });
+        groupsConf = {
+          keywords: {
+            groups: groupNames
+          }
+        };
         var groupsData = {
           configuration: {
             keywords: {
@@ -24,8 +30,14 @@
             }
           }
         };
-        data.append('configuration', JSON.stringify(groupsData));
       }
+
+      var jobConf = {executor: 'v2'};
+      var sumConf = jQuery.extend(jobConf, groupsConf);
+      var conf = {
+        configuration: sumConf
+      };
+      data.append('configuration', JSON.stringify(conf));
 
       jQuery.ajax({
         url: url + '/media',

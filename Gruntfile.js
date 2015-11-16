@@ -57,7 +57,8 @@ module.exports = function (grunt) {
         'bower_components/graphlib/dist/graphlib.core.js',
         'bower_components/dagre/dist/dagre.core.js',
         'bower_components/dagre-d3/dist/dagre-d3.core.js',
-        'src/vendor/dagre-d3-flow/dagre-flow.min.js'
+        'src/vendor/dagre-d3-flow/dagre-flow.min.js',
+        'src/vendor/dagre-d3-flow/tipsy.min.js'
       ],
       html: ['src/index.html'],
       scss: [

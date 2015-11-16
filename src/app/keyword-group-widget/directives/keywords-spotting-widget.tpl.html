@@ -108,8 +108,11 @@
       <css-spinner></css-spinner>
     </div>
 
-    <div ng-if="keywordsSpottingCtrl.pingProcess"  class="media-processing-loader">
-      <css-spinner></css-spinner>
+    <div ng-if="keywordsSpottingCtrl.pingProcess">
+      <div class="media-processing-loader">
+        <css-spinner></css-spinner>
+      </div>
+      <d3-dag-graph></d3-dag-graph>
     </div>
 
     <voicebase-accordion uploaded-data="keywordsSpottingCtrl.uploadedData" is-show="keywordsSpottingCtrl.finishedUpload"></voicebase-accordion>
