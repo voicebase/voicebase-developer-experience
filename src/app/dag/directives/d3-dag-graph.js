@@ -17,13 +17,50 @@
           $scope.$watch(function () {
             return jobApi.getActiveJob();
           }, function (newJob, oldJob) {
-            if(!angular.equals(newJob, oldJob)) {
-              me.job = newJob;
-              $timeout(function () {
-                me.renderJob();
-              }, 0);
-            }
+            me.compareJobs(newJob, oldJob);
           });
+
+          me.compareJobs = function (newJob, oldJob) {
+            // if jobs are equal - not render
+            if(angular.equals(newJob, oldJob)) {
+              return false;
+            }
+
+            // render first time
+            if(newJob && !oldJob) {
+              me.renderGraph(newJob);
+              return false;
+            }
+
+            // if jobs structures are different - rerender
+            var newJobKeys = Object.keys(newJob.tasks);
+            var oldJobKeys = Object.keys(oldJob.tasks);
+            if(!angular.equals(newJobKeys, oldJobKeys)) {
+              me.renderGraph(newJob);
+              return false;
+            }
+
+            // if structures are equal and tasks have different statuses - update statuses
+            var changedTasks = [];
+            newJobKeys.forEach(function (key) {
+              if(newJob.tasks[key].status !== oldJob.tasks[key].status) {
+                changedTasks.push(key);
+              }
+            });
+
+            changedTasks.forEach(function (taskKey) {
+              var status = getStatus(newJob.tasks[taskKey]);
+              DagreFlow.setNodeStatus(taskKey, status);
+            });
+            return false;
+          };
+
+          me.renderGraph = function (job) {
+            me.job = job;
+            $timeout(function () {
+              me.renderJob();
+            }, 0);
+          };
 
           me.renderJob = function () {
             if(!me.job) {
