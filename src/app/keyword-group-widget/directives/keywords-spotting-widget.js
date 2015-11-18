@@ -148,7 +148,7 @@
           me.pingProcess = true;
           var checker = $interval(function () {
             checkMediaHandler(checker, mediaId, file);
-          }, 5000);
+          }, 3000);
         };
 
         var checkMediaHandler = function (checker, mediaId, file) {

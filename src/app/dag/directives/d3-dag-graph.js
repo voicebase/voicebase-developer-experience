@@ -72,16 +72,97 @@
               .setDefaultEdgeLabel(function() { return {}; });
 
             var tasks = me.job.tasks;
+            parseTasks(tasks);
             var phases = initNodesAndPhases(tasks);
             initEdges(tasks);
             initClusters(phases);
 
             var svg = d3.select('svg');
             var svgGroup = svg.append('g');
-            DagreFlow.init(svg, me.graph, {
+            DagreFlow.init({
+              svg: svg,
+              graph: me.graph,
               shortLabels: true
             });
             DagreFlow.render();
+          };
+
+          var parseTasks = function (tasks) {
+            /*jshint loopfunc: true */
+            console.log(tasks);
+            var levels = getLevels(tasks);
+
+            levels.forEach(function (level, num) {
+              var completedTasks = 0;
+              var boxTask = jQuery.extend(true, {}, tasks[level[0]]);
+              boxTask.longLabel = true;
+              var firstBoxTask = jQuery.extend(true, {}, boxTask);
+              var lastBoxTask = jQuery.extend(true, {}, boxTask);
+              firstBoxTask.taskId = 'box-level' + num + '-0';
+              boxTask.taskId = 'box-level' + num + '-1';
+              lastBoxTask.taskId = 'box-level' + num + '-2';
+              boxTask.status = 'running';
+
+              for (var i = 0; i < level.length; i++) {
+                var levelTaskId = level[i];
+                var levelTask = tasks[levelTaskId];
+                if(levelTask.status === 'completed') {
+                  completedTasks++;
+                }
+                var index;
+                boxTask.dependents.forEach(function (parentId) {
+                  var parent = tasks[parentId];
+                  index = parent.dependencies.indexOf(levelTaskId);
+                  parent.dependencies.splice(index, 1);
+                });
+                boxTask.dependencies.forEach(function (dependencyId) {
+                  var child = tasks[dependencyId];
+                  index = child.dependents.indexOf(levelTaskId);
+                  child.dependents.splice(index, 1);
+                });
+                delete tasks[levelTaskId];
+              }
+
+              boxTask.dependents.forEach(function (parentId) {
+                tasks[parentId].dependencies.push(firstBoxTask.taskId, boxTask.taskId, lastBoxTask.taskId);
+              });
+              boxTask.dependencies.forEach(function (dependencyId) {
+                tasks[dependencyId].dependents.push(firstBoxTask.taskId, boxTask.taskId, lastBoxTask.taskId);
+              });
+              firstBoxTask.label = 'First';
+              lastBoxTask.label = 'Last';
+              boxTask.label = '' + completedTasks + '/' + level.length + ' complete';
+              firstBoxTask.status = (completedTasks > 0) ? 'completed' : 'pending';
+              lastBoxTask.status = (completedTasks === level.length) ? 'completed' : 'pending';
+
+              tasks[firstBoxTask.taskId] = firstBoxTask;
+              tasks[boxTask.taskId] = boxTask;
+              tasks[lastBoxTask.taskId] = lastBoxTask;
+            });
+
+            return tasks;
+          };
+
+          var getLevels = function (tasks) {
+            /*jshint loopfunc: true */
+            var levelLength = 5;
+            var levels = [];
+            for (var taskId in tasks) {
+              var task = tasks[taskId];
+
+              var filterLevel = Object.keys(tasks).filter(function (nodeId) {
+                return angular.equals(tasks[nodeId].dependencies, task.dependencies) && angular.equals(tasks[nodeId].dependents, task.dependents);
+              });
+
+              var matchLevel = levels.filter(function (level) {
+                return angular.equals(filterLevel, level);
+              });
+
+              if(matchLevel.length === 0 && filterLevel.length > levelLength - 1) {
+                levels.push(filterLevel);
+              }
+            }
+            return levels;
           };
 
           var initNodesAndPhases = function (tasks) {
@@ -89,7 +170,13 @@
             for (var taskId in tasks) {
               if(tasks.hasOwnProperty(taskId)) {
                 var task = tasks[taskId];
-                createNode(taskId, getStatus(task));
+                var label = task.label || taskId;
+                me.graph.setNode(taskId, {
+                  label: label,
+                  status: getStatus(task),
+                  shortLabel: (task.longLabel) ? false : true
+                });
+
                 if(!phases[task.phase]) {
                   phases[task.phase] = {name: '', contents: []};
                 }
@@ -128,13 +215,6 @@
                 }
               }
             }
-          };
-
-          var createNode = function (taskId, status) {
-            me.graph.setNode(taskId, {
-              label: taskId,
-              status: status
-            });
           };
 
           var getStatus = function (task) {
