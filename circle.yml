@@ -6,7 +6,7 @@ machine:
 
 dependencies:
   pre:
-    - sudo gem install sass
+    - gem install sass
   override:
     - npm install
     - bower install
