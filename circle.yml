@@ -5,6 +5,9 @@ machine:
     version: 1.9.3-p484
 
 dependencies:
+  cache_directories:
+    - node_modules
+    - bower_components
   pre:
     - gem install sass
   override:
