@@ -72,7 +72,7 @@
               .setDefaultEdgeLabel(function() { return {}; });
 
             var tasks = me.job.tasks;
-            parseTasks(tasks);
+            tasks = parseTasks(tasks);
             var phases = initNodesAndPhases(tasks);
             initEdges(tasks);
             initClusters(phases);
