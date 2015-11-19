@@ -1,6 +1,6 @@
 # RAML Console
 
-[![Build Status](https://travis-ci.org/voicebase/voicebase-developer-experience.svg?branch=develop)](https://travis-ci.org/voicebase/voicebase-developer-experience)
+[![Build Status](https://circleci.com/gh/voicebase/voicebase-developer-experience.svg?style=shield&circle-token=1e9aef62dc483265debb91eaea647b8cbaf82dd6)
 
 An API console for [RAML](http://raml.org) (Restful Api Modeling Language) documents. The RAML Console allows browsing of API documentation and in-browser testing of API methods.
 
