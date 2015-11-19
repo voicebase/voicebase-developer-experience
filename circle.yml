@@ -10,6 +10,7 @@ dependencies:
   override:
     - npm install
     - bower install
+    - node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update
 
 test:
   override:
