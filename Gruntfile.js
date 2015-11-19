@@ -538,8 +538,8 @@ module.exports = function (grunt) {
 
   grunt.registerTask('regression', [
     'connect:regression',
-    'buildMulesoft',
-    'protractor:apiConsole',
+    //'buildMulesoft',
+    //'protractor:apiConsole',
     'build',
     'protractor:voicebase'
   ]);

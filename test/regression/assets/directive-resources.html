@@ -4,12 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>API Console</title>
+  <link href="styles/api-console-vendors.css" rel="stylesheet">
   <link href="styles/api-console-light-theme.css" rel="stylesheet" class="theme">
+  <link href="styles/voicebase-light-theme.css" rel="stylesheet" class="theme">
 </head>
 <body ng-app="ramlVoicebaseConsoleApp" ng-cloak class="raml-console-body">
   <raml-console src="raml/resources.raml"></raml-console>
+
+  <!--vendors-->
+  <script src="scripts/voicebase-main-vendor.js"></script>
   <script src="scripts/api-console-vendor.js"></script>
+  <script src="scripts/voicebase-developer-experience-vendor.js"></script>
+  <script src="scripts/voicebase-graph-vendor.js"></script>
   <script src="scripts/api-console.js"></script>
+
+  <!--app-->
+  <script src="scripts/voicebase-developer-experience.js"></script>
+
   <script type="text/javascript">
     $.noConflict();
   </script>
