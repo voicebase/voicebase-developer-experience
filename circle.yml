@@ -1,0 +1,16 @@
+machine:
+  node:
+    version: 0.10.33
+  ruby:
+    version: 1.9.3-p484
+
+dependencies:
+  pre:
+    - sudo gem install sass
+  override:
+    - npm install
+    - bower install
+
+test:
+  override:
+    - npm test
