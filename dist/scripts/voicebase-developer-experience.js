@@ -757,53 +757,30 @@ voicebasePortal.Decorators = (function (Decorators) {
           $scope.$watch(function () {
             return jobApi.getActiveJob();
           }, function (newJob, oldJob) {
-            me.compareJobs(newJob, oldJob);
+            me.checkJobs(newJob, oldJob);
           });
 
-          me.compareJobs = function (newJob, oldJob) {
+          me.checkJobs = function (newJob, oldJob) {
             // if jobs are equal - not render
             if(angular.equals(newJob, oldJob)) {
               return false;
             }
 
             // render first time
-            if(newJob && !oldJob) {
-              me.renderGraph(newJob);
-              return false;
+            if(newJob) {
+              me.job = newJob;
+              $timeout(function () {
+                var _newJob = jQuery.extend(true, {}, newJob);
+                var _oldJob = jQuery.extend(true, {}, oldJob);
+                me.renderJob(_newJob, _oldJob);
+              }, 0);
             }
 
-            // if jobs structures are different - rerender
-            var newJobKeys = Object.keys(newJob.tasks);
-            var oldJobKeys = Object.keys(oldJob.tasks);
-            if(!angular.equals(newJobKeys, oldJobKeys)) {
-              me.renderGraph(newJob);
-              return false;
-            }
-
-            // if structures are equal and tasks have different statuses - update statuses
-            var changedTasks = [];
-            newJobKeys.forEach(function (key) {
-              if(newJob.tasks[key].status !== oldJob.tasks[key].status) {
-                changedTasks.push(key);
-              }
-            });
-
-            changedTasks.forEach(function (taskKey) {
-              var status = getStatus(newJob.tasks[taskKey]);
-              DagreFlow.setNodeStatus(taskKey, status);
-            });
             return false;
           };
 
-          me.renderGraph = function (job) {
-            me.job = job;
-            $timeout(function () {
-              me.renderJob();
-            }, 0);
-          };
-
-          me.renderJob = function () {
-            if(!me.job) {
+          me.renderJob = function (job, oldJob) {
+            if(!job) {
               return false;
             }
 
@@ -811,20 +788,65 @@ voicebasePortal.Decorators = (function (Decorators) {
               .setGraph({})
               .setDefaultEdgeLabel(function() { return {}; });
 
-            var tasks = me.job.tasks;
-            tasks = parseTasks(tasks);
-            var phases = initNodesAndPhases(tasks);
-            initEdges(tasks);
-            initClusters(phases);
+            var tasks = job.tasks;
 
-            var svg = d3.select('svg');
-            var svgGroup = svg.append('g');
-            DagreFlow.init({
-              svg: svg,
-              graph: me.graph,
-              shortLabels: true
-            });
-            DagreFlow.render();
+            if( oldJob && oldJob.tasks && angular.equals(Object.keys(tasks), Object.keys(oldJob.tasks)) ) {
+              var levels = getLevels(tasks);
+
+              var changedTasks = [];
+              var changedTasksInLevel = [];
+              Object.keys(tasks).filter(function (key) {
+                if(tasks[key].status !== oldJob.tasks[key].status) {
+                  var inLevels = levels.filter(function (level) {
+                    return level.indexOf(key) !== -1;
+                  }).length;
+
+                  if(inLevels > 0) {
+                    changedTasksInLevel.push(key);
+                  }
+                  else {
+                    changedTasks.push(key);
+                  }
+                }
+              });
+
+              if(changedTasksInLevel.length > 0) {
+                levels.forEach(function (level, num) {
+                  var completedTasks = 0;
+                  for (var i = 0; i < level.length; i++) {
+                    var levelTaskId = level[i];
+                    var levelTask = tasks[levelTaskId];
+                    if (levelTask.status === 'completed') {
+                      completedTasks++;
+                    }
+                  }
+                  var label = '' + completedTasks + '/' + level.length + ' complete';
+                  var levelNodeId = 'box-level' + num + '-1';
+                  DagreFlow.setNodeLabel(levelNodeId, label);
+                });
+              }
+
+              changedTasks.forEach(function (taskKey) {
+                var status = getStatus(tasks[taskKey]);
+                DagreFlow.setNodeStatus(taskKey, status);
+              });
+
+            }
+            else {
+              tasks = parseTasks(tasks);
+              var phases = initNodesAndPhases(tasks);
+              initEdges(tasks);
+              initClusters(phases);
+
+              var svg = d3.select('svg');
+              var svgGroup = svg.append('g');
+              DagreFlow.init({
+                svg: svg,
+                graph: me.graph,
+                shortLabels: true
+              });
+              DagreFlow.render();
+            }
           };
 
           var parseTasks = function (tasks) {
