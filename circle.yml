@@ -18,3 +18,8 @@ dependencies:
 test:
   override:
     - npm test
+
+general:
+  branches:
+    ignore:
+      - gh-pages
