@@ -19,13 +19,13 @@ test:
   override:
     - npm test
 
-deployment:
-  automerge:
-    branch: [develop]
-    commands:
-      - git checkout gh-pages
-      - git merge origin develop
-      - git push origin gh-pages
+#deployment:
+#  automerge:
+#    branch: [develop]
+#    commands:
+#      - git checkout gh-pages
+#      - git merge origin develop
+#      - git push origin gh-pages
 
 general:
   branches:
