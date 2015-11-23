@@ -25,7 +25,7 @@ deployment:
     commands:
       - git checkout gh-pages
       - git merge origin develop
-      - git push origin develop
+      - git push origin gh-pages
 
 general:
   branches:
