@@ -50,6 +50,7 @@
             templateUrl: 'keyword-group-widget/templates/removeKeywordGroupModal.tpl.html',
             controller: 'removeModalController',
             inputs: {
+              groupName: group.name,
               removeCallback: function() {
                 me.removeGroup(group);
               }

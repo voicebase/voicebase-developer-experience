@@ -1430,7 +1430,9 @@ voicebasePortal.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  angular.module('vbsKeywordGroupWidget').controller('removeModalController', function ($scope, $element, removeCallback) {
+  angular.module('vbsKeywordGroupWidget').controller('removeModalController', function ($scope, $element, groupName, removeCallback) {
+
+    $scope.groupName= groupName;
 
     $scope.removeGroup = function () {
       $element.modal('hide');
@@ -1610,6 +1612,7 @@ voicebasePortal.Decorators = (function (Decorators) {
             templateUrl: 'keyword-group-widget/templates/removeKeywordGroupModal.tpl.html',
             controller: 'removeModalController',
             inputs: {
+              groupName: group.name,
               removeCallback: function() {
                 me.removeGroup(group);
               }
@@ -4100,7 +4103,9 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "        <h4 class=\"modal-title raml-console-modal-title\">Remove Phrase Spotting Group</h4>\n" +
     "      </div>\n" +
     "      <div class=\"modal-body\">\n" +
-    "        <p class=\"raml-console-confirmation-message\">Are you sure you want to delete phrase spotting group?</p>\n" +
+    "        <p class=\"raml-console-confirmation-message\">\n" +
+    "          Are you sure you want to delete the group \"{{ groupName }}\"?\n" +
+    "        </p>\n" +
     "      </div>\n" +
     "      <div class=\"modal-footer raml-console-modal-footer\">\n" +
     "        <button type=\"button\" class=\"btn btn-success\" ng-click=\"removeGroup()\">\n" +
