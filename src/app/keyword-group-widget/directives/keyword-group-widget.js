@@ -19,7 +19,7 @@
         me.keywordGroups = null;
         me.newGroup = {};
         me.editedGroup = {};
-        me.groupsPerPage = 5;
+        me.groupsPerPage = 7;
         me.currentPage = 1;
         me.isPopup = ($scope.isPopup === 'true');
 
