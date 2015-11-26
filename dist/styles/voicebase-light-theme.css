@@ -104,6 +104,7 @@
   border-width: 1px 0;
   padding: 15px 0;
   margin-bottom: 18px;
+  font-size: 17px;
 }
 
 form.checkDirty.ng-dirty.ng-invalid-required .raml-console-vbs-validation-required-error {

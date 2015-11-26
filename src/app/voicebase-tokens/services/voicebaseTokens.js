@@ -78,7 +78,7 @@
         },
         error: function(jqXHR, textStatus, errorThrown){
           console.log(errorThrown + ': Error ' + jqXHR.status);
-          deferred.reject('Something goes wrong!');
+          deferred.reject('The API Key or Password you entered are incorrect. Please try again (make sure your caps lock is off).');
         }
       });
 
