@@ -14,6 +14,7 @@
     'ui.select',
     'ngSanitize',
     'cssSpinnerModule',
+    'progressBarModule',
     'formValidateModule'
   ]);
 
@@ -1757,6 +1758,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
         me.finishedUpload = false;
         me.uploadedData = [];
+        me.uploadedState = [];
         me.isEnableFileSelect = true;
         me.showStartOverBtn = false;
 
@@ -1782,6 +1784,12 @@ voicebasePortal.Decorators = (function (Decorators) {
           me.isLogin = (tokenData) ? true : false;
           getKeywordGroups();
         });
+
+        $scope.$watch(function () {
+          return keywordsSpottingApi.getUploadedState();
+        }, function (_uploadedState) {
+          me.uploadedState = _uploadedState;
+        }, true);
 
         var getKeywordGroups = function() {
           if(tokenData) {
@@ -2140,11 +2148,17 @@ voicebasePortal.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var keywordsSpottingApi = function ($q, voicebaseUrl) {
+  var keywordsSpottingApi = function ($q, $timeout, voicebaseUrl) {
 
     var url = voicebaseUrl.getBaseUrl();
 
     var mediaReady = false;
+
+    var uploadedState = 0;
+
+    var getUploadedState = function () {
+      return uploadedState;
+    };
 
     var postMedia = function (token, file, groups) {
       var deferred = $q.defer();
@@ -2187,7 +2201,19 @@ voicebasePortal.Decorators = (function (Decorators) {
         headers: {
           'Authorization': 'Bearer ' + token
         },
+        xhr: function () {
+          var xhr = new window.XMLHttpRequest();
+          xhr.upload.addEventListener('progress', function (evt) {
+            if (evt.lengthComputable) {
+              $timeout(function () {
+                uploadedState = evt.loaded * 100 / evt.total;
+              }, 0);
+            }
+          }, false);
+          return xhr;
+        },
         success: function (mediaStatus) {
+          uploadedState = 0;
           deferred.resolve(mediaStatus);
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -2261,6 +2287,7 @@ voicebasePortal.Decorators = (function (Decorators) {
     };
 
     return {
+      getUploadedState: getUploadedState,
       getMedia: getMedia,
       postMedia: postMedia,
       checkMediaFinish: checkMediaFinish,
@@ -2270,6 +2297,48 @@ voicebasePortal.Decorators = (function (Decorators) {
 
   angular.module('vbsKeywordGroupWidget')
     .service('keywordsSpottingApi', keywordsSpottingApi);
+
+})();
+
+(function () {
+  'use strict';
+
+  var progressBar = function() {
+    return {
+      restrict: 'E',
+      scope: {
+        loaded: '=loaded',
+        barClass: '@barClass',
+        completedClass: '=?'
+      },
+      transclude: true,
+      link: function (scope, elem, attrs) {
+
+        scope.completedClass = (scope.completedClass) || 'progress-bar-success';
+        var total = 100;
+        scope.$watch('loaded', function () {
+          var progress = scope.loaded / total;
+          if (progress >= 1) {
+            jQuery(elem).find('.progress-bar').removeClass(scope.barClass).addClass(scope.completedClass);
+          }
+          else if (progress < 1) {
+            jQuery(elem).find('.progress-bar').removeClass(scope.completedClass);
+          }
+
+        });
+
+      },
+      template:
+      '<div class="progress">'+
+      '   <div class="progress-bar {{barClass}}" title="{{loaded | number:0 }}%" style="width:{{loaded}}%;">{{loaded | number:0}} %</div>' +
+      '</div>'
+    };
+  };
+
+  angular.module('progressBarModule', []);
+
+  angular.module('progressBarModule')
+    .directive('progressBar', progressBar);
 
 })();
 
@@ -4045,8 +4114,14 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "      <button type=\"button\" class=\"btn btn-success\" ng-click=\"keywordsSpottingCtrl.upload()\">Upload</button>\n" +
     "    </div>\n" +
     "\n" +
-    "    <div ng-if=\"keywordsSpottingCtrl.isLoaded\" class=\"media-upload-loader\">\n" +
-    "      <css-spinner></css-spinner>\n" +
+    "    <div ng-if=\"keywordsSpottingCtrl.isLoaded\">\n" +
+    "      <div class=\"progress-bar__label\">Uploading...</div>\n" +
+    "      <progress-bar\n" +
+    "        data-loaded=\"keywordsSpottingCtrl.uploadedState\"\n" +
+    "        data-bar-class=\"progress-bar-info\"\n" +
+    "        title=\"Total Hours Progress\">\n" +
+    "        {{ keywordsSpottingCtrl.uploadedState }}\n" +
+    "      </progress-bar>\n" +
     "    </div>\n" +
     "\n" +
     "    <div ng-if=\"keywordsSpottingCtrl.pingProcess\">\n" +

@@ -104,8 +104,14 @@
       <button type="button" class="btn btn-success" ng-click="keywordsSpottingCtrl.upload()">Upload</button>
     </div>
 
-    <div ng-if="keywordsSpottingCtrl.isLoaded" class="media-upload-loader">
-      <css-spinner></css-spinner>
+    <div ng-if="keywordsSpottingCtrl.isLoaded">
+      <div class="progress-bar__label">Uploading...</div>
+      <progress-bar
+        data-loaded="keywordsSpottingCtrl.uploadedState"
+        data-bar-class="progress-bar-info"
+        title="Total Hours Progress">
+        {{ keywordsSpottingCtrl.uploadedState }}
+      </progress-bar>
     </div>
 
     <div ng-if="keywordsSpottingCtrl.pingProcess">

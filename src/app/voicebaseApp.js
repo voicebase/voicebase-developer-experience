@@ -14,6 +14,7 @@
     'ui.select',
     'ngSanitize',
     'cssSpinnerModule',
+    'progressBarModule',
     'formValidateModule'
   ]);
 

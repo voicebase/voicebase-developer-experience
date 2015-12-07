@@ -1,11 +1,17 @@
 (function () {
   'use strict';
 
-  var keywordsSpottingApi = function ($q, voicebaseUrl) {
+  var keywordsSpottingApi = function ($q, $timeout, voicebaseUrl) {
 
     var url = voicebaseUrl.getBaseUrl();
 
     var mediaReady = false;
+
+    var uploadedState = 0;
+
+    var getUploadedState = function () {
+      return uploadedState;
+    };
 
     var postMedia = function (token, file, groups) {
       var deferred = $q.defer();
@@ -48,7 +54,19 @@
         headers: {
           'Authorization': 'Bearer ' + token
         },
+        xhr: function () {
+          var xhr = new window.XMLHttpRequest();
+          xhr.upload.addEventListener('progress', function (evt) {
+            if (evt.lengthComputable) {
+              $timeout(function () {
+                uploadedState = evt.loaded * 100 / evt.total;
+              }, 0);
+            }
+          }, false);
+          return xhr;
+        },
         success: function (mediaStatus) {
+          uploadedState = 0;
           deferred.resolve(mediaStatus);
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -122,6 +140,7 @@
     };
 
     return {
+      getUploadedState: getUploadedState,
       getMedia: getMedia,
       postMedia: postMedia,
       checkMediaFinish: checkMediaFinish,

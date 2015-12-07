@@ -20,6 +20,7 @@
         me.acceptFileFormats = ['.wav', '.mp4', '.mp3', '.flv', '.wmv', '.avi', '.mov', '.mpeg', '.mpg', '.aac', '.3gp', '.aiff', '.au', '.ogg', '.flac', '.ra', '.m4a', '.wma', '.m4v', '.caf', '.amr-nb', '.asf', '.webm', '.amr'];
         me.finishedUpload = false;
         me.uploadedData = [];
+        me.uploadedState = [];
         me.isEnableFileSelect = true;
         me.showStartOverBtn = false;
 
@@ -45,6 +46,12 @@
           me.isLogin = (tokenData) ? true : false;
           getKeywordGroups();
         });
+
+        $scope.$watch(function () {
+          return keywordsSpottingApi.getUploadedState();
+        }, function (_uploadedState) {
+          me.uploadedState = _uploadedState;
+        }, true);
 
         var getKeywordGroups = function() {
           if(tokenData) {
