@@ -3745,6 +3745,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
     "        <h4><a href=\"\">API Key Management</a></h4>\n" +
+    "        Add, revoke, and manage keys used for API authorization to your account.\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -3767,7 +3768,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-search\"></i>\n" +
     "        <h4><a href=\"\">Media Browser</a></h4>\n" +
-    "        Browse previously uploaded media, transcripts, keywords, topics, and predictions.\n" +
+    "        Browse previously uploaded media, transcripts, keywords, and predictions.\n" +
     "      </div>\n" +
     "    </div>\n" +
     "    <div class=\"panel panel-default\" ng-if=\"showDag\" ng-click=\"loadDag()\">\n" +
@@ -3826,7 +3827,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
 
   $templateCache.put('console/templates/skip-toolbar.tpl.html',
     "<a href=\"#\" class=\"raml-console-login-header-btn raml-console-skip-console-btn\" ng-click=\"skip($event);\"\n" +
-    "   data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Explore a subnet of the Voicebase API prior to creating your developer account\">\n" +
+    "   data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Explore a subset of the Voicebase API prior to creating your developer account\">\n" +
     "  <span ng-hide=\"isSkipping\">Explore the API</span>\n" +
     "  <css-spinner ng-show=\"isSkipping\"></css-spinner>\n" +
     "</a>\n"
