@@ -13,12 +13,13 @@
       return uploadedState;
     };
 
-    var postMedia = function (token, file, groups) {
+    var postMedia = function (token, file, groups, models) {
       var deferred = $q.defer();
 
       var data = new FormData();
       data.append('media', file);
 
+      var jobConf = {executor: 'v2'};
       var groupsConf = {};
       if (groups.length > 0) {
         var groupNames = groups.map(function (group) {
@@ -38,11 +39,30 @@
         };
       }
 
-      var jobConf = {executor: 'v2'};
-      var sumConf = jQuery.extend(jobConf, groupsConf);
+      var predictionsConf = {};
+      if (models && models.length > 0) {
+        console.log('Mixing in models', models);
+
+        var modelsArray = models.map(function (model) {
+          return { model : model.modelId };
+        });
+        predictionsConf = {
+          predictions: {
+            models: modelsArray
+          }
+        };
+
+        jobConf = { }; // prediction not yet support on v2 executor
+      }
+      
+      var sumConf = jQuery.extend(
+        jQuery.extend(jobConf, groupsConf),
+        predictionsConf
+      );
       var conf = {
         configuration: sumConf
       };
+      
       data.append('configuration', JSON.stringify(conf));
 
       jQuery.ajax({

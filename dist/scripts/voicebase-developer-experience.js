@@ -1748,7 +1748,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         token: '='
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService, jobApi) {
+      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, predictionModelApi, voicebasePlayerService, ModalService, jobApi) {
         var me = this;
 
         var tokenData;
@@ -1764,6 +1764,9 @@ voicebasePortal.Decorators = (function (Decorators) {
 
         me.keywordGroups = [];
         me.detectGroups = [];
+
+        me.predictionModels = [];
+        me.runModels = [];
 
         me.uploadFiles = [];
 
@@ -1783,6 +1786,7 @@ voicebasePortal.Decorators = (function (Decorators) {
           tokenData = _tokenData;
           me.isLogin = (tokenData) ? true : false;
           getKeywordGroups();
+          getPredictionModels();
         });
 
         $scope.$watch(function () {
@@ -1799,7 +1803,20 @@ voicebasePortal.Decorators = (function (Decorators) {
               me.keywordGroups = data.groups;
             }, function() {
               me.isLoadedGroups = false;
-              me.errorMessage = 'Can\'t getting groups!';
+              me.errorMessage = 'Failed to retrieve phrase spotting groups!';
+            });
+          }
+        };
+
+        var getPredictionModels = function() {
+          if(tokenData) {
+            me.isLoadedModels = true;
+            predictionModelApi.getPredictionModels(tokenData.token).then(function(data) {
+              me.isLoadedModels = false;
+              me.predictionModels = data.models;
+            }, function() {
+              me.isLoadedModels = false;
+              me.errorMessage = 'Failed to retrieve prediction models!';
             });
           }
         };
@@ -1876,7 +1893,7 @@ voicebasePortal.Decorators = (function (Decorators) {
 
         var postMedia = function (file) {
           me.errorMessage = '';
-          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups)
+          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups, me.runModels)
             .then(function (mediaStatus) {
               me.isLoaded = false;
               if (mediaStatus.mediaId) {
@@ -2160,12 +2177,13 @@ voicebasePortal.Decorators = (function (Decorators) {
       return uploadedState;
     };
 
-    var postMedia = function (token, file, groups) {
+    var postMedia = function (token, file, groups, models) {
       var deferred = $q.defer();
 
       var data = new FormData();
       data.append('media', file);
 
+      var jobConf = {executor: 'v2'};
       var groupsConf = {};
       if (groups.length > 0) {
         var groupNames = groups.map(function (group) {
@@ -2185,11 +2203,30 @@ voicebasePortal.Decorators = (function (Decorators) {
         };
       }
 
-      var jobConf = {executor: 'v2'};
-      var sumConf = jQuery.extend(jobConf, groupsConf);
+      var predictionsConf = {};
+      if (models && models.length > 0) {
+        console.log('Mixing in models', models);
+
+        var modelsArray = models.map(function (model) {
+          return { model : model.modelId };
+        });
+        predictionsConf = {
+          predictions: {
+            models: modelsArray
+          }
+        };
+
+        jobConf = { }; // prediction not yet support on v2 executor
+      }
+      
+      var sumConf = jQuery.extend(
+        jQuery.extend(jobConf, groupsConf),
+        predictionsConf
+      );
       var conf = {
         configuration: sumConf
       };
+      
       data.append('configuration', JSON.stringify(conf));
 
       jQuery.ajax({
@@ -2297,6 +2334,46 @@ voicebasePortal.Decorators = (function (Decorators) {
 
   angular.module('vbsKeywordGroupWidget')
     .service('keywordsSpottingApi', keywordsSpottingApi);
+
+})();
+
+(function () {
+  'use strict';
+
+  var predictionModelApi = function($http, $q, voicebaseUrl) {
+
+    var url = voicebaseUrl.getBaseUrl();
+
+    var getPredictionModels = function(token) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        url: url + '/definitions/predictions/models',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function(predictionModels) {
+          deferred.resolve(predictionModels);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Failed to retrieve prediction models!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
+    return {
+      getPredictionModels: getPredictionModels
+    };
+
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .service('predictionModelApi', predictionModelApi);
 
 })();
 
@@ -4107,6 +4184,18 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "      </ui-select>\n" +
     "    </div>\n" +
     "    <div ng-if=\"keywordsSpottingCtrl.isLoadedGroups\" class=\"groups-loader\">\n" +
+    "      <css-spinner></css-spinner>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"!keywordsSpottingCtrl.isLoadedModels\" class=\"form-group\">\n" +
+    "      <ui-select multiple ng-model=\"keywordsSpottingCtrl.runModels\" ng-disabled=\"!keywordsSpottingCtrl.isEnableFileSelect\">\n" +
+    "        <ui-select-match placeholder=\"Select models...\">{{ $item.displayName }}</ui-select-match>\n" +
+    "        <ui-select-choices repeat=\"model in keywordsSpottingCtrl.predictionModels | filter:$select.search\">\n" +
+    "          {{ model.displayName }}\n" +
+    "        </ui-select-choices>\n" +
+    "      </ui-select>\n" +
+    "    </div>\n" +
+    "    <div ng-if=\"keywordsSpottingCtrl.isLoadedModels\" class=\"groups-loader\">\n" +
     "      <css-spinner></css-spinner>\n" +
     "    </div>\n" +
     "\n" +

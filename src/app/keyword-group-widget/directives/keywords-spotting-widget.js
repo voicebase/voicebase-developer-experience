@@ -10,7 +10,7 @@
         token: '='
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, voicebasePlayerService, ModalService, jobApi) {
+      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, predictionModelApi, voicebasePlayerService, ModalService, jobApi) {
         var me = this;
 
         var tokenData;
@@ -26,6 +26,9 @@
 
         me.keywordGroups = [];
         me.detectGroups = [];
+
+        me.predictionModels = [];
+        me.runModels = [];
 
         me.uploadFiles = [];
 
@@ -45,6 +48,7 @@
           tokenData = _tokenData;
           me.isLogin = (tokenData) ? true : false;
           getKeywordGroups();
+          getPredictionModels();
         });
 
         $scope.$watch(function () {
@@ -61,7 +65,20 @@
               me.keywordGroups = data.groups;
             }, function() {
               me.isLoadedGroups = false;
-              me.errorMessage = 'Can\'t getting groups!';
+              me.errorMessage = 'Failed to retrieve phrase spotting groups!';
+            });
+          }
+        };
+
+        var getPredictionModels = function() {
+          if(tokenData) {
+            me.isLoadedModels = true;
+            predictionModelApi.getPredictionModels(tokenData.token).then(function(data) {
+              me.isLoadedModels = false;
+              me.predictionModels = data.models;
+            }, function() {
+              me.isLoadedModels = false;
+              me.errorMessage = 'Failed to retrieve prediction models!';
             });
           }
         };
@@ -138,7 +155,7 @@
 
         var postMedia = function (file) {
           me.errorMessage = '';
-          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups)
+          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups, me.runModels)
             .then(function (mediaStatus) {
               me.isLoaded = false;
               if (mediaStatus.mediaId) {

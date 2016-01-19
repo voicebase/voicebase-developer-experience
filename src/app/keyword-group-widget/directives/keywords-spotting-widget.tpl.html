@@ -99,6 +99,18 @@
       <css-spinner></css-spinner>
     </div>
 
+    <div ng-if="!keywordsSpottingCtrl.isLoadedModels" class="form-group">
+      <ui-select multiple ng-model="keywordsSpottingCtrl.runModels" ng-disabled="!keywordsSpottingCtrl.isEnableFileSelect">
+        <ui-select-match placeholder="Select models...">{{ $item.displayName }}</ui-select-match>
+        <ui-select-choices repeat="model in keywordsSpottingCtrl.predictionModels | filter:$select.search">
+          {{ model.displayName }}
+        </ui-select-choices>
+      </ui-select>
+    </div>
+    <div ng-if="keywordsSpottingCtrl.isLoadedModels" class="groups-loader">
+      <css-spinner></css-spinner>
+    </div>
+
 
     <div ng-if="!keywordsSpottingCtrl.isLoaded && !keywordsSpottingCtrl.pingProcess" class="form-group">
       <button type="button" class="btn btn-success" ng-click="keywordsSpottingCtrl.upload()">Upload</button>
