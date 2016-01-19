@@ -2006,7 +2006,7 @@ voicebasePortal.Decorators = (function (Decorators) {
 
         me.checkDropdownVisibility = function (model) {
           return !(!me.isEnableFileSelect && model.length === 0);
-        }
+        };
 
       }
     };
@@ -2209,9 +2209,7 @@ voicebasePortal.Decorators = (function (Decorators) {
           return { model : model.modelId };
         });
         predictionsConf = {
-          predictions: {
-            models: modelsArray
-          }
+          predictions: modelsArray
         };
 
         jobConf = { }; // prediction not yet support on v2 executor
