@@ -268,7 +268,7 @@
 
         me.checkDropdownVisibility = function (model) {
           return !(!me.isEnableFileSelect && model.length === 0);
-        }
+        };
 
       }
     };
