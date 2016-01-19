@@ -40,9 +40,7 @@
           return { model : model.modelId };
         });
         predictionsConf = {
-          predictions: {
-            models: modelsArray
-          }
+          predictions: modelsArray
         };
 
         jobConf = { }; // prediction not yet support on v2 executor
