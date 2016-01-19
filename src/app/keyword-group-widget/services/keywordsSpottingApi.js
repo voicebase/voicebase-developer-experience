@@ -30,13 +30,6 @@
             groups: groupNames
           }
         };
-        var groupsData = {
-          configuration: {
-            keywords: {
-              groups: groupNames
-            }
-          }
-        };
       }
 
       var predictionsConf = {};
@@ -54,15 +47,13 @@
 
         jobConf = { }; // prediction not yet support on v2 executor
       }
-      
-      var sumConf = jQuery.extend(
-        jQuery.extend(jobConf, groupsConf),
-        predictionsConf
-      );
+
+      var sumConf = jQuery.extend(jobConf, groupsConf, predictionsConf);
+
       var conf = {
         configuration: sumConf
       };
-      
+
       data.append('configuration', JSON.stringify(conf));
 
       jQuery.ajax({

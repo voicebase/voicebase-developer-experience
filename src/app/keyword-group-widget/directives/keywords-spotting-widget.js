@@ -110,6 +110,7 @@
         me.startOver = function (event) {
           me.removeAllFiles(event);
           me.detectGroups = [];
+          me.runModels = [];
           me.uploadedData = [];
           me.finishedUpload = false;
           me.showStartOverBtn = false;
@@ -264,6 +265,10 @@
             me.errorMessage = 'Can\'t create group!';
           });
         };
+
+        me.checkDropdownVisibility = function (model) {
+          return !(!me.isEnableFileSelect && model.length === 0);
+        }
 
       }
     };

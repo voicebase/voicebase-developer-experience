@@ -1848,6 +1848,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         me.startOver = function (event) {
           me.removeAllFiles(event);
           me.detectGroups = [];
+          me.runModels = [];
           me.uploadedData = [];
           me.finishedUpload = false;
           me.showStartOverBtn = false;
@@ -2002,6 +2003,10 @@ voicebasePortal.Decorators = (function (Decorators) {
             me.errorMessage = 'Can\'t create group!';
           });
         };
+
+        me.checkDropdownVisibility = function (model) {
+          return !(!me.isEnableFileSelect && model.length === 0);
+        }
 
       }
     };
@@ -2194,13 +2199,6 @@ voicebasePortal.Decorators = (function (Decorators) {
             groups: groupNames
           }
         };
-        var groupsData = {
-          configuration: {
-            keywords: {
-              groups: groupNames
-            }
-          }
-        };
       }
 
       var predictionsConf = {};
@@ -2218,15 +2216,13 @@ voicebasePortal.Decorators = (function (Decorators) {
 
         jobConf = { }; // prediction not yet support on v2 executor
       }
-      
-      var sumConf = jQuery.extend(
-        jQuery.extend(jobConf, groupsConf),
-        predictionsConf
-      );
+
+      var sumConf = jQuery.extend(jobConf, groupsConf, predictionsConf);
+
       var conf = {
         configuration: sumConf
       };
-      
+
       data.append('configuration', JSON.stringify(conf));
 
       jQuery.ajax({
@@ -4176,7 +4172,10 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "    </div>\n" +
     "\n" +
     "    <div ng-if=\"!keywordsSpottingCtrl.isLoadedGroups\" class=\"form-group\">\n" +
-    "      <ui-select multiple ng-model=\"keywordsSpottingCtrl.detectGroups\" ng-disabled=\"!keywordsSpottingCtrl.isEnableFileSelect\">\n" +
+    "      <ui-select multiple\n" +
+    "                 ng-model=\"keywordsSpottingCtrl.detectGroups\"\n" +
+    "                 ng-disabled=\"!keywordsSpottingCtrl.isEnableFileSelect\"\n" +
+    "                 ng-if=\"keywordsSpottingCtrl.checkDropdownVisibility(keywordsSpottingCtrl.detectGroups)\">\n" +
     "        <ui-select-match placeholder=\"Select groups...\">{{ $item.name }}</ui-select-match>\n" +
     "        <ui-select-choices repeat=\"group in keywordsSpottingCtrl.keywordGroups | filter:$select.search\">\n" +
     "          {{ group.name }}\n" +
@@ -4188,7 +4187,10 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "    </div>\n" +
     "\n" +
     "    <div ng-if=\"!keywordsSpottingCtrl.isLoadedModels\" class=\"form-group\">\n" +
-    "      <ui-select multiple ng-model=\"keywordsSpottingCtrl.runModels\" ng-disabled=\"!keywordsSpottingCtrl.isEnableFileSelect\">\n" +
+    "      <ui-select multiple\n" +
+    "                 ng-model=\"keywordsSpottingCtrl.runModels\"\n" +
+    "                 ng-disabled=\"!keywordsSpottingCtrl.isEnableFileSelect\"\n" +
+    "                 ng-if=\"keywordsSpottingCtrl.checkDropdownVisibility(keywordsSpottingCtrl.runModels)\">\n" +
     "        <ui-select-match placeholder=\"Select models...\">{{ $item.displayName }}</ui-select-match>\n" +
     "        <ui-select-choices repeat=\"model in keywordsSpottingCtrl.predictionModels | filter:$select.search\">\n" +
     "          {{ model.displayName }}\n" +
