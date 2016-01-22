@@ -22,6 +22,7 @@
     "angular-route": "1.2.20",
     "fontawesome": "~4.3.0",
     "angular-utils-pagination": "~0.7.0",
+    "angular-marked": "0.0.12",
     "bootstrap-sass": "~3.3.4",
     "angular-modal-service": "~0.6.6",
     "angular-bootstrap-switch": "~0.4.0",
