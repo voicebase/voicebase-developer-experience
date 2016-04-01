@@ -48,7 +48,8 @@
             showPredictionsBlock: true,
             actionFlag: {
               downloadMedia: false,
-              downloadTranscript: false
+              downloadTranscript: false,
+              orderTranscript: false
             }
           });
         };
