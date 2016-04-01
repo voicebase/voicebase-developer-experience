@@ -3512,7 +3512,7 @@ voiceBase = (function(VB, $) {
 
         parseCategoriesForTopics: function (catArray) {
             var categories = jQuery.map(catArray, function(item) {
-                var speakersKeys = VB.speakers.parseSpeakersInCategory(item);
+                var speakersKeys = VB.speakers.parseSpeakersInCategory(item.speakers);
                 return {
                     "name": item.name,
                     "score": item.score,
@@ -3527,6 +3527,13 @@ voiceBase = (function(VB, $) {
             }));
             categories.reverse();
             return categories;
+        },
+
+        parseSpeakersForAllKeywords: function (keywords) {
+            keywords.forEach(function (keyword) {
+                var speakers = Object.keys(keyword.t);
+                VB.speakers.parseSpeakersInCategory(speakers);
+            });
         },
 
         getAllTopicsItem: function (keywords, speakers) {
@@ -3671,6 +3678,7 @@ voiceBase = (function(VB, $) {
 
                     var catArray = VB.keywords.getCategories(data.categories, data.groups);
                     var categories = VB.keywords.parseCategoriesForTopics(catArray);
+                    VB.keywords.parseSpeakersForAllKeywords(data.keywords);
 
                     var allTopicItem = VB.keywords.getAllTopicsItem(data.keywords, VB.speakers.getSpeakersKeys().join());
                     categories.unshift(allTopicItem);
@@ -5827,10 +5835,10 @@ voiceBase = (function(VB, $) {
             return false;
         },
 
-        parseSpeakersInCategory: function(category){
+        parseSpeakersInCategory: function(speakers){
             var isps = [];
-            if(category.speakers) {
-                category.speakers.forEach(function (speaker) {
+            if(speakers) {
+                speakers.forEach(function (speaker) {
                     var speaker_name = VB.common.replaceAndTrim(speaker);
                     VB.speakers.addSpeakerKey(speaker_name);
                     isps.push(VB.speakers.getSpeakerKeyByName(speaker_name));
