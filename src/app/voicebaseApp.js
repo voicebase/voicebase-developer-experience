@@ -18,6 +18,12 @@
     'formValidateModule'
   ]);
 
+  angular.module('voicebaseAuth0Module', [
+    'auth0',
+    'angular-storage',
+    'angular-jwt'
+  ]);
+
   angular.module('voicebaseTokensModule', []);
 
   angular.module('voicebasePlayerModule', []);
@@ -32,6 +38,7 @@
   var voicebaseConsoleModules = [
     'voicebaseVendorsModule',
     'voicebaseTokensModule',
+    'voicebaseAuth0Module',
     'voicebasePlayerModule',
     'vbsKeywordGroupWidget',
     'dagModule'
@@ -50,6 +57,10 @@
 
       // for support custom scheme x-OAuth 2 Bearer
       voicebasePortal.Decorators.AuthStrategies();
+    }
+
+    if (voicebaseConsoleModules.indexOf('voicebaseAuth0Module') !== -1 && typeof Auth0Lock !== 'undefined') {
+      voicebasePortal.Decorators.voicebaseSignAuth0($provide);
     }
 
     $routeProvider
