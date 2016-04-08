@@ -43,6 +43,7 @@
     "voicebasePortal": true,
     "dagreD3": true,
     "d3": true,
-    "DagreFlow": true
+    "DagreFlow": true,
+    "Auth0Lock": true
   }
 }
