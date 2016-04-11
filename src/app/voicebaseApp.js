@@ -104,6 +104,10 @@
         templateUrl: 'pages/addToWaitListPage.html',
         reloadOnSearch: false
       })
+      .when('/confirm', {
+        templateUrl: 'pages/confirmEmailPage.html',
+        reloadOnSearch: false
+      })
       .otherwise({redirectTo: '/'});
 
   });

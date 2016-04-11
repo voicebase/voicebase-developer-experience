@@ -15,6 +15,16 @@
         };
 
         var loginSuccess = function (response) {
+          if (response.profile.email_verified) {
+            getApiKey(response);
+          }
+          else {
+            $scope.isLoaded = false;
+            $location.path('/confirm');
+          }
+        };
+
+        var getApiKey = function (response) {
           auth0Api.createAuth0ApiKey(response.token)
             .then(function (voicebaseToken) {
               voicebaseTokensApi.setNeedRemember(true);
