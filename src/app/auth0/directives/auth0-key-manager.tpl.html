@@ -1,0 +1,36 @@
+<div class="panel panel-default raml-console-panel auth0-key-manager">
+
+  <div class="alert alert-danger" role="alert" ng-if="keyManagerCtrl.errorMessage">
+    <button type="button" class="close" ng-click="keyManagerCtrl.errorMessage = ''"><span aria-hidden="true">&times;</span></button>
+    {{ keyManagerCtrl.errorMessage }}
+  </div>
+
+  <div ng-if="keyManagerCtrl.isLogin">
+    <div class="panel-body">
+      <form>
+        <h4>API Key</h4>
+
+        <div class="form-group">
+          <textarea class="form-control" rows="4" ng-model="keyManagerCtrl.token"></textarea>
+        </div>
+
+        <div class="form-group">Copy or download this key and use it for your application</div>
+
+        <div class="form-group text-warning">
+          <strong>Warning!</strong> This key is only is only displayed this one time. It will not be displayed again once you navigate away from this page
+        </div>
+
+        <button type="button"
+                class="btn btn-success copy-button"
+                clipboard
+                text="keyManagerCtrl.token"
+                on-copied="keyManagerCtrl.onCopy()"
+                on-error="keyManagerCtrl.onCopyError(err)">
+          {{keyManagerCtrl.isCopied ? "Copied!" : "Copy to clipboard"}}
+        </button>
+        <button type="button" class="btn btn-success" ng-click="keyManagerCtrl.downloadKey()">Download</button>
+      </form>
+    </div>
+  </div>
+
+</div>

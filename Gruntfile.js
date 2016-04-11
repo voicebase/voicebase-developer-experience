@@ -46,7 +46,8 @@ module.exports = function (grunt) {
         'bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js',
         'bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js',
         'bower_components/ng-file-upload/ng-file-upload.min.js',
-        'bower_components/angular-ui-select/dist/select.min.js'
+        'bower_components/angular-ui-select/dist/select.min.js',
+        'bower_components/angular-clipboard/angular-clipboard.js'
       ],
       jsApiConsole: [
         'bower_components/api-console-voicebase/dist/scripts/api-console.js'

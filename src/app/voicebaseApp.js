@@ -21,7 +21,8 @@
   angular.module('voicebaseAuth0Module', [
     'auth0',
     'angular-storage',
-    'angular-jwt'
+    'angular-jwt',
+    'angular-clipboard'
   ]);
 
   angular.module('voicebaseTokensModule', []);
