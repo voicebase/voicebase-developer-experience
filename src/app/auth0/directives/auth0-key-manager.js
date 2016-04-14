@@ -32,8 +32,8 @@
         };
 
         me.downloadKey = function () {
-          var blob = new Blob([me.token], {type: "text/plain;charset=utf-8"});
-          saveAs(blob, "voicebase-api-key.txt");
+          var blob = new Blob([me.token], {type: 'text/plain;charset=utf-8'});
+          saveAs(blob, 'voicebase-api-key.txt');
         };
 
       }
