@@ -102,13 +102,13 @@
       var _tokensObj = (!tokensObj) ? null : tokensObj.tokens[0];
       setCurrentToken(_tokensObj);
 
-      if(needRemember && _tokensObj && _tokensObj.token) {
-        localStorage.setItem('voicebaseToken', _tokensObj.token);
-      }
-      else {
-        localStorage.removeItem('voicebaseToken');
-        saveApiKey(null);
-      }
+      //if(needRemember && _tokensObj && _tokensObj.token) {
+      //  localStorage.setItem('voicebaseToken', _tokensObj.token);
+      //}
+      //else {
+      //  localStorage.removeItem('voicebaseToken');
+      //  saveApiKey(null);
+      //}
 
       tokens = tokensObj;
     };
