@@ -28,7 +28,7 @@
 
         var generateToken = function () {
           me.tokenPending = true;
-          auth0Api.createAuth0ApiKey().then(generateTokenSuccess, generateTokenError)
+          auth0Api.createAuth0ApiKey().then(generateTokenSuccess, generateTokenError);
         };
 
         var generateTokenSuccess = function (token) {

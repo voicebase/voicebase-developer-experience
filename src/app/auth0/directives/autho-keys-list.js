@@ -27,7 +27,7 @@
 
         var getKeys = function () {
           me.keysPending = true;
-          auth0Api.getApiKeys().then(getKeysSuccess, getKeysError)
+          auth0Api.getApiKeys().then(getKeysSuccess, getKeysError);
         };
 
         var getKeysSuccess = function (keys) {
