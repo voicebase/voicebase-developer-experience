@@ -9,7 +9,7 @@
       scope: {
       },
       controllerAs: 'keyManagerCtrl',
-      controller: function($scope, voicebaseTokensApi, formValidate) {
+      controller: function($scope, voicebaseTokensApi) {
         var me = this;
 
         me.isLogin = false;
