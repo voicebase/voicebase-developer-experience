@@ -1,4 +1,4 @@
-<div class="panel panel-default raml-console-panel auth0-key-manager">
+<div class="panel panel-default raml-console-panel auth0-key-generator">
 
   <div class="alert alert-danger" role="alert" ng-if="keyManagerCtrl.errorMessage">
     <button type="button" class="close" ng-click="keyManagerCtrl.errorMessage = ''"><span aria-hidden="true">&times;</span></button>
@@ -6,7 +6,9 @@
   </div>
 
   <div ng-if="keyManagerCtrl.isLogin">
-    <div class="panel-body">
+    <css-spinner ng-if="keyManagerCtrl.tokenPending"></css-spinner>
+
+    <div class="panel-body" ng-if="!keyManagerCtrl.tokenPending">
       <form>
         <h4>API Key</h4>
 

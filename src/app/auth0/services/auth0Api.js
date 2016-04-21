@@ -13,6 +13,9 @@
 
     var createAuth0ApiKey = function (auth0Token) {
       var deferred = $q.defer();
+      if (!auth0Token) {
+        auth0Token = store.get('auth0Token');
+      }
 
       jQuery.ajax({
         url: baseUrl + '/profile/keys',
@@ -59,8 +62,31 @@
       store.remove('auth0Token');
     };
 
+    var getApiKeys = function() {
+      var deferred = $q.defer();
+      var auth0Token = store.get('auth0Token');
+
+      jQuery.ajax({
+        url: baseUrl + '/profile/keys',
+        type: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + auth0Token
+        },
+        success: function(response) {
+          deferred.resolve(response.keys);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
     return {
       createAuth0ApiKey: createAuth0ApiKey,
+      getApiKeys: getApiKeys,
       signIn: signIn,
       saveCredentials: saveCredentials,
       signOut: signOut

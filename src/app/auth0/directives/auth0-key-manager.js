@@ -9,10 +9,11 @@
       scope: {
       },
       controllerAs: 'keyManagerCtrl',
-      controller: function($scope, voicebaseTokensApi) {
+      controller: function($scope, voicebaseTokensApi, auth0Api) {
         var me = this;
 
         me.isLogin = false;
+        me.tokenPending = false;
         me.token = '';
         me.isCopied = false;
 
@@ -20,8 +21,26 @@
           return voicebaseTokensApi.getCurrentToken();
         }, function (_tokenData) {
           me.isLogin = (_tokenData) ? true : false;
-          me.token = _tokenData.token;
+          if (!me.token) {
+            generateToken();
+          }
         });
+
+        var generateToken = function () {
+          me.tokenPending = true;
+          auth0Api.createAuth0ApiKey().then(generateTokenSuccess, generateTokenError)
+        };
+
+        var generateTokenSuccess = function (token) {
+          me.tokenPending = false;
+          me.token = token;
+          voicebaseTokensApi.setToken(token);
+        };
+
+        var generateTokenError = function (error) {
+          me.tokenPending = false;
+          me.errorMessage = error;
+        };
 
         me.onCopy = function () {
           me.isCopied = true;

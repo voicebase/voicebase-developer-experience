@@ -93,6 +93,10 @@
         templateUrl: 'pages/keyManagerPage.html',
         reloadOnSearch: false
       })
+      .when('/generate-api-key', {
+        templateUrl: 'pages/generateKeyPage.html',
+        reloadOnSearch: false
+      })
       .when('/media-browser', {
         templateUrl: 'pages/mediaBrowserPage.html',
         reloadOnSearch: false

@@ -1,0 +1,49 @@
+<div class="panel panel-default raml-console-panel auth0-key-manager">
+
+  <div class="alert alert-danger" role="alert" ng-if="keyListCtrl.errorMessage">
+    <button type="button" class="close" ng-click="keyListCtrl.errorMessage = ''"><span aria-hidden="true">&times;</span></button>
+    {{ keyListCtrl.errorMessage }}
+  </div>
+
+  <div ng-if="keyListCtrl.isLogin">
+    <div class="panel-body">
+      <div class="generate-container">
+        <h4>Generate an API Key</h4>
+        <button type="button" class="btn btn-success generate-button" ng-click="keyListCtrl.onGenerateApiKey()">
+          Go
+        </button>
+      </div>
+
+      <h4>Active API Keys</h4>
+
+      <css-spinner ng-if="keyListCtrl.keysPending"></css-spinner>
+
+      <div class="keys-list-container" ng-if="!keyListCtrl.keysPending">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Date Generated</th>
+            <th>
+              <span>Key Reference</span>
+              <i class="fa fa-question-circle tooltip-icon"
+                 data-toggle="tooltip" data-placement="right" title="Voicebase only remembers the last 6 digits to help you with API key management.">
+              </i>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="key in keyListCtrl.keys track by $index">
+            <td>
+              Jan 11, 2016
+            </td>
+            <td>
+              ...{{key.lastSix}}
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
