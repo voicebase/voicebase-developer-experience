@@ -2,7 +2,7 @@
   'use strict';
 
   var Months = function($http, $q, voicebaseUrl, store) {
-    var months = months = {
+    var months = {
       1: {
         num: 1,
         name: 'January',
