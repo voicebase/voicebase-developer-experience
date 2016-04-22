@@ -9,7 +9,7 @@
       scope: {
       },
       controllerAs: 'keyListCtrl',
-      controller: function($scope, $location, voicebaseTokensApi, auth0Api) {
+      controller: function($scope, $location, voicebaseTokensApi, auth0Api, months) {
         var me = this;
 
         me.isLogin = false;
@@ -38,6 +38,18 @@
         var getKeysError = function (error) {
           me.keysPending = false;
           me.errorMessage = error;
+        };
+
+        me.formatDate = function (key) {
+          var dateLabel = '-';
+          if (key.issued) {
+            var dateObj = new Date(key.issued);
+            var day = dateObj.getDate();
+            var month = months.getMonthById(dateObj.getMonth() + 1).short;
+            var year = dateObj.getFullYear();
+            dateLabel = month + ' ' + day + ', ' + year;
+          }
+          return dateLabel;
         };
 
         me.onGenerateApiKey = function () {

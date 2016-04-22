@@ -34,7 +34,7 @@
           <tbody>
           <tr ng-repeat="key in keyListCtrl.keys track by $index">
             <td>
-              Jan 11, 2016
+              {{keyListCtrl.formatDate(key)}}
             </td>
             <td>
               ...{{key.lastSix}}
