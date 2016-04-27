@@ -21,7 +21,7 @@ function(){this.$get=function(){return{}}});n.directive("ngView",x);n.directive(
 //# sourceMappingURL=angular-route.min.js.map
 
 /*
- AngularJS v1.4.9
+ AngularJS v1.4.10
  (c) 2010-2015 Google, Inc. http://angularjs.org
  License: MIT
 */
@@ -37,7 +37,7 @@ p=g("accent-height,accumulate,additive,alphabetic,arabic-form,ascent,baseProfile
 c){g.push("<a ");h.isDefined(b)&&g.push('target="',b,'" ');g.push('href="',a.replace(/"/g,"&quot;"),'">');k(c);g.push("</a>")}if(!c)return c;for(var m,l=c,g=[],n,p;m=l.match(f);)n=m[0],m[2]||m[4]||(n=(m[3]?"http://":"mailto:")+n),p=m.index,k(l.substr(0,p)),e(n,m[0].replace(d,"")),l=l.substring(p+m[0].length);k(l);return a(g.join(""))}}])})(window,window.angular);
 //# sourceMappingURL=angular-sanitize.min.js.map
 
-/*angular-modal-service v0.6.8 - https://github.com/dwmkerr/angular-modal-service */
+/*angular-modal-service v0.6.7 - https://github.com/dwmkerr/angular-modal-service */
 !function(){"use strict";var e=angular.module("angularModalService",[]);e.factory("ModalService",["$document","$compile","$controller","$http","$rootScope","$q","$templateCache",function(e,n,l,o,t,r,c){function a(){var e=this,a=function(e,n){var l=r.defer();return e?l.resolve(e):n?o.get(n,{cache:c}).then(function(e){l.resolve(e.data)},function(e){l.reject(e)}):l.reject("No template or templateUrl has been specified."),l.promise};e.showModal=function(e){var o=r.defer(),c=e.controller;return c?(a(e.template,e.templateUrl).then(function(c){var a=t.$new(),i=r.defer(),s={$scope:a,close:function(e,n){(void 0===n||null===n)&&(n=0),window.setTimeout(function(){i.resolve(e),a.$destroy(),d.remove(),s.close=null,o=null,i=null,m=null,s=null,d=null,a=null},n)}};e.inputs&&angular.extend(s,e.inputs);var p=n(c),d=p(a);s.$element=d;var f=l(e.controller,s);e.controllerAs&&(a[e.controllerAs]=f),e.appendElement?e.appendElement.append(d):u.append(d);var m={controller:f,scope:a,element:d,close:i.promise};o.resolve(m)}).then(null,function(e){o.reject(e)}),o.promise):(o.reject("No controller has been specified."),o.promise)}}var u=e.find("body");return new a}])}();
 //# sourceMappingURL=angular-modal-service.min.js.map
 /**
