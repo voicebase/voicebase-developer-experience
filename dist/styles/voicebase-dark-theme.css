@@ -606,21 +606,23 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   content: '';
 }
 .key-manager .user-info__token-row {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 .key-manager .user-info__token-row_highlight {
   background-color: #FCF8E3;
 }
-.key-manager .user-info__token-name,
-.key-manager .user-info__token-actions {
-  display: table-cell;
-  vertical-align: middle;
-}
 .key-manager .user-info__token-name {
   width: 95%;
   overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 0;
 }
 .key-manager .user-info__token-actions {
   width: 5%;
