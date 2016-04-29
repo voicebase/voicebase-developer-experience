@@ -15,6 +15,7 @@
         me.isLogin = false;
         me.errorMessage = '';
         me.keysPending = false;
+        me.showGeneratedKey = false;
         me.keys = [];
 
         $scope.$watch(function () {
@@ -53,7 +54,11 @@
         };
 
         me.onGenerateApiKey = function () {
-          $location.path('/generate-api-key');
+          me.showGeneratedKey = true;
+        };
+
+        me.done = function () {
+          me.showGeneratedKey = false;
         };
 
       }

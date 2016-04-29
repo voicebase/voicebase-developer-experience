@@ -1,43 +1,77 @@
-<div class="panel panel-default raml-console-panel auth0-key-manager">
-
-  <div class="alert alert-danger" role="alert" ng-if="keyListCtrl.errorMessage">
-    <button type="button" class="close" ng-click="keyListCtrl.errorMessage = ''"><span aria-hidden="true">&times;</span></button>
-    {{ keyListCtrl.errorMessage }}
-  </div>
+<div class="raml-console-panel auth0-key-manager">
 
   <div ng-if="keyListCtrl.isLogin">
-    <div class="panel-body">
-      <div class="generate-container">
-        <h4>Generate an API Key</h4>
-        <button type="button" class="btn btn-success generate-button" ng-click="keyListCtrl.onGenerateApiKey()">
-          Go
+    <div class="alert alert-danger" role="alert" ng-if="keyListCtrl.errorMessage">
+      <button type="button" class="close" ng-click="keyListCtrl.errorMessage = ''"><span aria-hidden="true">&times;</span></button>
+      {{ keyListCtrl.errorMessage }}
+    </div>
+
+    <div class="section-heading auth0-key-manager_heading">
+      <h3 class="section-title">Key Management</h3>
+      <div class="pull-right">
+        <button class="btn btn-sm btn-success btn-add-key collapsed" data-toggle="collapse" data-target="#addKey" aria-expanded="false">
+          <i class="fa fa-plus"></i>
+          Add new Key
         </button>
       </div>
+    </div>
 
-      <h4>Active API Keys</h4>
+    <div class="collapse" id="addKey" aria-expanded="false" >
+      <div class="well">
+        <div class="auth0-add-key-form" ng-if="!keyListCtrl.showGeneratedKey">
+          <form>
+            <div class="form-group">
+              <input class="form-control" type="text" placeholder="Label your key">
+            </div>
+            <div class="form-group" id="addKeyFormType">
+              <select class="form-control">
+                <option selected="" disabled="">Key type</option>
+                <option>Bearer token</option>
+              </select>
+            </div>
+            <div class="form-group" id="addKeyFormRights">
+              <select class="form-control">
+                <option selected="" disabled="">Rights</option>
+                <option>All Access</option>
+              </select>
+            </div>
+            <hr>
+            <div class="form-group">
+              <button class="btn btn-success" type="button" id="addKeyFormConfirm" ng-click="keyListCtrl.onGenerateApiKey()">Create Key</button>
+              <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#addKey">Cancel</button>
+            </div>
+          </form>
+        </div>
+        <div ng-if="keyListCtrl.showGeneratedKey">
+          <auth0-key-manager></auth0-key-manager>
+          <button type="button" class="btn btn-primary" ng-click="keyListCtrl.done()" data-toggle="collapse" data-target="#addKey">Done</button>
+        </div>
+      </div>
+    </div>
 
+    <div class="panel panel-default keys-list-container">
       <css-spinner ng-if="keyListCtrl.keysPending"></css-spinner>
 
-      <div class="keys-list-container" ng-if="!keyListCtrl.keysPending">
-        <table class="table">
+      <div ng-if="!keyListCtrl.keysPending">
+        <table class="table table-key-management">
           <thead>
           <tr>
-            <th>Date Generated</th>
             <th>
               <span>Key Reference</span>
               <i class="fa fa-question-circle tooltip-icon"
                  data-toggle="tooltip" data-placement="right" title="Voicebase only remembers the last 6 digits to help you with API key management.">
               </i>
             </th>
+            <th>Date Generated</th>
           </tr>
           </thead>
           <tbody>
           <tr ng-repeat="key in keyListCtrl.keys track by $index">
             <td>
-              {{keyListCtrl.formatDate(key)}}
+              <code>...{{key.lastSix}}</code>
             </td>
             <td>
-              ...{{key.lastSix}}
+              {{keyListCtrl.formatDate(key)}}
             </td>
           </tr>
           </tbody>
