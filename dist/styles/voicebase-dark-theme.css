@@ -645,6 +645,109 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   padding: 0;
 }
 
+.auth0-key-manager .text-warning,
+.auth0-key-generator .text-warning {
+  color: #a94442;
+}
+.auth0-key-manager .copy-button,
+.auth0-key-generator .copy-button {
+  margin-right: 5px;
+}
+.auth0-key-manager .generate-container,
+.auth0-key-generator .generate-container {
+  display: flex;
+}
+.auth0-key-manager h4,
+.auth0-key-generator h4 {
+  margin: 10px 0 !important;
+}
+.auth0-key-manager .generate-button,
+.auth0-key-generator .generate-button {
+  margin-left: 5px;
+}
+.auth0-key-manager .keys-list-container,
+.auth0-key-generator .keys-list-container {
+  max-height: 300px;
+  overflow: auto;
+}
+.auth0-key-manager .tooltip-icon,
+.auth0-key-generator .tooltip-icon {
+  cursor: pointer;
+  margin-left: 5px;
+}
+.auth0-key-manager .raml-console-spinner,
+.auth0-key-generator .raml-console-spinner {
+  margin: 35px auto;
+  height: 35px;
+}
+
+.auth0-key-manager .raml-console-spinner {
+  margin: 55px auto;
+}
+.auth0-key-manager .raml-console-spinner:after {
+  content: 'Loading API keys..';
+}
+.auth0-key-manager_heading {
+  display: table;
+  width: 100%;
+}
+.auth0-key-manager .section-title {
+  margin: 0 0 20px;
+  float: left;
+  line-height: 30px;
+}
+.auth0-key-manager .table th, .auth0-key-manager .table td {
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
+.auth0-key-manager .table th {
+  background: #f9f9f9;
+  border-bottom-width: 1px !important;
+  color: #999;
+  font-size: 11px;
+  line-height: 20px !important;
+}
+.auth0-key-manager .table th i {
+  font-size: 14px;
+  margin-left: 4px;
+}
+.auth0-key-manager code {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+}
+.auth0-key-manager .auth0-add-key-form .well {
+  padding: 15px;
+  background: #e9e9e9;
+  border-color: #ddd;
+}
+.auth0-key-manager .auth0-add-key-form .form-group {
+  max-width: 300px;
+}
+.auth0-key-manager .auth0-add-key-form .form-group:last-child {
+  margin: 0;
+}
+.auth0-key-manager .auth0-add-key-form hr {
+  margin: 15px -15px;
+  border: 0;
+  border-top: 1px solid #ddd;
+}
+.auth0-key-manager .auth0-add-key-form .btn-group {
+  margin-bottom: 15px;
+}
+.auth0-key-manager .auth0-add-key-form .btn i {
+  margin-right: 4px;
+}
+
+.auth0-key-generator .raml-console-spinner {
+  margin: 50px auto;
+}
+.auth0-key-generator .raml-console-spinner:after {
+  content: 'Generating API key..';
+}
+
 .media-browser {
   padding: 15px;
 }
@@ -800,6 +903,15 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 
 .raml-console-login-page-container .raml-console-create-account-link:hover {
   text-decoration: none !important;
+}
+
+.raml-console-login-page-container .raml-console-confirm-email-container h1,
+.raml-console-login-page-container .raml-console-confirm-email-container h3 {
+  color: #fff;
+}
+
+.raml-console-login-page-container .raml-console-confirm-email-container h3 {
+  margin-top: 25px;
 }
 
 .raml-console-margin-content {

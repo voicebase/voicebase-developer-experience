@@ -18,6 +18,13 @@
     'formValidateModule'
   ]);
 
+  angular.module('voicebaseAuth0Module', [
+    'auth0',
+    'angular-storage',
+    'angular-jwt',
+    'angular-clipboard'
+  ]);
+
   angular.module('voicebaseTokensModule', []);
 
   angular.module('voicebasePlayerModule', []);
@@ -32,6 +39,7 @@
   var voicebaseConsoleModules = [
     'voicebaseVendorsModule',
     'voicebaseTokensModule',
+    'voicebaseAuth0Module',
     'voicebasePlayerModule',
     'vbsKeywordGroupWidget',
     'dagModule'
@@ -50,6 +58,10 @@
 
       // for support custom scheme x-OAuth 2 Bearer
       voicebasePortal.Decorators.AuthStrategies();
+    }
+
+    if (voicebaseConsoleModules.indexOf('voicebaseAuth0Module') !== -1 && typeof Auth0Lock !== 'undefined') {
+      voicebasePortal.Decorators.voicebaseSignAuth0($provide);
     }
 
     $routeProvider
@@ -81,6 +93,10 @@
         templateUrl: 'pages/keyManagerPage.html',
         reloadOnSearch: false
       })
+      .when('/generate-api-key', {
+        templateUrl: 'pages/generateKeyPage.html',
+        reloadOnSearch: false
+      })
       .when('/media-browser', {
         templateUrl: 'pages/mediaBrowserPage.html',
         reloadOnSearch: false
@@ -93,10 +109,426 @@
         templateUrl: 'pages/addToWaitListPage.html',
         reloadOnSearch: false
       })
+      .when('/confirm', {
+        templateUrl: 'pages/confirmEmailPage.html',
+        reloadOnSearch: false
+      })
       .otherwise({redirectTo: '/'});
 
   });
 
+
+})();
+
+voicebasePortal.Decorators = (function (Decorators) {
+  'use strict';
+
+  Decorators.voicebaseSignAuth0 = function ($provide) {
+    $provide.decorator('voicebaseSignDirective', function ($delegate, $controller, $compile, voicebaseTokensApi, auth0Api) {
+      var directive = $delegate[0];
+
+      var controllerOrigin = directive.controller; // save original controller
+      directive.controller = function ($scope, $location, $anchorScroll) {
+        angular.extend(this, $controller(controllerOrigin, {
+          $scope: $scope,
+          $location: $location,
+          voicebaseTokensApi: voicebaseTokensApi,
+          auth0Api: auth0Api
+        }));
+
+        var _signOut = $scope.signOut;
+        $scope.signOut = function() {
+          _signOut.apply(this);
+          auth0Api.signOut();
+        };
+
+      };
+
+      return $delegate;
+    });
+
+  };
+
+  return Decorators;
+
+})(voicebasePortal.Decorators || {});
+
+(function () {
+  'use strict';
+
+  var auth0KeyManager = function () {
+    return {
+      restrict: 'E',
+      templateUrl: 'auth0/directives/auth0-key-manager.tpl.html',
+      replace: true,
+      scope: {
+      },
+      controllerAs: 'keyManagerCtrl',
+      controller: function($scope, voicebaseTokensApi, auth0Api) {
+        var me = this;
+
+        me.isLogin = false;
+        me.tokenPending = false;
+        me.token = '';
+        me.isCopied = false;
+
+        $scope.$watch(function () {
+          return voicebaseTokensApi.getCurrentToken();
+        }, function (_tokenData) {
+          me.isLogin = (_tokenData) ? true : false;
+          if (!me.token) {
+            generateToken();
+          }
+        });
+
+        var generateToken = function () {
+          me.tokenPending = true;
+          auth0Api.createAuth0ApiKey().then(generateTokenSuccess, generateTokenError);
+        };
+
+        var generateTokenSuccess = function (token) {
+          me.tokenPending = false;
+          me.token = token;
+          voicebaseTokensApi.setToken(token);
+        };
+
+        var generateTokenError = function (error) {
+          me.tokenPending = false;
+          me.errorMessage = error;
+        };
+
+        me.onCopy = function () {
+          me.isCopied = true;
+        };
+
+        me.onCopyError = function (error) {
+          console.log('Copy error: ', error);
+        };
+
+        me.downloadKey = function () {
+          var blob = new Blob([me.token], {type: 'text/plain;charset=utf-8'});
+          saveAs(blob, 'voicebase-api-key.txt');
+        };
+
+      }
+    };
+  };
+
+  angular.module('voicebaseAuth0Module')
+    .directive('auth0KeyManager', auth0KeyManager);
+
+})();
+
+(function () {
+  'use strict';
+
+  var Auth0Login = function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'auth0/directives/auth0-login.tpl.html',
+      replace: false,
+      controller: function($scope, $location, store, auth, auth0Api, voicebaseTokensApi) {
+        $scope.isLoaded = false;
+
+        $scope.auth0SignIn = function () {
+          $scope.isLoaded = true;
+          auth0Api.signIn().then(loginSuccess, loginError);
+        };
+
+        var loginSuccess = function (response) {
+          if (response.profile.email_verified) {
+            getApiKey(response);
+          }
+          else {
+            $scope.isLoaded = false;
+            $location.path('/confirm');
+          }
+        };
+
+        var getApiKey = function (response) {
+          auth0Api.createAuth0ApiKey(response.token)
+            .then(function (voicebaseToken) {
+              voicebaseTokensApi.setNeedRemember(true);
+              voicebaseTokensApi.setToken(voicebaseToken);
+              $scope.isLoaded = false;
+              loadPortal();
+            }, loginError);
+        };
+
+        var loginError = function (error) {
+          $scope.isLoaded = false;
+          console.log(error);
+        };
+
+        var loadPortal = function() {
+          $location.path('/portal');
+        };
+
+      }
+
+    };
+  };
+
+  angular.module('voicebaseAuth0Module')
+    .directive('auth0Login', Auth0Login);
+
+})();
+
+(function () {
+  'use strict';
+
+  var auth0KeyList = function () {
+    return {
+      restrict: 'E',
+      templateUrl: 'auth0/directives/autho-keys-list.tpl.html',
+      replace: true,
+      scope: {
+      },
+      controllerAs: 'keyListCtrl',
+      controller: function($scope, $location, voicebaseTokensApi, auth0Api, months) {
+        var me = this;
+
+        me.isLogin = false;
+        me.errorMessage = '';
+        me.keysPending = false;
+        me.showGeneratedKey = false;
+        me.keys = [];
+
+        $scope.$watch(function () {
+          return voicebaseTokensApi.getCurrentToken();
+        }, function (_tokenData) {
+          me.isLogin = (_tokenData) ? true : false;
+          me.token = _tokenData.token;
+          getKeys();
+        });
+
+        var getKeys = function () {
+          me.keysPending = true;
+          auth0Api.getApiKeys().then(getKeysSuccess, getKeysError);
+        };
+
+        var getKeysSuccess = function (keys) {
+          me.keysPending = false;
+          me.keys = keys;
+        };
+
+        var getKeysError = function (error) {
+          me.keysPending = false;
+          me.errorMessage = error;
+        };
+
+        me.formatDate = function (key) {
+          var dateLabel = '-';
+          if (key.issued) {
+            var dateObj = new Date(key.issued);
+            var day = dateObj.getDate();
+            var month = months.getMonthById(dateObj.getMonth() + 1).short;
+            var year = dateObj.getFullYear();
+            dateLabel = month + ' ' + day + ', ' + year;
+          }
+          return dateLabel;
+        };
+
+        me.onGenerateApiKey = function () {
+          me.showGeneratedKey = true;
+        };
+
+        me.done = function () {
+          me.showGeneratedKey = false;
+        };
+
+      }
+    };
+  };
+
+  angular.module('voicebaseAuth0Module')
+    .directive('auth0KeyList', auth0KeyList);
+
+})();
+
+(function () {
+  'use strict';
+
+  var Auth0Api = function($http, $q, voicebaseUrl, store) {
+    var baseUrl = voicebaseUrl.getBaseUrl();
+    var DOMAIN = 'voicebase.auth0.com';
+    var CLIENT_ID = '1eQFoL41viLp5qK90AMme5tc5TjEpUeE';
+    var auth0Options = {
+      icon:'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png',
+      focusInput: false,
+      popup: true
+    };
+
+    var createAuth0ApiKey = function (auth0Token) {
+      var deferred = $q.defer();
+      if (!auth0Token) {
+        auth0Token = store.get('auth0Token');
+      }
+
+      jQuery.ajax({
+        url: baseUrl + '/profile/keys',
+        type: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + auth0Token
+        },
+        success: function(response) {
+          deferred.resolve(response.key.bearerToken);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
+    var signIn = function () {
+      var deferred = $q.defer();
+
+      var lock = new Auth0Lock(CLIENT_ID, DOMAIN);
+      lock.show(auth0Options, function (err, profile, token) {
+        if (err) {
+          deferred.reject(err);
+        }
+        else {
+          saveCredentials(profile, token);
+          deferred.resolve({profile: profile, token: token});
+        }
+      });
+
+      return deferred.promise;
+    };
+
+    var saveCredentials = function (profile, token) {
+      store.set('voicebase-profile', profile);
+      store.set('auth0Token', token);
+    };
+
+    var signOut = function () {
+      store.remove('voicebase-profile');
+      store.remove('auth0Token');
+    };
+
+    var getApiKeys = function() {
+      var deferred = $q.defer();
+      var auth0Token = store.get('auth0Token');
+
+      jQuery.ajax({
+        url: baseUrl + '/profile/keys',
+        type: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + auth0Token
+        },
+        success: function(response) {
+          deferred.resolve(response.keys);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
+    return {
+      createAuth0ApiKey: createAuth0ApiKey,
+      getApiKeys: getApiKeys,
+      signIn: signIn,
+      saveCredentials: saveCredentials,
+      signOut: signOut
+    };
+  };
+
+  angular.module('voicebaseAuth0Module')
+    .service('auth0Api', Auth0Api);
+
+})();
+
+(function () {
+  'use strict';
+
+  var Months = function($http, $q, voicebaseUrl, store) {
+    var months = {
+      1: {
+        num: 1,
+        name: 'January',
+        short: 'Jan'
+      },
+      2: {
+        num: 2,
+        name: 'February',
+        short: 'Feb'
+      },
+      3: {
+        num: 3,
+        name: 'March',
+        short: 'Mar'
+      },
+      4: {
+        num: 4,
+        name: 'April',
+        short: 'Apr'
+      },
+      5: {
+        num: 5,
+        name: 'May',
+        short: 'May'
+      },
+      6: {
+        num: 6,
+        name: 'June',
+        short: 'Jun'
+      },
+      7: {
+        num: 7,
+        name: 'July',
+        short: 'Jul'
+      },
+      8: {
+        num: 8,
+        name: 'August',
+        short: 'Aug'
+      },
+      9: {
+        num: 9,
+        name: 'September',
+        short: 'Sep'
+      },
+      10: {
+        num: 10,
+        name: 'October',
+        short: 'Oct'
+      },
+      11: {
+        num: 11,
+        name: 'November',
+        short: 'Nov'
+      },
+      12: {
+        num: 12,
+        name: 'December',
+        short: 'Dec'
+      }
+    };
+
+    var getMonths = function () {
+      return months;
+    };
+
+    var getMonthById = function (monthId) {
+      return months[monthId];
+    };
+
+    return {
+      getMonths: getMonths,
+      getMonthById: getMonthById
+    };
+  };
+
+  angular.module('voicebaseAuth0Module')
+    .service('months', Months);
 
 })();
 
@@ -3608,6 +4040,145 @@ voicebasePortal.Decorators = (function (Decorators) {
 
 angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templateCache) {
   'use strict';
+
+  $templateCache.put('auth0/directives/auth0-key-manager.tpl.html',
+    "<div class=\"raml-console-panel auth0-key-generator\">\n" +
+    "\n" +
+    "  <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"keyManagerCtrl.errorMessage\">\n" +
+    "    <button type=\"button\" class=\"close\" ng-click=\"keyManagerCtrl.errorMessage = ''\"><span aria-hidden=\"true\">&times;</span></button>\n" +
+    "    {{ keyManagerCtrl.errorMessage }}\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div ng-if=\"keyManagerCtrl.isLogin\">\n" +
+    "    <css-spinner ng-if=\"keyManagerCtrl.tokenPending\"></css-spinner>\n" +
+    "\n" +
+    "    <div ng-if=\"!keyManagerCtrl.tokenPending\">\n" +
+    "      <form>\n" +
+    "        <div class=\"form-group\">\n" +
+    "          <button type=\"button\"\n" +
+    "                  class=\"btn btn-success copy-button\"\n" +
+    "                  clipboard\n" +
+    "                  text=\"keyManagerCtrl.token\"\n" +
+    "                  on-copied=\"keyManagerCtrl.onCopy()\"\n" +
+    "                  on-error=\"keyManagerCtrl.onCopyError(err)\">\n" +
+    "            {{keyManagerCtrl.isCopied ? \"Copied!\" : \"Copy to clipboard\"}}\n" +
+    "          </button>\n" +
+    "          <button type=\"button\" class=\"btn btn-success\" ng-click=\"keyManagerCtrl.downloadKey()\">Download</button>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "          <textarea class=\"form-control\" rows=\"4\" ng-model=\"keyManagerCtrl.token\"></textarea>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"form-group\">Copy or download this key and use it for your application</div>\n" +
+    "\n" +
+    "        <div class=\"form-group text-warning\">\n" +
+    "          <strong>Warning!</strong> This key is only is only displayed this one time. It will not be displayed again once you navigate away from this page\n" +
+    "        </div>\n" +
+    "      </form>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('auth0/directives/auth0-login.tpl.html',
+    "<div class=\"raml-console-main-login-form\">\n" +
+    "  <button type=\"button\" class=\"raml-console-login-submit raml-console-margin-top-input\" ng-click=\"auth0SignIn()\">\n" +
+    "    <span ng-show=\"!isLoaded\">Sign In</span>\n" +
+    "    <span ng-show=\"isLoaded\">Signing In...</span>\n" +
+    "  </button>\n" +
+    "</div>\n"
+  );
+
+
+  $templateCache.put('auth0/directives/autho-keys-list.tpl.html',
+    "<div class=\"raml-console-panel auth0-key-manager\">\n" +
+    "\n" +
+    "  <div ng-if=\"keyListCtrl.isLogin\">\n" +
+    "    <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"keyListCtrl.errorMessage\">\n" +
+    "      <button type=\"button\" class=\"close\" ng-click=\"keyListCtrl.errorMessage = ''\"><span aria-hidden=\"true\">&times;</span></button>\n" +
+    "      {{ keyListCtrl.errorMessage }}\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"section-heading auth0-key-manager_heading\">\n" +
+    "      <h3 class=\"section-title\">Key Management</h3>\n" +
+    "      <div class=\"pull-right\">\n" +
+    "        <button class=\"btn btn-sm btn-success btn-add-key collapsed\" data-toggle=\"collapse\" data-target=\"#addKey\" aria-expanded=\"false\">\n" +
+    "          <i class=\"fa fa-plus\"></i>\n" +
+    "          Add new Key\n" +
+    "        </button>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"collapse\" id=\"addKey\" aria-expanded=\"false\" >\n" +
+    "      <div class=\"well\">\n" +
+    "        <div class=\"auth0-add-key-form\" ng-if=\"!keyListCtrl.showGeneratedKey\">\n" +
+    "          <form>\n" +
+    "            <div class=\"form-group\">\n" +
+    "              <input class=\"form-control\" type=\"text\" placeholder=\"Label your key\">\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\" id=\"addKeyFormType\">\n" +
+    "              <select class=\"form-control\">\n" +
+    "                <option selected=\"\" disabled=\"\">Key type</option>\n" +
+    "                <option>Bearer token</option>\n" +
+    "              </select>\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\" id=\"addKeyFormRights\">\n" +
+    "              <select class=\"form-control\">\n" +
+    "                <option selected=\"\" disabled=\"\">Rights</option>\n" +
+    "                <option>All Access</option>\n" +
+    "              </select>\n" +
+    "            </div>\n" +
+    "            <hr>\n" +
+    "            <div class=\"form-group\">\n" +
+    "              <button class=\"btn btn-success\" type=\"button\" id=\"addKeyFormConfirm\" ng-click=\"keyListCtrl.onGenerateApiKey()\">Create Key</button>\n" +
+    "              <button class=\"btn btn-default\" type=\"button\" data-toggle=\"collapse\" data-target=\"#addKey\">Cancel</button>\n" +
+    "            </div>\n" +
+    "          </form>\n" +
+    "        </div>\n" +
+    "        <div ng-if=\"keyListCtrl.showGeneratedKey\">\n" +
+    "          <auth0-key-manager></auth0-key-manager>\n" +
+    "          <button type=\"button\" class=\"btn btn-primary\" ng-click=\"keyListCtrl.done()\" data-toggle=\"collapse\" data-target=\"#addKey\">Done</button>\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"panel panel-default keys-list-container\">\n" +
+    "      <css-spinner ng-if=\"keyListCtrl.keysPending\"></css-spinner>\n" +
+    "\n" +
+    "      <div ng-if=\"!keyListCtrl.keysPending\">\n" +
+    "        <table class=\"table table-key-management\">\n" +
+    "          <thead>\n" +
+    "          <tr>\n" +
+    "            <th>\n" +
+    "              <span>Key Reference</span>\n" +
+    "              <i class=\"fa fa-question-circle tooltip-icon\"\n" +
+    "                 data-toggle=\"tooltip\" data-placement=\"right\" title=\"Voicebase only remembers the last 6 digits to help you with API key management.\">\n" +
+    "              </i>\n" +
+    "            </th>\n" +
+    "            <th>Date Generated</th>\n" +
+    "          </tr>\n" +
+    "          </thead>\n" +
+    "          <tbody>\n" +
+    "          <tr ng-repeat=\"key in keyListCtrl.keys track by $index\">\n" +
+    "            <td>\n" +
+    "              <code>...{{key.lastSix}}</code>\n" +
+    "            </td>\n" +
+    "            <td>\n" +
+    "              {{keyListCtrl.formatDate(key)}}\n" +
+    "            </td>\n" +
+    "          </tr>\n" +
+    "          </tbody>\n" +
+    "        </table>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "\n" +
+    "</div>\n"
+  );
+
 
   $templateCache.put('console/directives/main-login.tpl.html',
     "<div class=\"raml-console-main-login-form\">\n" +
