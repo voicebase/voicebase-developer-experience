@@ -16,6 +16,7 @@
         me.tokenPending = false;
         me.token = '';
         me.isCopied = false;
+        me.showTokenForm = false;
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getCurrentToken();
@@ -53,6 +54,10 @@
         me.downloadKey = function () {
           var blob = new Blob([me.token], {type: 'text/plain;charset=utf-8'});
           saveAs(blob, 'voicebase-api-key.txt');
+        };
+
+        me.changeActive = function () {
+          me.showTokenForm = !me.showTokenForm;
         };
 
       }

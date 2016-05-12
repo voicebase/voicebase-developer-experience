@@ -11,19 +11,29 @@
     <div ng-if="!keyManagerCtrl.tokenPending">
       <form>
         <div class="form-group">
-          <button type="button"
-                  class="btn btn-success copy-button"
-                  clipboard
-                  text="keyManagerCtrl.token"
-                  on-copied="keyManagerCtrl.onCopy()"
-                  on-error="keyManagerCtrl.onCopyError(err)">
-            {{keyManagerCtrl.isCopied ? "Copied!" : "Copy to clipboard"}}
-          </button>
-          <button type="button" class="btn btn-success" ng-click="keyManagerCtrl.downloadKey()">Download</button>
+          <div class="btn-group">
+            <button type="button"
+                    class="btn btn-default btn-show-key"
+                    ng-class="keyManagerCtrl.showTokenForm ? 'active' : ''"
+                    data-toggle="collapse" data-target="#tokenForm"
+                    ng-click="keyManagerCtrl.changeActive()"
+            >
+              <i class="fa fa-eye"></i> Show Key
+            </button>
+            <button type="button"
+                    class="btn btn-default copy-button"
+                    clipboard
+                    text="keyManagerCtrl.token"
+                    on-copied="keyManagerCtrl.onCopy()"
+                    on-error="keyManagerCtrl.onCopyError(err)">
+              {{keyManagerCtrl.isCopied ? "Copied!" : "Copy to clipboard"}}
+            </button>
+            <button type="button" class="btn btn-default" ng-click="keyManagerCtrl.downloadKey()">Download</button>
+          </div>
         </div>
 
-        <div class="form-group">
-          <textarea class="form-control" rows="4" ng-model="keyManagerCtrl.token"></textarea>
+        <div class="form-group collapse" id="tokenForm">
+          <textarea class="form-control" rows="4" ng-model="keyManagerCtrl.token" readonly></textarea>
         </div>
 
         <div class="form-group">Copy or download this key and use it for your application</div>
