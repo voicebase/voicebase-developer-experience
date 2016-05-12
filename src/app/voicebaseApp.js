@@ -49,7 +49,10 @@
     voicebaseConsoleModules.push('ramlConsoleApp');
   }
 
-  angular.module('ramlVoicebaseConsoleApp', voicebaseConsoleModules).config(function ($provide, $routeProvider) {
+  angular.module('ramlVoicebaseConsoleApp', voicebaseConsoleModules).config(
+    function ($provide, $routeProvider, $locationProvider) {
+    $locationProvider.html5Mode(true);
+
     if(typeof RAML !== 'undefined') {
       //voicebasePortal.Decorators.ramlConsole($provide);
       voicebasePortal.Decorators.ramlSidebar($provide);
