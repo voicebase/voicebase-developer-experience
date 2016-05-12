@@ -649,10 +649,6 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 .auth0-key-generator .text-warning {
   color: #a94442;
 }
-.auth0-key-manager .copy-button,
-.auth0-key-generator .copy-button {
-  margin-right: 5px;
-}
 .auth0-key-manager .generate-container,
 .auth0-key-generator .generate-container {
   display: flex;

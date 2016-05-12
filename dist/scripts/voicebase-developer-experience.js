@@ -171,6 +171,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         me.tokenPending = false;
         me.token = '';
         me.isCopied = false;
+        me.showTokenForm = false;
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getCurrentToken();
@@ -208,6 +209,10 @@ voicebasePortal.Decorators = (function (Decorators) {
         me.downloadKey = function () {
           var blob = new Blob([me.token], {type: 'text/plain;charset=utf-8'});
           saveAs(blob, 'voicebase-api-key.txt');
+        };
+
+        me.changeActive = function () {
+          me.showTokenForm = !me.showTokenForm;
         };
 
       }
@@ -4055,19 +4060,29 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "    <div ng-if=\"!keyManagerCtrl.tokenPending\">\n" +
     "      <form>\n" +
     "        <div class=\"form-group\">\n" +
-    "          <button type=\"button\"\n" +
-    "                  class=\"btn btn-success copy-button\"\n" +
-    "                  clipboard\n" +
-    "                  text=\"keyManagerCtrl.token\"\n" +
-    "                  on-copied=\"keyManagerCtrl.onCopy()\"\n" +
-    "                  on-error=\"keyManagerCtrl.onCopyError(err)\">\n" +
-    "            {{keyManagerCtrl.isCopied ? \"Copied!\" : \"Copy to clipboard\"}}\n" +
-    "          </button>\n" +
-    "          <button type=\"button\" class=\"btn btn-success\" ng-click=\"keyManagerCtrl.downloadKey()\">Download</button>\n" +
+    "          <div class=\"btn-group\">\n" +
+    "            <button type=\"button\"\n" +
+    "                    class=\"btn btn-default btn-show-key\"\n" +
+    "                    ng-class=\"keyManagerCtrl.showTokenForm ? 'active' : ''\"\n" +
+    "                    data-toggle=\"collapse\" data-target=\"#tokenForm\"\n" +
+    "                    ng-click=\"keyManagerCtrl.changeActive()\"\n" +
+    "            >\n" +
+    "              <i class=\"fa fa-eye\"></i> Show Key\n" +
+    "            </button>\n" +
+    "            <button type=\"button\"\n" +
+    "                    class=\"btn btn-default copy-button\"\n" +
+    "                    clipboard\n" +
+    "                    text=\"keyManagerCtrl.token\"\n" +
+    "                    on-copied=\"keyManagerCtrl.onCopy()\"\n" +
+    "                    on-error=\"keyManagerCtrl.onCopyError(err)\">\n" +
+    "              {{keyManagerCtrl.isCopied ? \"Copied!\" : \"Copy to clipboard\"}}\n" +
+    "            </button>\n" +
+    "            <button type=\"button\" class=\"btn btn-default\" ng-click=\"keyManagerCtrl.downloadKey()\">Download</button>\n" +
+    "          </div>\n" +
     "        </div>\n" +
     "\n" +
-    "        <div class=\"form-group\">\n" +
-    "          <textarea class=\"form-control\" rows=\"4\" ng-model=\"keyManagerCtrl.token\"></textarea>\n" +
+    "        <div class=\"form-group collapse\" id=\"tokenForm\">\n" +
+    "          <textarea class=\"form-control\" rows=\"4\" ng-model=\"keyManagerCtrl.token\" readonly></textarea>\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"form-group\">Copy or download this key and use it for your application</div>\n" +
@@ -4107,7 +4122,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "      <div class=\"pull-right\">\n" +
     "        <button class=\"btn btn-sm btn-success btn-add-key collapsed\" data-toggle=\"collapse\" data-target=\"#addKey\" aria-expanded=\"false\">\n" +
     "          <i class=\"fa fa-plus\"></i>\n" +
-    "          Add new Key\n" +
+    "          Add New Key\n" +
     "        </button>\n" +
     "      </div>\n" +
     "    </div>\n" +
