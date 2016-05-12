@@ -9,11 +9,23 @@
 
       var setBaseUrl = function (environment) {
         var queryEnvironment = $location.search().environment;
-          if(queryEnvironment) {
+
+        if(queryEnvironment) {
             _setUrl(queryEnvironment);
         }
         else {
-          _setUrl(environment);
+          var productEnvironment = '';
+          if ($location.host() === 'apis.dev.voicebase.com') {
+            productEnvironment = 'dev';
+          } else if ($location.host() === 'apis.qa.voicebase.com') {
+            productEnvironment = 'qa';
+          } else if ($location.host() === 'apis.preprod.voicebase.com') {
+            productEnvironment = 'preprod';
+          } else if ($location.host() === 'apis.prod.voicebase.com') {
+            productEnvironment = 'prod';
+          }
+          
+          _setUrl(productEnvironment);
         }
       };
 
