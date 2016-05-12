@@ -4011,7 +4011,9 @@ voicebasePortal.Decorators = (function (Decorators) {
         }
         else {
           var productEnvironment = '';
-          if ($location.host() === 'apis.dev.voicebase.com') {
+          if ($location.host() === 'localhost') {
+            productEnvironment = 'dev';
+          } else if ($location.host() === 'apis.dev.voicebase.com') {
             productEnvironment = 'dev';
           } else if ($location.host() === 'apis.qa.voicebase.com') {
             productEnvironment = 'qa';
@@ -4020,7 +4022,7 @@ voicebasePortal.Decorators = (function (Decorators) {
           } else if ($location.host() === 'apis.prod.voicebase.com') {
             productEnvironment = 'prod';
           }
-          
+
           _setUrl(productEnvironment);
         }
       };
