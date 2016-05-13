@@ -51,7 +51,7 @@
 
   angular.module('ramlVoicebaseConsoleApp', voicebaseConsoleModules).config(
     function ($provide, $routeProvider, $locationProvider) {
-    $locationProvider.html5Mode(true);
+    //$locationProvider.html5Mode(true);
 
     if(typeof RAML !== 'undefined') {
       //voicebasePortal.Decorators.ramlConsole($provide);

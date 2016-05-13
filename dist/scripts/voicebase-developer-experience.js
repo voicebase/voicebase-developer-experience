@@ -51,7 +51,7 @@
 
   angular.module('ramlVoicebaseConsoleApp', voicebaseConsoleModules).config(
     function ($provide, $routeProvider, $locationProvider) {
-    $locationProvider.html5Mode(true);
+    //$locationProvider.html5Mode(true);
 
     if(typeof RAML !== 'undefined') {
       //voicebasePortal.Decorators.ramlConsole($provide);
@@ -4004,7 +4004,17 @@ voicebasePortal.Decorators = (function (Decorators) {
       var url = 'https://apis.voicebase.com/v2-beta';
 
       var setBaseUrl = function (environment) {
-        var queryEnvironment = $location.search().environment;
+        var queryEnvironment = null;
+
+        if ($location.absUrl().includes('environment=dev')) {
+          queryEnvironment = 'dev';
+        } else if ($location.absUrl().includes('environment=qa')) {
+          queryEnvironment = 'qa';
+        } else if ($location.absUrl().includes('environment=preprod')) {
+          queryEnvironment = 'preprod';
+        } else if ($location.absUrl().includes('environment=prod')) {
+          queryEnvironment = 'prod';
+        }
 
         if(queryEnvironment) {
             _setUrl(queryEnvironment);
