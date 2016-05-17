@@ -332,9 +332,25 @@ voicebasePortal.Decorators = (function (Decorators) {
             var day = dateObj.getDate();
             var month = months.getMonthById(dateObj.getMonth() + 1).short;
             var year = dateObj.getFullYear();
-            dateLabel = month + ' ' + day + ', ' + year;
+            var hours = dateObj.getHours();
+            var minutes = dateObj.getMinutes();
+            var ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = padLeft(minutes.toString(), 2);
+            dateLabel = month + ' ' + day + ', ' + year + ', ' + hours + ':' + minutes + ' ' + ampm;
           }
           return dateLabel;
+        };
+
+        var padLeft = function (string, total) {
+          if (typeof string !== 'string') {
+            throw new Error('First parameter must be a string');
+          }
+          if (typeof total !== 'number') {
+            throw new Error('Second parameter must be a integer');
+          }
+          return new Array(total - string.length + 1).join('0') + string;
         };
 
         me.onGenerateApiKey = function () {
@@ -4158,20 +4174,14 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "      <div class=\"well\">\n" +
     "        <div class=\"auth0-add-key-form\" ng-if=\"!keyListCtrl.showGeneratedKey\">\n" +
     "          <form>\n" +
-    "            <div class=\"form-group\">\n" +
-    "              <input class=\"form-control\" type=\"text\" placeholder=\"Label your key\">\n" +
-    "            </div>\n" +
+    "            <!--<div class=\"form-group\">-->\n" +
+    "              <!--<input class=\"form-control\" type=\"text\" placeholder=\"Label your key\">-->\n" +
+    "            <!--</div>-->\n" +
     "            <div class=\"form-group\" id=\"addKeyFormType\">\n" +
-    "              <select class=\"form-control\">\n" +
-    "                <option selected=\"\" disabled=\"\">Key type</option>\n" +
-    "                <option>Bearer token</option>\n" +
-    "              </select>\n" +
+    "              <input type=\"text\" class=\"form-control\" readonly value=\"Bearer token\"/>\n" +
     "            </div>\n" +
     "            <div class=\"form-group\" id=\"addKeyFormRights\">\n" +
-    "              <select class=\"form-control\">\n" +
-    "                <option selected=\"\" disabled=\"\">Rights</option>\n" +
-    "                <option>All Access</option>\n" +
-    "              </select>\n" +
+    "              <input type=\"text\" class=\"form-control\" readonly value=\"All Access\"/>\n" +
     "            </div>\n" +
     "            <hr>\n" +
     "            <div class=\"form-group\">\n" +
