@@ -1,8 +1,10 @@
 var localSearchHelper = (function() {
     var transcript;
+    var isApi2 = false;
 
-    var localTranscriptSearch = function(transcript, terms) {
+    var localTranscriptSearch = function(transcript, terms, _isApi2) {
         console.time('localSearch');
+        isApi2 = _isApi2;
         var data = {
             requestStatus: 'SUCCESS',
             hits: {
@@ -13,6 +15,7 @@ var localSearchHelper = (function() {
         var transcript_words = transcript;
         var results = [];
         var temp_results = {};
+        var posOffset = isApi2 ? 0 : 1;
 
         // create fuse model
         var fuseEngine = new Fuse(transcript_words, {
@@ -65,7 +68,7 @@ var localSearchHelper = (function() {
                         var word = '';
                         var phrase_begin_word = first_word_result[p];
                         var term_length = inner_words.length;
-                        var num = phrase_begin_word.p - 1;
+                        var num = phrase_begin_word.p - posOffset;
                         for (var k = 0; k < term_length; k++) {
                             var next_word = transcript_words[num];
                             if(next_word){
@@ -127,15 +130,12 @@ var localSearchHelper = (function() {
         var before = 1000;
         var after = 1500;
 
-        var i = 1;
-        var before_phrase = '<b>' + transcript_words[pos - 1].w + '</b>';
+        var posOffset = isApi2 ? 0 : 1;
+
+        var i = posOffset;
+        var before_phrase = '<b>' + transcript_words[pos - posOffset].w + '</b>';
         var tek_word;
         var space;
-
-        var one_word_in_term = true;
-        if(term.split(/(?=\W)(?=\s)/).length !== 1) { // one word
-            one_word_in_term = false;
-        }
 
         while(before > 0){
             tek_word = transcript_words[pos - i];
@@ -152,8 +152,8 @@ var localSearchHelper = (function() {
         i = 1;
         var after_phrase = '';
         while(after > 0){
-            tek_word = transcript_words[pos - i];
-            var next_word = transcript_words[pos - 1 + i];
+            tek_word = (i === 1) ? transcript_words[pos - posOffset] : transcript_words[pos - i];
+            var next_word = transcript_words[pos - posOffset + i];
             if(next_word && tek_word && next_word.m != 'turn' && tek_word.m != 'turn'){
                 space = (next_word.m == 'punc') ? '' : ' ';
                 after_phrase =  after_phrase + space;
