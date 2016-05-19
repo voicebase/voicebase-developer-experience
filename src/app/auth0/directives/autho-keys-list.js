@@ -17,6 +17,8 @@
         me.keysPending = false;
         me.showGeneratedKey = false;
         me.keys = [];
+        me.sortType = 'issued';
+        me.sortReverse = true;
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getCurrentToken();
@@ -77,6 +79,9 @@
           me.showGeneratedKey = false;
         };
 
+        me.changeSortReverse = function () {
+          me.sortReverse = !me.sortReverse;
+        };
       }
     };
   };

@@ -56,11 +56,15 @@
                  data-toggle="tooltip" data-placement="right" title="Voicebase only remembers the last 6 digits to help you with API key management.">
               </i>
             </th>
-            <th>Date Generated</th>
+            <th ng-click="keyListCtrl.changeSortReverse()">
+              Date Generated
+              <i ng-show="keyListCtrl.sortReverse" class="fa fa-caret-down"></i>
+              <i ng-show="!keyListCtrl.sortReverse" class="fa fa-caret-up"></i>
+            </th>
           </tr>
           </thead>
           <tbody>
-          <tr ng-repeat="key in keyListCtrl.keys track by $index">
+          <tr ng-repeat="key in keyListCtrl.keys | orderBy:keyListCtrl.sortType:keyListCtrl.sortReverse track by $index">
             <td>
               <code>...{{key.lastSix}}</code>
             </td>

@@ -297,6 +297,8 @@ voicebasePortal.Decorators = (function (Decorators) {
         me.keysPending = false;
         me.showGeneratedKey = false;
         me.keys = [];
+        me.sortType = 'issued';
+        me.sortReverse = true;
 
         $scope.$watch(function () {
           return voicebaseTokensApi.getCurrentToken();
@@ -357,6 +359,9 @@ voicebasePortal.Decorators = (function (Decorators) {
           me.showGeneratedKey = false;
         };
 
+        me.changeSortReverse = function () {
+          me.sortReverse = !me.sortReverse;
+        };
       }
     };
   };
@@ -4204,11 +4209,15 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "                 data-toggle=\"tooltip\" data-placement=\"right\" title=\"Voicebase only remembers the last 6 digits to help you with API key management.\">\n" +
     "              </i>\n" +
     "            </th>\n" +
-    "            <th>Date Generated</th>\n" +
+    "            <th ng-click=\"keyListCtrl.changeSortReverse()\">\n" +
+    "              Date Generated\n" +
+    "              <i ng-show=\"keyListCtrl.sortReverse\" class=\"fa fa-caret-down\"></i>\n" +
+    "              <i ng-show=\"!keyListCtrl.sortReverse\" class=\"fa fa-caret-up\"></i>\n" +
+    "            </th>\n" +
     "          </tr>\n" +
     "          </thead>\n" +
     "          <tbody>\n" +
-    "          <tr ng-repeat=\"key in keyListCtrl.keys track by $index\">\n" +
+    "          <tr ng-repeat=\"key in keyListCtrl.keys | orderBy:keyListCtrl.sortType:keyListCtrl.sortReverse track by $index\">\n" +
     "            <td>\n" +
     "              <code>...{{key.lastSix}}</code>\n" +
     "            </td>\n" +
