@@ -236,12 +236,7 @@ voicebasePortal.Decorators = (function (Decorators) {
       templateUrl: 'auth0/directives/auth0-login.tpl.html',
       replace: false,
       controller: function($scope, $location, store, auth, auth0Api, voicebaseTokensApi) {
-        $scope.isLoaded = false;
-
-        $scope.auth0SignIn = function () {
-          $scope.isLoaded = true;
-          auth0Api.signIn().then(loginSuccess, loginError);
-        };
+        $scope.isLoaded = true;
 
         var loginSuccess = function (response) {
           if (response.profile.email_verified) {
@@ -272,6 +267,7 @@ voicebasePortal.Decorators = (function (Decorators) {
           $location.path('/portal');
         };
 
+        auth0Api.signIn().then(loginSuccess, loginError);
       }
 
     };
@@ -380,7 +376,8 @@ voicebasePortal.Decorators = (function (Decorators) {
     var auth0Options = {
       icon:'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png',
       focusInput: false,
-      popup: true
+      popup: true,
+      closable: false
     };
 
     var createAuth0ApiKey = function (auth0Token) {
@@ -4143,10 +4140,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
 
   $templateCache.put('auth0/directives/auth0-login.tpl.html',
     "<div class=\"raml-console-main-login-form\">\n" +
-    "  <button type=\"button\" class=\"raml-console-login-submit raml-console-margin-top-input\" ng-click=\"auth0SignIn()\">\n" +
-    "    <span ng-show=\"!isLoaded\">Sign In</span>\n" +
-    "    <span ng-show=\"isLoaded\">Signing In...</span>\n" +
-    "  </button>\n" +
+    "  <css-spinner ng-if=\"isLoaded\"></css-spinner>\n" +
     "</div>\n"
   );
 

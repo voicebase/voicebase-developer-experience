@@ -7,12 +7,7 @@
       templateUrl: 'auth0/directives/auth0-login.tpl.html',
       replace: false,
       controller: function($scope, $location, store, auth, auth0Api, voicebaseTokensApi) {
-        $scope.isLoaded = false;
-
-        $scope.auth0SignIn = function () {
-          $scope.isLoaded = true;
-          auth0Api.signIn().then(loginSuccess, loginError);
-        };
+        $scope.isLoaded = true;
 
         var loginSuccess = function (response) {
           if (response.profile.email_verified) {
@@ -43,6 +38,7 @@
           $location.path('/portal');
         };
 
+        auth0Api.signIn().then(loginSuccess, loginError);
       }
 
     };

@@ -8,7 +8,8 @@
     var auth0Options = {
       icon:'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png',
       focusInput: false,
-      popup: true
+      popup: true,
+      closable: false
     };
 
     var createAuth0ApiKey = function (auth0Token) {

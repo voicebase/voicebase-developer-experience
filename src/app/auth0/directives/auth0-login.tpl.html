@@ -1,6 +1,3 @@
 <div class="raml-console-main-login-form">
-  <button type="button" class="raml-console-login-submit raml-console-margin-top-input" ng-click="auth0SignIn()">
-    <span ng-show="!isLoaded">Sign In</span>
-    <span ng-show="isLoaded">Signing In...</span>
-  </button>
+  <css-spinner ng-if="isLoaded"></css-spinner>
 </div>
