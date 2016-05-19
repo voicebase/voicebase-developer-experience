@@ -4434,7 +4434,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
     "        <h4><a href=\"\">API Key Management</a></h4>\n" +
-    "        Add, revoke, and manage keys used for API authorization to your account.\n" +
+    "        Generate keys used for API authorization to your account.\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
