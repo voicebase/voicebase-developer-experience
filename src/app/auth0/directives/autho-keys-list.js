@@ -24,8 +24,10 @@
           return voicebaseTokensApi.getCurrentToken();
         }, function (_tokenData) {
           me.isLogin = (_tokenData) ? true : false;
-          me.token = _tokenData.token;
-          getKeys();
+          if (me.isLogin) {
+            me.token = _tokenData.token;
+            getKeys();
+          }
         });
 
         var getKeys = function () {

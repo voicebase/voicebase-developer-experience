@@ -5,12 +5,23 @@
     var baseUrl = voicebaseUrl.getBaseUrl();
     var DOMAIN = 'voicebase.auth0.com';
     var CLIENT_ID = '1eQFoL41viLp5qK90AMme5tc5TjEpUeE';
-    var auth0Options = {
-      icon:'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png',
-      focusInput: false,
-      popup: true,
+    var AUTH0_OPTIONS = {
+      theme: {
+        logo: 'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png'
+      },
+      // autofocus: false,
+      auth: { redirect: false },
+      avatar: null,
+      additionalSignUpFields: [],
+      languageDictionary: {
+        signUp: {
+          terms: 'I accept the <a href="https://www.voicebase.com/terms-of-use/" target="_new">Terms of Service</a> and <a href="https://www.voicebase.com/privacy-policy/" target="_new">Privacy Policy</a>.'
+        }
+      },
+      mustAcceptTerms: true,
       closable: false
     };
+    var _canShowLock = true;
 
     var createAuth0ApiKey = function (auth0Token) {
       var deferred = $q.defer();
@@ -39,16 +50,24 @@
     var signIn = function () {
       var deferred = $q.defer();
 
-      var lock = new Auth0Lock(CLIENT_ID, DOMAIN);
-      lock.show(auth0Options, function (err, profile, token) {
+      var lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS, function (err, result) {
         if (err) {
           deferred.reject(err);
         }
-        else {
-          saveCredentials(profile, token);
-          deferred.resolve({profile: profile, token: token});
+        else if (result) {
+          const token = result.idToken;
+          lock.getProfile(token, function (error, profile) {
+            if (error) {
+              deferred.reject(error);
+            }
+            lock.hide();
+            saveCredentials(profile, token);
+            deferred.resolve({profile: profile, token: token});
+          });
         }
       });
+      lock.show();
+      _canShowLock = false;
 
       return deferred.promise;
     };
@@ -59,6 +78,7 @@
     };
 
     var signOut = function () {
+      _canShowLock = true;
       store.remove('voicebase-profile');
       store.remove('auth0Token');
     };
@@ -85,7 +105,17 @@
       return deferred.promise;
     };
 
+    var canShowLock = function () {
+      return _canShowLock === true;
+    };
+
+    var setCanShowLock = function (value) {
+      _canShowLock = value;
+    };
+
     return {
+      setCanShowLock: setCanShowLock,
+      canShowLock: canShowLock,
       createAuth0ApiKey: createAuth0ApiKey,
       getApiKeys: getApiKeys,
       signIn: signIn,

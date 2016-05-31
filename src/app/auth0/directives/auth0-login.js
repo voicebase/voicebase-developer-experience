@@ -15,6 +15,7 @@
           }
           else {
             $scope.isLoaded = false;
+            auth0Api.setCanShowLock(true);
             $location.path('/confirm');
           }
         };
@@ -38,7 +39,9 @@
           $location.path('/portal');
         };
 
-        auth0Api.signIn().then(loginSuccess, loginError);
+        if (auth0Api.canShowLock()) {
+          auth0Api.signIn().then(loginSuccess, loginError);
+        }
       }
 
     };
