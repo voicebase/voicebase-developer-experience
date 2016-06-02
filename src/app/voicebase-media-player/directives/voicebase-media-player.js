@@ -49,7 +49,8 @@
             actionFlag: {
               downloadMedia: false,
               downloadTranscript: false,
-              orderTranscript: false
+              orderTranscript: false,
+              share: false
             }
           });
         };
