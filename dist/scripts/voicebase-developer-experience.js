@@ -2665,7 +2665,8 @@ voicebasePortal.Decorators = (function (Decorators) {
             actionFlag: {
               downloadMedia: false,
               downloadTranscript: false,
-              orderTranscript: false
+              orderTranscript: false,
+              share: false
             }
           });
         };
@@ -4102,7 +4103,9 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "      <div class=\"drop-box-text\" ng-class=\"!keywordsSpottingCtrl.isEnableFileSelect ? 'drop-box-inner__disabled' : ''\">\n" +
     "        <div>\n" +
     "          <i class=\"drop-box-text__icon fa fa-2x fa-cloud-upload\"></i>\n" +
-    "          <div class=\"drop-box-text__label\">Drop file here to upload, or browse</div>\n" +
+    "          <div class=\"drop-box-text__label\">\n" +
+    "            Drop file here to upload, or <a href=\"#\" class=\"drop-box-text__link\">browse</a>\n" +
+    "          </div>\n" +
     "        </div>\n" +
     "      </div>\n" +
     "\n" +

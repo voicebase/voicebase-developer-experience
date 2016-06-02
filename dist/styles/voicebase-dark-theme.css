@@ -506,6 +506,9 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   padding: 7px;
   float: left;
 }
+.keywords-spotting .drop-box-text__link:hover {
+  text-decoration: underline !important;
+}
 .keywords-spotting .drop-box-text__file-header {
   text-align: right;
   font-weight: bold;
