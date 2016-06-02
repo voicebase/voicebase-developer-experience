@@ -328,6 +328,12 @@
     float: left;
   }
 
+  .drop-box-text__link {
+    &:hover {
+      text-decoration: underline !important;
+    }
+  }
+
   .drop-box-text__file-header {
     text-align: right;
     font-weight: bold;
