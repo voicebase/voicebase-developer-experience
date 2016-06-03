@@ -6,7 +6,7 @@
       restrict: 'E',
       templateUrl: 'auth0/directives/auth0-login.tpl.html',
       replace: false,
-      controller: function($scope, $location, store, auth, auth0Api, voicebaseTokensApi) {
+      controller: function($scope, $location, store, auth0Api, voicebaseTokensApi) {
         $scope.isLoaded = true;
 
         var loginSuccess = function (response) {

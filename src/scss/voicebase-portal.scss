@@ -665,3 +665,10 @@
 
 }
 
+.alternate-login-link {
+  color: #337ab7;
+
+  &:hover {
+    text-decoration: underline !important;
+  }
+}
