@@ -765,6 +765,13 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   content: 'Loading media..';
 }
 
+.alternate-login-link {
+  color: #337ab7;
+}
+.alternate-login-link:hover {
+  text-decoration: underline !important;
+}
+
 .raml-console-login-page-container {
   background: #242f3e;
   color: #6e7e95;

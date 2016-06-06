@@ -19,7 +19,6 @@
   ]);
 
   angular.module('voicebaseAuth0Module', [
-    'auth0',
     'angular-storage',
     'angular-jwt',
     'angular-clipboard'
@@ -69,6 +68,10 @@
 
     $routeProvider
       .when('/', {
+        templateUrl: 'pages/auth0LoginPage.html',
+        reloadOnSearch: false
+      })
+      .when('/login', {
         templateUrl: 'pages/loginPage.html',
         reloadOnSearch: false
       })
@@ -118,9 +121,14 @@
       })
       .otherwise({redirectTo: '/'});
 
-  });
-
-
+  })
+    .run(function ($rootScope, $location) {
+      $rootScope.$on("$locationChangeStart", function (event, next, current) {
+        if (next + '#/' === current) {
+          event.preventDefault();
+        }
+      });
+    });
 })();
 
 voicebasePortal.Decorators = (function (Decorators) {
@@ -155,6 +163,75 @@ voicebasePortal.Decorators = (function (Decorators) {
   return Decorators;
 
 })(voicebasePortal.Decorators || {});
+
+(function () {
+  'use strict';
+
+  var Auth0Injector = function(auth0Api) {
+    return {
+      restrict: 'E',
+      link: function() {
+
+        var findAuth0Mutation = function (mutations) {
+          var aut0Container = null;
+          for (var i = 0; i < mutations.length; i++) {
+            var mutation = mutations[i];
+            if (mutation.type === 'childList') {
+              var addedNodes = mutation.addedNodes;
+              for (var j = 0; j < addedNodes.length; j++) {
+                var node = addedNodes[j];
+                if (node.classList && node.classList.contains('auth0-lock-container')) {
+                  aut0Container = node;
+                  break;
+                }
+              }
+            }
+            if (aut0Container) {
+              break;
+            }
+          }
+          return aut0Container;
+        };
+
+        var runAuth0Injector = function () {
+          var observer = new MutationObserver(function(mutations, observer) {
+            console.log(mutations);
+            var aut0Container = findAuth0Mutation(mutations);
+            if(aut0Container) {
+              injectLoginLink(aut0Container);
+              observer.disconnect();
+            }
+          });
+
+          observer.observe(document, {
+            subtree: true,
+            childList: true,
+            attributes: false
+          });
+        };
+
+        var injectLoginLink = function (aut0Container) {
+          var link = '<div><a href="#login" class="alternate-login-link">Alternate API Key Log in</a></div>';
+
+          jQuery(aut0Container)
+            .find('.auth0-lock-badge-bottom')
+            .prepend(link);
+
+          jQuery('.auth0-lock-badge-bottom').off('click').on('click', function () {
+            auth0Api.hideLock();
+          });
+        };
+
+        runAuth0Injector();
+      }
+
+    };
+  };
+
+  angular.module('voicebaseAuth0Module')
+    .directive('auth0Injector', Auth0Injector);
+
+})();
 
 (function () {
   'use strict';
@@ -235,17 +312,24 @@ voicebasePortal.Decorators = (function (Decorators) {
       restrict: 'E',
       templateUrl: 'auth0/directives/auth0-login.tpl.html',
       replace: false,
-      controller: function($scope, $location, store, auth, auth0Api, voicebaseTokensApi) {
-        $scope.isLoaded = true;
+      controller: function($scope, $location, $timeout, store, auth0Api, voicebaseTokensApi) {
+        $scope.$on('auth0SignIn', function(e, credentials) {
+          if (credentials.token && credentials.profile) {
+            loginSuccess(credentials);
+          }
+          else if (credentials.error) {
+            loginError(credentials.error);
+          }
+        });
 
         var loginSuccess = function (response) {
           if (response.profile.email_verified) {
             getApiKey(response);
           }
           else {
-            $scope.isLoaded = false;
-            auth0Api.setCanShowLock(true);
-            $location.path('/confirm');
+            $timeout(function () {
+              $location.path('/confirm');
+            }, 100);
           }
         };
 
@@ -254,13 +338,11 @@ voicebasePortal.Decorators = (function (Decorators) {
             .then(function (voicebaseToken) {
               voicebaseTokensApi.setNeedRemember(true);
               voicebaseTokensApi.setToken(voicebaseToken);
-              $scope.isLoaded = false;
               loadPortal();
             }, loginError);
         };
 
         var loginError = function (error) {
-          $scope.isLoaded = false;
           console.log(error);
         };
 
@@ -268,9 +350,7 @@ voicebasePortal.Decorators = (function (Decorators) {
           $location.path('/portal');
         };
 
-        if (auth0Api.canShowLock()) {
-          auth0Api.signIn().then(loginSuccess, loginError);
-        }
+        auth0Api.signIn();
       }
 
     };
@@ -379,7 +459,7 @@ voicebasePortal.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var Auth0Api = function($http, $q, voicebaseUrl, store) {
+  var Auth0Api = function($rootScope, $http, $q, voicebaseUrl, store) {
     var baseUrl = voicebaseUrl.getBaseUrl();
     var DOMAIN = 'voicebase.auth0.com';
     var CLIENT_ID = '1eQFoL41viLp5qK90AMme5tc5TjEpUeE';
@@ -399,7 +479,8 @@ voicebasePortal.Decorators = (function (Decorators) {
       mustAcceptTerms: true,
       closable: false
     };
-    var _canShowLock = true;
+
+    var lock;
 
     var createAuth0ApiKey = function (auth0Token) {
       var deferred = $q.defer();
@@ -426,28 +507,31 @@ voicebasePortal.Decorators = (function (Decorators) {
     };
 
     var signIn = function () {
-      var deferred = $q.defer();
-
-      var lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS, function (err, result) {
+      lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS, function (err, result) {
         if (err) {
-          deferred.reject(err);
+          setCredentialsError(err);
         }
         else if (result) {
           const token = result.idToken;
           lock.getProfile(token, function (error, profile) {
             if (error) {
-              deferred.reject(error);
+              setCredentialsError(error);
             }
-            lock.hide();
+            hideLock();
             saveCredentials(profile, token);
-            deferred.resolve({profile: profile, token: token});
+            $rootScope.$broadcast('auth0SignIn', {profile: profile, token: token});
           });
         }
       });
       lock.show();
-      _canShowLock = false;
+    };
 
-      return deferred.promise;
+    var hideLock = function () {
+      lock.hide();
+    };
+
+    var setCredentialsError = function (error) {
+      $rootScope.$broadcast('auth0SignIn', {error: error});
     };
 
     var saveCredentials = function (profile, token) {
@@ -456,7 +540,6 @@ voicebasePortal.Decorators = (function (Decorators) {
     };
 
     var signOut = function () {
-      _canShowLock = true;
       store.remove('voicebase-profile');
       store.remove('auth0Token');
     };
@@ -483,20 +566,11 @@ voicebasePortal.Decorators = (function (Decorators) {
       return deferred.promise;
     };
 
-    var canShowLock = function () {
-      return _canShowLock === true;
-    };
-
-    var setCanShowLock = function (value) {
-      _canShowLock = value;
-    };
-
     return {
-      setCanShowLock: setCanShowLock,
-      canShowLock: canShowLock,
       createAuth0ApiKey: createAuth0ApiKey,
       getApiKeys: getApiKeys,
       signIn: signIn,
+      hideLock: hideLock,
       saveCredentials: saveCredentials,
       signOut: signOut
     };
@@ -4180,7 +4254,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
 
   $templateCache.put('auth0/directives/auth0-login.tpl.html',
     "<div class=\"raml-console-main-login-form\">\n" +
-    "  <css-spinner ng-if=\"isLoaded\"></css-spinner>\n" +
+    "  <css-spinner></css-spinner>\n" +
     "</div>\n"
   );
 

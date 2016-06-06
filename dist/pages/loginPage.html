@@ -1,18 +1,17 @@
 <section class="raml-console-login-page-container" ng-cloak ng-controller="loginPageCtrl">
   <header class="raml-console-login-header">
     <div class="raml-console-login-header-right">
-      <!--<div ng-include="'console/templates/skip-toolbar.tpl.html'"></div>-->
+      <div ng-include="'console/templates/skip-toolbar.tpl.html'"></div>
     </div>
   </header>
 
   <article class="raml-console-login-content">
     <div ng-include="'console/templates/landing-brand.tpl.html'"></div>
-    <auth0-login></auth0-login>
-    <!--<main-login></main-login>-->
-    <!--<div class="raml-console-login-label">-->
-      <!--<a href="#wait" class="raml-console-create-account-link">-->
-        <!--Create a Developer Account-->
-      <!--</a>-->
-    <!--</div>-->
+    <main-login></main-login>
+    <div class="raml-console-login-label">
+      <a href="#wait" class="raml-console-create-account-link">
+        Create a Developer Account
+      </a>
+    </div>
   </article>
 </section>
