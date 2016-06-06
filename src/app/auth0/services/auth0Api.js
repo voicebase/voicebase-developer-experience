@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var Auth0Api = function($http, $q, voicebaseUrl, store) {
+  var Auth0Api = function($rootScope, $http, $q, voicebaseUrl, store) {
     var baseUrl = voicebaseUrl.getBaseUrl();
     var DOMAIN = 'voicebase.auth0.com';
     var CLIENT_ID = '1eQFoL41viLp5qK90AMme5tc5TjEpUeE';
@@ -49,31 +49,31 @@
     };
 
     var signIn = function () {
-      var deferred = $q.defer();
-
       lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS, function (err, result) {
         if (err) {
-          deferred.reject(err);
+          setCredentialsError(err);
         }
         else if (result) {
           const token = result.idToken;
           lock.getProfile(token, function (error, profile) {
             if (error) {
-              deferred.reject(error);
+              setCredentialsError(error);
             }
             hideLock();
             saveCredentials(profile, token);
-            deferred.resolve({profile: profile, token: token});
+            $rootScope.$broadcast('auth0SignIn', {profile: profile, token: token});
           });
         }
       });
       lock.show();
-
-      return deferred.promise;
     };
 
     var hideLock = function () {
       lock.hide();
+    };
+
+    var setCredentialsError = function (error) {
+      $rootScope.$broadcast('auth0SignIn', {error: error});
     };
 
     var saveCredentials = function (profile, token) {

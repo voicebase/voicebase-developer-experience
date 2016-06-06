@@ -6,16 +6,24 @@
       restrict: 'E',
       templateUrl: 'auth0/directives/auth0-login.tpl.html',
       replace: false,
-      controller: function($scope, $location, store, auth0Api, voicebaseTokensApi) {
-        $scope.isLoaded = true;
+      controller: function($scope, $location, $timeout, store, auth0Api, voicebaseTokensApi) {
+        $scope.$on('auth0SignIn', function(e, credentials) {
+          if (credentials.token && credentials.profile) {
+            loginSuccess(credentials);
+          }
+          else if (credentials.error) {
+            loginError(credentials.error);
+          }
+        });
 
         var loginSuccess = function (response) {
           if (response.profile.email_verified) {
             getApiKey(response);
           }
           else {
-            $scope.isLoaded = false;
-            $location.path('/confirm');
+            $timeout(function () {
+              $location.path('/confirm');
+            }, 100);
           }
         };
 
@@ -24,13 +32,11 @@
             .then(function (voicebaseToken) {
               voicebaseTokensApi.setNeedRemember(true);
               voicebaseTokensApi.setToken(voicebaseToken);
-              $scope.isLoaded = false;
               loadPortal();
             }, loginError);
         };
 
         var loginError = function (error) {
-          $scope.isLoaded = false;
           console.log(error);
         };
 
@@ -38,7 +44,7 @@
           $location.path('/portal');
         };
 
-        auth0Api.signIn().then(loginSuccess, loginError);
+        auth0Api.signIn();
       }
 
     };
