@@ -12,7 +12,10 @@
       // autofocus: false,
       auth: { redirect: false },
       avatar: null,
-      additionalSignUpFields: [],
+      additionalSignUpFields: [{
+        name: "account",
+        placeholder: "Create an Account"
+      }],
       languageDictionary: {
         signUp: {
           terms: 'I accept the <a href="https://www.voicebase.com/terms-of-use/" target="_new">Terms of Service</a> and <a href="https://www.voicebase.com/privacy-policy/" target="_new">Privacy Policy</a>.'
