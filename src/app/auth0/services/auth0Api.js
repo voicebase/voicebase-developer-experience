@@ -21,7 +21,8 @@
       mustAcceptTerms: true,
       closable: false
     };
-    var _canShowLock = true;
+
+    var lock;
 
     var createAuth0ApiKey = function (auth0Token) {
       var deferred = $q.defer();
@@ -50,7 +51,7 @@
     var signIn = function () {
       var deferred = $q.defer();
 
-      var lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS, function (err, result) {
+      lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS, function (err, result) {
         if (err) {
           deferred.reject(err);
         }
@@ -60,16 +61,19 @@
             if (error) {
               deferred.reject(error);
             }
-            lock.hide();
+            hideLock();
             saveCredentials(profile, token);
             deferred.resolve({profile: profile, token: token});
           });
         }
       });
       lock.show();
-      _canShowLock = false;
 
       return deferred.promise;
+    };
+
+    var hideLock = function () {
+      lock.hide();
     };
 
     var saveCredentials = function (profile, token) {
@@ -78,7 +82,6 @@
     };
 
     var signOut = function () {
-      _canShowLock = true;
       store.remove('voicebase-profile');
       store.remove('auth0Token');
     };
@@ -105,20 +108,11 @@
       return deferred.promise;
     };
 
-    var canShowLock = function () {
-      return _canShowLock === true;
-    };
-
-    var setCanShowLock = function (value) {
-      _canShowLock = value;
-    };
-
     return {
-      setCanShowLock: setCanShowLock,
-      canShowLock: canShowLock,
       createAuth0ApiKey: createAuth0ApiKey,
       getApiKeys: getApiKeys,
       signIn: signIn,
+      hideLock: hideLock,
       saveCredentials: saveCredentials,
       signOut: signOut
     };

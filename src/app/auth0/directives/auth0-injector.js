@@ -45,16 +45,18 @@
         };
 
         var injectLoginLink = function (aut0Container) {
-          var link = '<div><a href="#portal" class="alternate-login-link">Alternate API Key Log in</a></div>';
+          var link = '<div><a href="#login" class="alternate-login-link">Alternate API Key Log in</a></div>';
 
           jQuery(aut0Container)
             .find('.auth0-lock-badge-bottom')
             .prepend(link);
+
+          jQuery('.auth0-lock-badge-bottom').off('click').on('click', function () {
+            auth0Api.hideLock();
+          });
         };
 
-        if (auth0Api.canShowLock()) {
-          runAuth0Injector();
-        }
+        runAuth0Injector();
       }
 
     };

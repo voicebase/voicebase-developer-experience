@@ -68,6 +68,10 @@
 
     $routeProvider
       .when('/', {
+        templateUrl: 'pages/auth0LoginPage.html',
+        reloadOnSearch: false
+      })
+      .when('/login', {
         templateUrl: 'pages/loginPage.html',
         reloadOnSearch: false
       })
@@ -117,7 +121,12 @@
       })
       .otherwise({redirectTo: '/'});
 
-  });
-
-
+  })
+    .run(function ($rootScope, $location) {
+      $rootScope.$on("$locationChangeStart", function (event, next, current) {
+        if (next + '#/' === current) {
+          event.preventDefault();
+        }
+      });
+    });
 })();
