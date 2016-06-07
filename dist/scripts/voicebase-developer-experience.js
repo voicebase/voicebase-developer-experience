@@ -123,7 +123,7 @@
 
   })
     .run(function ($rootScope, $location) {
-      $rootScope.$on("$locationChangeStart", function (event, next, current) {
+      $rootScope.$on('$locationChangeStart', function (event, next, current) {
         if (next + '#/' === current) {
           event.preventDefault();
         }
@@ -471,8 +471,8 @@ voicebasePortal.Decorators = (function (Decorators) {
       auth: { redirect: false },
       avatar: null,
       additionalSignUpFields: [{
-        name: "account",
-        placeholder: "Create an Account"
+        name: 'account',
+        placeholder: 'Create an Account'
       }],
       languageDictionary: {
         signUp: {

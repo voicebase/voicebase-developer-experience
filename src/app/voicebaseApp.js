@@ -123,7 +123,7 @@
 
   })
     .run(function ($rootScope, $location) {
-      $rootScope.$on("$locationChangeStart", function (event, next, current) {
+      $rootScope.$on('$locationChangeStart', function (event, next, current) {
         if (next + '#/' === current) {
           event.preventDefault();
         }

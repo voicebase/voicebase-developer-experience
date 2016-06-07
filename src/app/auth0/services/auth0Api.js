@@ -13,8 +13,8 @@
       auth: { redirect: false },
       avatar: null,
       additionalSignUpFields: [{
-        name: "account",
-        placeholder: "Create an Account"
+        name: 'account',
+        placeholder: 'Create an Account'
       }],
       languageDictionary: {
         signUp: {
