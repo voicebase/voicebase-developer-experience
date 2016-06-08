@@ -1,0 +1,94 @@
+<div class="vocabulary">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" ng-click="ctrl.toggleAccordionPane()">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" href="javascript:void(0)">
+          Custom Vocabulary
+        </a>
+        <div class="pull-right">
+          <i class="fa fa-caret-up" ng-if="!ctrl.isExpanded"></i>
+          <i class="fa fa-caret-down" ng-if="ctrl.isExpanded"></i>
+        </div>
+      </h4>
+    </div>
+    <div class="panel-collapse collapse" ng-class="{'in': !ctrl.isExpanded}" role="tabpanel">
+      <div class="panel-body">
+        <div class="panel-player-container">
+          <div class="alert alert-danger" role="alert" ng-if="ctrl.errorMessage">
+            <button type="button" class="close" ng-click="ctrl.errorMessage = ''"><span aria-hidden="true">&times;</span></button>
+            {{ ctrl.errorMessage }}
+          </div>
+
+          <div class="form-group">
+            <label>Add 1 ore more custom terms</label>
+            <ui-select multiple
+                       ng-model="ctrl.terms"
+                       tagging
+                       tagging-label=""
+                       tagging-tokens="ENTER|,"
+            >
+              <ui-select-match placeholder="Pick 1 ore more custom terms">{{ $item }}</ui-select-match>
+              <ui-select-choices repeat="term in ctrl.terms | filter:$select.search">
+                {{ term }}
+              </ui-select-choices>
+            </ui-select>
+          </div>
+
+          <div class="drop-box form-group"
+               ngf-drop
+               ngf-select
+               ng-model="ctrl.files"
+               ngf-drag-over-class="dragover"
+               ngf-allow-dir="false"
+               ngf-multiple="true"
+               ngf-accept="ctrl.validateFormat($file)"
+               ngf-change="ctrl.changeFiles($files, $event)"
+               ng-disabled="!ctrl.isEnableFileSelect"
+               ng-class="!ctrl.isEnableFileSelect ? 'drop-box__disabled' : ''"
+          >
+
+            <div class="drop-box-text" ng-class="!ctrl.isEnableFileSelect ? 'drop-box-inner__disabled' : ''">
+              <div>
+                <i class="drop-box-text__icon fa fa-2x fa-cloud-upload"></i>
+                <div class="drop-box-text__label">
+                  Drag and drop custom terms file or <a href="#" class="drop-box-text__link">click here to browse</a> (txt files only)
+                </div>
+              </div>
+            </div>
+
+            <div class="drop-box-all-preview" ng-class="!ctrl.isEnableFileSelect ? 'drop-box-inner__disabled' : ''">
+              <div class="drop-box-preview" ng-repeat="_file in ctrl.termsFiles">
+
+                <div class="drop-box-text__file-header drop-box-preview__cell">
+                  <span class="drop-box-text__file-name">{{ _file.name }}</span>
+                </div>
+
+                <div class="drop-box-text__file-buttons drop-box-preview__cell">
+                  <button type="button" class="close"
+                          data-toggle="tooltip" data-placement="top" title="Delete file"
+                          ng-click="ctrl.removeFile(_file, $event)"
+                          ng-if="ctrl.isEnableFileSelect">
+                    <i class="fa fa-times"></i>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="drop-box-text" ng-if="ctrl.termsFiles.length > 1 && ctrl.isEnableFileSelect">
+              <button type="button" class="btn btn-danger"
+                      ng-click="ctrl.removeAllFiles($event)">
+                Remove All Files
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+
+          </div>
+
+
+          test
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
