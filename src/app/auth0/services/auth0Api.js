@@ -14,11 +14,12 @@
       avatar: null,
       additionalSignUpFields: [{
         name: 'account',
-        placeholder: 'Create an Account'
+        placeholder: 'your account name'
       }],
       languageDictionary: {
+        title: 'DEVELOPER PORTAL',
         signUp: {
-          terms: 'I accept the <a href="https://www.voicebase.com/terms-of-use/" target="_new">Terms of Service</a> and <a href="https://www.voicebase.com/privacy-policy/" target="_new">Privacy Policy</a>.'
+          terms: 'I accept the <a href="https://www.voicebase.com/terms-of-use/" target="_new">Terms of Service</a>.'
         }
       },
       mustAcceptTerms: true,

@@ -211,13 +211,13 @@ voicebasePortal.Decorators = (function (Decorators) {
         };
 
         var injectLoginLink = function (aut0Container) {
-          var link = '<div><a href="#login" class="alternate-login-link">Alternate API Key Log in</a></div>';
+          var link = '<a href="#login" class="alternate-login-link">Alternate API Key Log in</a>';
 
           jQuery(aut0Container)
             .find('.auth0-lock-badge-bottom')
             .prepend(link);
 
-          jQuery('.auth0-lock-badge-bottom').off('click').on('click', function () {
+          jQuery('.auth0-lock-badge-bottom .alternate-login-link').off('click').on('click', function () {
             auth0Api.hideLock();
           });
         };
@@ -472,11 +472,12 @@ voicebasePortal.Decorators = (function (Decorators) {
       avatar: null,
       additionalSignUpFields: [{
         name: 'account',
-        placeholder: 'Create an Account'
+        placeholder: 'your account name'
       }],
       languageDictionary: {
+        title: 'DEVELOPER PORTAL',
         signUp: {
-          terms: 'I accept the <a href="https://www.voicebase.com/terms-of-use/" target="_new">Terms of Service</a> and <a href="https://www.voicebase.com/privacy-policy/" target="_new">Privacy Policy</a>.'
+          terms: 'I accept the <a href="https://www.voicebase.com/terms-of-use/" target="_new">Terms of Service</a>.'
         }
       },
       mustAcceptTerms: true,
@@ -4321,7 +4322,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "                 data-toggle=\"tooltip\" data-placement=\"right\" title=\"Voicebase only remembers the last 6 digits to help you with API key management.\">\n" +
     "              </i>\n" +
     "            </th>\n" +
-    "            <th ng-click=\"keyListCtrl.changeSortReverse()\">\n" +
+    "            <th ng-click=\"keyListCtrl.changeSortReverse()\" class=\"table-sort-header\">\n" +
     "              Date Generated\n" +
     "              <i ng-show=\"keyListCtrl.sortReverse\" class=\"fa fa-caret-down\"></i>\n" +
     "              <i ng-show=\"!keyListCtrl.sortReverse\" class=\"fa fa-caret-up\"></i>\n" +

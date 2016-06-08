@@ -665,6 +665,7 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 .auth0-key-generator .keys-list-container {
   max-height: 300px;
   overflow: auto;
+  cursor: inherit;
 }
 .auth0-key-manager .tooltip-icon,
 .auth0-key-generator .tooltip-icon {
@@ -675,6 +676,10 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 .auth0-key-generator .raml-console-spinner {
   margin: 35px auto;
   height: 35px;
+}
+.auth0-key-manager .table-sort-header,
+.auth0-key-generator .table-sort-header {
+  cursor: pointer;
 }
 
 .auth0-key-manager .raml-console-spinner {
@@ -770,6 +775,14 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 }
 .alternate-login-link:hover {
   text-decoration: underline !important;
+}
+
+.auth0-lock-badge {
+  display: none !important;
+}
+
+.auth0-lock-overlay {
+  background: none !important;
 }
 
 .raml-console-login-page-container {

@@ -45,13 +45,13 @@
         };
 
         var injectLoginLink = function (aut0Container) {
-          var link = '<div><a href="#login" class="alternate-login-link">Alternate API Key Log in</a></div>';
+          var link = '<a href="#login" class="alternate-login-link">Alternate API Key Log in</a>';
 
           jQuery(aut0Container)
             .find('.auth0-lock-badge-bottom')
             .prepend(link);
 
-          jQuery('.auth0-lock-badge-bottom').off('click').on('click', function () {
+          jQuery('.auth0-lock-badge-bottom .alternate-login-link').off('click').on('click', function () {
             auth0Api.hideLock();
           });
         };
