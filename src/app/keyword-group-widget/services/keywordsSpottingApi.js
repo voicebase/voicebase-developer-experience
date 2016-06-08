@@ -13,7 +13,7 @@
       return uploadedState;
     };
 
-    var postMedia = function (token, file, groups, models) {
+    var postMedia = function (token, file, groups, models, vocabulary) {
       var deferred = $q.defer();
 
       var data = new FormData();
@@ -46,7 +46,20 @@
         jobConf = { }; // prediction not yet support on v2 executor
       }
 
-      var sumConf = jQuery.extend(jobConf, groupsConf, predictionsConf);
+      var transcriptConf = {
+        transcripts: {
+          formatNumbers: true
+        }
+      };
+      if (vocabulary && (vocabulary.terms.length > 0/* || vocabulary.termsFiles.length > 0*/)) {
+        jQuery.extend(transcriptConf.transcripts, {
+          vocabularies: [{
+            terms: vocabulary.terms
+          }]
+        });
+      }
+
+      var sumConf = jQuery.extend(jobConf, groupsConf, predictionsConf, transcriptConf);
 
       var conf = {
         configuration: sumConf

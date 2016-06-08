@@ -1495,6 +1495,84 @@ voicebasePortal.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
+  var customVocabulary = function () {
+    return {
+      restrict: 'E',
+      templateUrl: 'keyword-group-widget/directives/custom-vocabulary.tpl.html',
+      replace: true,
+      scope: {
+        vocabulary: '='
+      },
+      controllerAs: 'ctrl',
+      controller: function($scope) {
+        var me = this;
+
+        $scope.vocabulary = {
+          terms: [],
+          termsFiles: [],
+          isExpanded: false
+        };
+        
+        me.files = [];
+        me.acceptFileFormats = ['.txt'];
+        me.isEnableFileSelect = true;
+
+        me.toggleAccordionPane = function () {
+          $scope.vocabulary.isExpanded = !$scope.vocabulary.isExpanded;
+        };
+
+        me.validateFormat = function (file) {
+          if(Object.prototype.toString.call(file) === '[object File]') {
+            var format = file.name.substring(file.name.lastIndexOf('.'));
+            var isFileAllow = me.acceptFileFormats.filter(function (_format) {
+              return _format === format;
+            });
+            if(isFileAllow.length === 0) {
+              me.errorMessage = 'Media in ' + format + ' format is not yet supported. Please try uploading media in one of these formats: \n' + me.acceptFileFormats.join(', ');
+            }
+            else {
+              me.errorMessage = '';
+            }
+          }
+          return me.acceptFileFormats.join(',');
+        };
+
+        me.changeFiles = function (files) {
+          if(files.length > 0) {
+            files.forEach(function (_file) {
+              $scope.vocabulary.termsFiles.push(_file);
+            });
+          }
+        };
+
+        me.removeFile = function (file, event) {
+          event.preventDefault();
+          event.stopPropagation();
+          $scope.vocabulary.termsFiles = $scope.vocabulary.termsFiles.filter(function (uploadFile) {
+            return uploadFile.$$hashKey !== file.$$hashKey;
+          });
+        };
+
+        me.removeAllFiles = function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          $scope.vocabulary.termsFiles = [];
+          me.files = [];
+        };
+
+
+      }
+    };
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .directive('customVocabulary', customVocabulary);
+
+})();
+
+(function () {
+  'use strict';
+
   var focusForm = function () {
     return {
       restrict: 'A',
@@ -1770,6 +1848,8 @@ voicebasePortal.Decorators = (function (Decorators) {
 
         me.uploadFiles = [];
 
+        me.vocabulary = {};
+        
         if($scope.token) {
           voicebaseTokensApi.setToken($scope.token);
         }
@@ -1894,7 +1974,12 @@ voicebasePortal.Decorators = (function (Decorators) {
 
         var postMedia = function (file) {
           me.errorMessage = '';
-          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups, me.runModels)
+          var vocabulary = null;
+          if (me.vocabulary.isExpanded) {
+            vocabulary = me.vocabulary;
+          }
+          
+          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups, me.runModels, vocabulary)
             .then(function (mediaStatus) {
               me.isLoaded = false;
               if (mediaStatus.mediaId) {
@@ -2061,6 +2146,20 @@ voicebasePortal.Decorators = (function (Decorators) {
 
 })();
 
+(function () {
+  'use strict';
+
+  angular.module('vbsKeywordGroupWidget')
+    .directive('hideChoices', function() {
+      return {
+        link: function(scope, element) {
+          element.find('.ui-select-choices').hide();
+        }
+      };
+    });
+
+})();
+
 (function() {
   'use strict';
 
@@ -2182,7 +2281,7 @@ voicebasePortal.Decorators = (function (Decorators) {
       return uploadedState;
     };
 
-    var postMedia = function (token, file, groups, models) {
+    var postMedia = function (token, file, groups, models, vocabulary) {
       var deferred = $q.defer();
 
       var data = new FormData();
@@ -2215,7 +2314,20 @@ voicebasePortal.Decorators = (function (Decorators) {
         jobConf = { }; // prediction not yet support on v2 executor
       }
 
-      var sumConf = jQuery.extend(jobConf, groupsConf, predictionsConf);
+      var transcriptConf = {
+        transcripts: {
+          formatNumbers: true
+        }
+      };
+      if (vocabulary && (vocabulary.terms.length > 0/* || vocabulary.termsFiles.length > 0*/)) {
+        jQuery.extend(transcriptConf.transcripts, {
+          vocabularies: [{
+            terms: vocabulary.terms
+          }]
+        });
+      }
+
+      var sumConf = jQuery.extend(jobConf, groupsConf, predictionsConf, transcriptConf);
 
       var conf = {
         configuration: sumConf
@@ -3942,6 +4054,103 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
   );
 
 
+  $templateCache.put('keyword-group-widget/directives/custom-vocabulary.tpl.html',
+    "<div class=\"vocabulary\">\n" +
+    "  <div class=\"panel panel-default\">\n" +
+    "    <div class=\"panel-heading\" role=\"tab\" ng-click=\"ctrl.toggleAccordionPane()\">\n" +
+    "      <h4 class=\"panel-title\">\n" +
+    "        <a role=\"button\" data-toggle=\"collapse\" href=\"javascript:void(0)\">\n" +
+    "          Custom Vocabulary\n" +
+    "        </a>\n" +
+    "        <div class=\"pull-right\">\n" +
+    "          <i class=\"fa fa-caret-up\" ng-if=\"!vocabulary.isExpanded\"></i>\n" +
+    "          <i class=\"fa fa-caret-down\" ng-if=\"vocabulary.isExpanded\"></i>\n" +
+    "        </div>\n" +
+    "      </h4>\n" +
+    "    </div>\n" +
+    "    <div class=\"panel-collapse collapse\" ng-class=\"{'in': vocabulary.isExpanded}\" role=\"tabpanel\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <div class=\"panel-player-container\">\n" +
+    "          <div class=\"alert alert-danger\" role=\"alert\" ng-if=\"ctrl.errorMessage\">\n" +
+    "            <button type=\"button\" class=\"close\" ng-click=\"ctrl.errorMessage = ''\"><span aria-hidden=\"true\">&times;</span></button>\n" +
+    "            {{ ctrl.errorMessage }}\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"form-group\">\n" +
+    "            <label>Add 1 ore more custom terms</label>\n" +
+    "            <ui-select multiple\n" +
+    "                       ng-model=\"vocabulary.terms\"\n" +
+    "                       tagging\n" +
+    "                       tagging-label=\"\"\n" +
+    "                       tagging-tokens=\"ENTER|,\"\n" +
+    "                       hide-choices\n" +
+    "            >\n" +
+    "              <ui-select-match placeholder=\"Pick 1 ore more custom terms\">{{ $item }}</ui-select-match>\n" +
+    "              <ui-select-choices repeat=\"term in vocabulary.terms | filter:$select.search\">\n" +
+    "                {{ term }}\n" +
+    "              </ui-select-choices>\n" +
+    "            </ui-select>\n" +
+    "          </div>\n" +
+    "\n" +
+    "          <div class=\"drop-box form-group\"\n" +
+    "               ngf-drop\n" +
+    "               ngf-select\n" +
+    "               ng-model=\"ctrl.files\"\n" +
+    "               ngf-drag-over-class=\"dragover\"\n" +
+    "               ngf-allow-dir=\"false\"\n" +
+    "               ngf-multiple=\"true\"\n" +
+    "               ngf-accept=\"ctrl.validateFormat($file)\"\n" +
+    "               ngf-change=\"ctrl.changeFiles($files, $event)\"\n" +
+    "               ng-disabled=\"!ctrl.isEnableFileSelect\"\n" +
+    "               ng-class=\"!ctrl.isEnableFileSelect ? 'drop-box__disabled' : ''\"\n" +
+    "          >\n" +
+    "\n" +
+    "            <div class=\"drop-box-text\" ng-class=\"!ctrl.isEnableFileSelect ? 'drop-box-inner__disabled' : ''\">\n" +
+    "              <div>\n" +
+    "                <i class=\"drop-box-text__icon fa fa-2x fa-cloud-upload\"></i>\n" +
+    "                <div class=\"drop-box-text__label\">\n" +
+    "                  Drag and drop custom terms file or <a href=\"#\" class=\"drop-box-text__link\">click here to browse</a> (txt files only)\n" +
+    "                </div>\n" +
+    "              </div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <div class=\"drop-box-all-preview\" ng-class=\"!ctrl.isEnableFileSelect ? 'drop-box-inner__disabled' : ''\">\n" +
+    "              <div class=\"drop-box-preview\" ng-repeat=\"_file in vocabulary.termsFiles\">\n" +
+    "\n" +
+    "                <div class=\"drop-box-text__file-header drop-box-preview__cell\">\n" +
+    "                  <span class=\"drop-box-text__file-name\">{{ _file.name }}</span>\n" +
+    "                </div>\n" +
+    "\n" +
+    "                <div class=\"drop-box-text__file-buttons drop-box-preview__cell\">\n" +
+    "                  <button type=\"button\" class=\"close\"\n" +
+    "                          data-toggle=\"tooltip\" data-placement=\"top\" title=\"Delete file\"\n" +
+    "                          ng-click=\"ctrl.removeFile(_file, $event)\"\n" +
+    "                          ng-if=\"ctrl.isEnableFileSelect\">\n" +
+    "                    <i class=\"fa fa-times\"></i>\n" +
+    "                  </button>\n" +
+    "                </div>\n" +
+    "\n" +
+    "              </div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <div class=\"drop-box-text\" ng-if=\"vocabulary.termsFiles.length > 1 && ctrl.isEnableFileSelect\">\n" +
+    "              <button type=\"button\" class=\"btn btn-danger\"\n" +
+    "                      ng-click=\"ctrl.removeAllFiles($event)\">\n" +
+    "                Remove All Files\n" +
+    "                <i class=\"fa fa-times\"></i>\n" +
+    "              </button>\n" +
+    "            </div>\n" +
+    "\n" +
+    "          </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "</div>\n"
+  );
+
+
   $templateCache.put('keyword-group-widget/directives/keyword-group-form.tpl.html',
     "<div>\n" +
     "  <div class=\"form-group\">\n" +
@@ -4203,6 +4412,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "      <css-spinner></css-spinner>\n" +
     "    </div>\n" +
     "\n" +
+    "    <custom-vocabulary vocabulary=\"keywordsSpottingCtrl.vocabulary\"></custom-vocabulary>\n" +
     "\n" +
     "    <div ng-if=\"!keywordsSpottingCtrl.isLoaded && !keywordsSpottingCtrl.pingProcess\" class=\"form-group\">\n" +
     "      <button type=\"button\" class=\"btn btn-success\" ng-click=\"keywordsSpottingCtrl.upload()\">Upload</button>\n" +

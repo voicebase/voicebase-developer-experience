@@ -6,12 +6,12 @@
           Custom Vocabulary
         </a>
         <div class="pull-right">
-          <i class="fa fa-caret-up" ng-if="!ctrl.isExpanded"></i>
-          <i class="fa fa-caret-down" ng-if="ctrl.isExpanded"></i>
+          <i class="fa fa-caret-up" ng-if="!vocabulary.isExpanded"></i>
+          <i class="fa fa-caret-down" ng-if="vocabulary.isExpanded"></i>
         </div>
       </h4>
     </div>
-    <div class="panel-collapse collapse" ng-class="{'in': !ctrl.isExpanded}" role="tabpanel">
+    <div class="panel-collapse collapse" ng-class="{'in': vocabulary.isExpanded}" role="tabpanel">
       <div class="panel-body">
         <div class="panel-player-container">
           <div class="alert alert-danger" role="alert" ng-if="ctrl.errorMessage">
@@ -22,13 +22,14 @@
           <div class="form-group">
             <label>Add 1 ore more custom terms</label>
             <ui-select multiple
-                       ng-model="ctrl.terms"
+                       ng-model="vocabulary.terms"
                        tagging
                        tagging-label=""
                        tagging-tokens="ENTER|,"
+                       hide-choices
             >
               <ui-select-match placeholder="Pick 1 ore more custom terms">{{ $item }}</ui-select-match>
-              <ui-select-choices repeat="term in ctrl.terms | filter:$select.search">
+              <ui-select-choices repeat="term in vocabulary.terms | filter:$select.search">
                 {{ term }}
               </ui-select-choices>
             </ui-select>
@@ -57,7 +58,7 @@
             </div>
 
             <div class="drop-box-all-preview" ng-class="!ctrl.isEnableFileSelect ? 'drop-box-inner__disabled' : ''">
-              <div class="drop-box-preview" ng-repeat="_file in ctrl.termsFiles">
+              <div class="drop-box-preview" ng-repeat="_file in vocabulary.termsFiles">
 
                 <div class="drop-box-text__file-header drop-box-preview__cell">
                   <span class="drop-box-text__file-name">{{ _file.name }}</span>
@@ -75,7 +76,7 @@
               </div>
             </div>
 
-            <div class="drop-box-text" ng-if="ctrl.termsFiles.length > 1 && ctrl.isEnableFileSelect">
+            <div class="drop-box-text" ng-if="vocabulary.termsFiles.length > 1 && ctrl.isEnableFileSelect">
               <button type="button" class="btn btn-danger"
                       ng-click="ctrl.removeAllFiles($event)">
                 Remove All Files
@@ -85,8 +86,6 @@
 
           </div>
 
-
-          test
         </div>
       </div>
     </div>

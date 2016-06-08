@@ -32,6 +32,8 @@
 
         me.uploadFiles = [];
 
+        me.vocabulary = {};
+        
         if($scope.token) {
           voicebaseTokensApi.setToken($scope.token);
         }
@@ -156,7 +158,12 @@
 
         var postMedia = function (file) {
           me.errorMessage = '';
-          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups, me.runModels)
+          var vocabulary = null;
+          if (me.vocabulary.isExpanded) {
+            vocabulary = me.vocabulary;
+          }
+          
+          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups, me.runModels, vocabulary)
             .then(function (mediaStatus) {
               me.isLoaded = false;
               if (mediaStatus.mediaId) {

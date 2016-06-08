@@ -7,21 +7,24 @@
       templateUrl: 'keyword-group-widget/directives/custom-vocabulary.tpl.html',
       replace: true,
       scope: {
+        vocabulary: '='
       },
       controllerAs: 'ctrl',
-      controller: function($scope, $vocabulary) {
+      controller: function($scope) {
         var me = this;
 
-        me.terms = [];
+        $scope.vocabulary = {
+          terms: [],
+          termsFiles: [],
+          isExpanded: false
+        };
+        
         me.files = [];
-        me.termsFiles = [];
         me.acceptFileFormats = ['.txt'];
         me.isEnableFileSelect = true;
 
-
-        me.isExpanded = false;
         me.toggleAccordionPane = function () {
-          me.isExpanded = !me.isExpanded;
+          $scope.vocabulary.isExpanded = !$scope.vocabulary.isExpanded;
         };
 
         me.validateFormat = function (file) {
@@ -43,7 +46,7 @@
         me.changeFiles = function (files) {
           if(files.length > 0) {
             files.forEach(function (_file) {
-              me.termsFiles.push(_file);
+              $scope.vocabulary.termsFiles.push(_file);
             });
           }
         };
@@ -51,7 +54,7 @@
         me.removeFile = function (file, event) {
           event.preventDefault();
           event.stopPropagation();
-          me.termsFiles = me.termsFiles.filter(function (uploadFile) {
+          $scope.vocabulary.termsFiles = $scope.vocabulary.termsFiles.filter(function (uploadFile) {
             return uploadFile.$$hashKey !== file.$$hashKey;
           });
         };
@@ -59,7 +62,7 @@
         me.removeAllFiles = function (event) {
           event.preventDefault();
           event.stopPropagation();
-          me.termsFiles = [];
+          $scope.vocabulary.termsFiles = [];
           me.files = [];
         };
 
