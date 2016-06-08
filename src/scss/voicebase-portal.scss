@@ -536,6 +536,7 @@
   .keys-list-container {
     max-height: 300px;
     overflow: auto;
+    cursor: inherit;
   }
 
   .tooltip-icon {
@@ -546,6 +547,10 @@
   .raml-console-spinner {
     margin: 35px auto;
     height: 35px;
+  }
+
+  .table-sort-header {
+    cursor: pointer;
   }
 }
 
