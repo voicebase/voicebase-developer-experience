@@ -1826,7 +1826,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         token: '='
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, predictionModelApi, voicebasePlayerService, ModalService, jobApi) {
+      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, predictionModelApi, voicebasePlayerService, ModalService, jobApi, $vocabulary) {
         var me = this;
 
         var tokenData;
@@ -1974,22 +1974,19 @@ voicebasePortal.Decorators = (function (Decorators) {
 
         var postMedia = function (file) {
           me.errorMessage = '';
-          var vocabulary = null;
-          if (me.vocabulary.isExpanded) {
-            vocabulary = me.vocabulary;
-          }
-          
-          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups, me.runModels, vocabulary)
-            .then(function (mediaStatus) {
-              me.isLoaded = false;
-              if (mediaStatus.mediaId) {
-                me.checkMediaFinish(mediaStatus.mediaId, file);
-              }
-            }, function () {
-              me.isLoaded = false;
-              me.errorMessage = 'Can\'t upload media file!';
+          $vocabulary.parseVocabulary(me.vocabulary)
+            .then(function (vocabulary) {
+              keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups, me.runModels, vocabulary)
+                .then(function (mediaStatus) {
+                  me.isLoaded = false;
+                  if (mediaStatus.mediaId) {
+                    me.checkMediaFinish(mediaStatus.mediaId, file);
+                  }
+                }, function () {
+                  me.isLoaded = false;
+                  me.errorMessage = 'Can\'t upload media file!';
+                });
             });
-
         };
 
         me.checkMediaFinish = function (mediaId, file) {
@@ -2319,10 +2316,10 @@ voicebasePortal.Decorators = (function (Decorators) {
           formatNumbers: true
         }
       };
-      if (vocabulary && (vocabulary.terms.length > 0/* || vocabulary.termsFiles.length > 0*/)) {
+      if (vocabulary && vocabulary.length > 0) {
         jQuery.extend(transcriptConf.transcripts, {
           vocabularies: [{
-            terms: vocabulary.terms
+            terms: vocabulary
           }]
         });
       }
@@ -2480,6 +2477,74 @@ voicebasePortal.Decorators = (function (Decorators) {
 
   angular.module('vbsKeywordGroupWidget')
     .service('predictionModelApi', predictionModelApi);
+
+})();
+
+(function () {
+  'use strict';
+
+  var vocabularyService = function ($q) {
+
+    var files = {};
+
+    var parseVocabularyText = function (file) {
+      var deferred = $q.defer();
+
+      var reader = new FileReader();
+      reader.onload = function(){
+        var parsedResult = [];
+        var lines = reader.result.split('\n');
+        lines.forEach(function (line) {
+          line = line.trim();
+          if (line) {
+            parsedResult.push(line);
+          }
+        });
+
+        files[file.$$hashKey] = [].concat(parsedResult);
+
+        deferred.resolve(reader.result);
+      };
+      reader.readAsText(file);
+
+      return deferred.promise;
+    };
+
+    var parseVocabulary = function (vocabulary) {
+      var deferred = $q.defer();
+
+      setTimeout(function () {
+        if (!vocabulary.isExpanded) {
+          deferred.resolve(null);
+        }
+        else {
+          var promises = [];
+          vocabulary.termsFiles.forEach(function (file) {
+            var _promise = parseVocabularyText(file);
+            promises.push(_promise);
+          });
+          $q.all(promises).then(function () {
+            var terms = [].concat(vocabulary.terms);+
+            Object.keys(files).forEach(function (key) {
+              var parsedFile = files[key];
+              terms = terms.concat(parsedFile);
+            });
+            deferred.resolve(terms);
+          });
+        }
+      }, 0);
+
+      return deferred.promise;
+    };
+
+
+    return {
+      parseVocabulary: parseVocabulary
+    };
+  };
+
+  angular.module('vbsKeywordGroupWidget')
+    .service('$vocabulary', vocabularyService);
 
 })();
 

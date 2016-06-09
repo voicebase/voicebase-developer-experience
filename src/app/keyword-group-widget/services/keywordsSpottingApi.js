@@ -51,10 +51,10 @@
           formatNumbers: true
         }
       };
-      if (vocabulary && (vocabulary.terms.length > 0/* || vocabulary.termsFiles.length > 0*/)) {
+      if (vocabulary && vocabulary.length > 0) {
         jQuery.extend(transcriptConf.transcripts, {
           vocabularies: [{
-            terms: vocabulary.terms
+            terms: vocabulary
           }]
         });
       }

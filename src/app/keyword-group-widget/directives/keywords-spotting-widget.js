@@ -10,7 +10,7 @@
         token: '='
       },
       controllerAs: 'keywordsSpottingCtrl',
-      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, predictionModelApi, voicebasePlayerService, ModalService, jobApi) {
+      controller: function($scope, $interval, $timeout, $compile, voicebaseTokensApi, formValidate, keywordsSpottingApi, keywordGroupApi, predictionModelApi, voicebasePlayerService, ModalService, jobApi, $vocabulary) {
         var me = this;
 
         var tokenData;
@@ -158,22 +158,19 @@
 
         var postMedia = function (file) {
           me.errorMessage = '';
-          var vocabulary = null;
-          if (me.vocabulary.isExpanded) {
-            vocabulary = me.vocabulary;
-          }
-          
-          keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups, me.runModels, vocabulary)
-            .then(function (mediaStatus) {
-              me.isLoaded = false;
-              if (mediaStatus.mediaId) {
-                me.checkMediaFinish(mediaStatus.mediaId, file);
-              }
-            }, function () {
-              me.isLoaded = false;
-              me.errorMessage = 'Can\'t upload media file!';
+          $vocabulary.parseVocabulary(me.vocabulary)
+            .then(function (vocabulary) {
+              keywordsSpottingApi.postMedia(tokenData.token, file, me.detectGroups, me.runModels, vocabulary)
+                .then(function (mediaStatus) {
+                  me.isLoaded = false;
+                  if (mediaStatus.mediaId) {
+                    me.checkMediaFinish(mediaStatus.mediaId, file);
+                  }
+                }, function () {
+                  me.isLoaded = false;
+                  me.errorMessage = 'Can\'t upload media file!';
+                });
             });
-
         };
 
         me.checkMediaFinish = function (mediaId, file) {
