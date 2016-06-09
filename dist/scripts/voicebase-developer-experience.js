@@ -211,7 +211,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         };
 
         var injectLoginLink = function (aut0Container) {
-          var link = '<a href="#login" class="alternate-login-link">Alternate API Key Log in</a>';
+          var link = '<a href="#login" class="alternate-login-link">Alternate API Key Log In</a>';
 
           jQuery(aut0Container)
             .find('.auth0-lock-badge-bottom')
