@@ -4142,7 +4142,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "          </div>\n" +
     "\n" +
     "          <div class=\"form-group\">\n" +
-    "            <label>Add 1 ore more custom terms</label>\n" +
+    "            <label>Add 1 or more custom terms</label>\n" +
     "            <ui-select multiple\n" +
     "                       ng-model=\"vocabulary.terms\"\n" +
     "                       tagging\n" +
@@ -4150,7 +4150,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "                       tagging-tokens=\"ENTER|,\"\n" +
     "                       hide-choices\n" +
     "            >\n" +
-    "              <ui-select-match placeholder=\"Pick 1 ore more custom terms\">{{ $item }}</ui-select-match>\n" +
+    "              <ui-select-match placeholder=\"Pick 1 or more custom terms\">{{ $item }}</ui-select-match>\n" +
     "              <ui-select-choices repeat=\"term in vocabulary.terms | filter:$select.search\">\n" +
     "                {{ term }}\n" +
     "              </ui-select-choices>\n" +

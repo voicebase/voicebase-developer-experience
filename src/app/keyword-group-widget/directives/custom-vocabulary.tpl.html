@@ -20,7 +20,7 @@
           </div>
 
           <div class="form-group">
-            <label>Add 1 ore more custom terms</label>
+            <label>Add 1 or more custom terms</label>
             <ui-select multiple
                        ng-model="vocabulary.terms"
                        tagging
@@ -28,7 +28,7 @@
                        tagging-tokens="ENTER|,"
                        hide-choices
             >
-              <ui-select-match placeholder="Pick 1 ore more custom terms">{{ $item }}</ui-select-match>
+              <ui-select-match placeholder="Pick 1 or more custom terms">{{ $item }}</ui-select-match>
               <ui-select-choices repeat="term in vocabulary.terms | filter:$select.search">
                 {{ term }}
               </ui-select-choices>
