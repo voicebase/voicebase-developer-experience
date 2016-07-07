@@ -2313,7 +2313,7 @@ voicebasePortal.Decorators = (function (Decorators) {
 
       var transcriptConf = {
         transcripts: {
-          formatNumbers: true
+          // formatNumbers: true
         }
       };
       if (vocabulary && vocabulary.length > 0) {
