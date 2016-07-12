@@ -10,8 +10,8 @@
         logo: 'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png'
       },
       prefill: {
-        email: 'someone@foobar.com',
-        username: 'someone and you know who you are'
+        email: 'someone@yourcompany.com',
+        username: 'your user name'
       },
       // autofocus: false,
       auth: {
