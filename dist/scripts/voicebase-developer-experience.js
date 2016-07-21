@@ -119,15 +119,20 @@
         templateUrl: 'pages/confirmEmailPage.html',
         reloadOnSearch: false
       })
+      .when('/approve', {
+        templateUrl: 'pages/approvalPage.html',
+        reloadOnSearch: false
+      })
       .otherwise({redirectTo: '/'});
 
   })
-    .run(function ($rootScope, $location) {
+    .run(function ($rootScope, $location, ajaxError) {
       $rootScope.$on('$locationChangeStart', function (event, next, current) {
         if (next + '#/' === current) {
           event.preventDefault();
         }
       });
+      ajaxError.handleError();
     });
 })();
 
@@ -1198,6 +1203,33 @@ voicebasePortal.Decorators = (function (Decorators) {
     }
   ]);
 
+})();
+
+
+(function () {
+  'use strict';
+
+  var ajaxError = function($location) {
+
+    var handleError = function () {
+      jQuery(document).ajaxError(function( event, jqxhr, settings, thrownError ) {
+        if (jqxhr.status === 403) {
+          $location.path('/approve');
+        }
+        else if (jqxhr.status === 401) {
+          $location.path('/login');
+        }
+      });
+    };
+
+    return {
+      handleError: handleError
+    };
+
+  };
+
+  angular.module('ramlVoicebaseConsoleApp')
+    .service('ajaxError', ajaxError);
 })();
 
 

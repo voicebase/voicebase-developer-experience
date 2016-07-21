@@ -119,14 +119,19 @@
         templateUrl: 'pages/confirmEmailPage.html',
         reloadOnSearch: false
       })
+      .when('/approve', {
+        templateUrl: 'pages/approvalPage.html',
+        reloadOnSearch: false
+      })
       .otherwise({redirectTo: '/'});
 
   })
-    .run(function ($rootScope, $location) {
+    .run(function ($rootScope, $location, ajaxError) {
       $rootScope.$on('$locationChangeStart', function (event, next, current) {
         if (next + '#/' === current) {
           event.preventDefault();
         }
       });
+      ajaxError.handleError();
     });
 })();

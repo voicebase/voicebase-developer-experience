@@ -1,0 +1,19 @@
+<section class="raml-console-login-page-container" ng-cloak ng-controller="loginPageCtrl">
+  <header class="raml-console-login-header">
+    <div class="raml-console-login-header-left">
+      <a href="#portal" class="raml-console-login-header__logo">
+        <img alt="VoiceBase Developer Portal" src="img/logo-portal.png">
+      </a>
+    </div>
+    <div class="raml-console-login-header-right">
+      <div ng-include="'console/templates/skip-toolbar.tpl.html'"></div>
+    </div>
+  </header>
+
+  <article class="raml-console-login-content raml-console-approve-email-container">
+    <div ng-include="'console/templates/landing-brand.tpl.html'"></div>
+    <h1>Access Pending Approval</h1>
+    <p class="raml-console-description raml-console-description--big">Your request to access the VoiceBase Developer Portal is under evaluation. Accounts will be notified by email once they have been approved.</p>
+    <p class="raml-console-description">Questions about account status may be sent to support@voicebase.com</p>
+  </article>
+</section>
