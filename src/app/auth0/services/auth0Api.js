@@ -9,8 +9,17 @@
       theme: {
         logo: 'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png'
       },
+      prefill: {
+        email: 'someone@yourcompany.com',
+        username: 'your user name'
+      },
       // autofocus: false,
-      auth: { redirect: false },
+      auth: {
+          redirect: false,
+          params: {
+            scope: 'openid app_metadata'
+          }
+      },
       avatar: null,
       additionalSignUpFields: [{
         name: 'account',
@@ -54,6 +63,7 @@
 
     var signIn = function () {
       lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS, function (err, result) {
+
         if (err) {
           setCredentialsError(err);
         }
