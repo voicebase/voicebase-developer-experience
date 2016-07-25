@@ -339,7 +339,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         };
 
         var getApiKey = function (response) {
-          auth0Api.createAuth0ApiKey(response.token)
+          auth0Api.getApiKeys(response.token)
             .then(function (voicebaseToken) {
               voicebaseTokensApi.setNeedRemember(true);
               voicebaseTokensApi.setToken(voicebaseToken);
@@ -472,8 +472,17 @@ voicebasePortal.Decorators = (function (Decorators) {
       theme: {
         logo: 'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png'
       },
+      prefill: {
+        email: 'someone@yourcompany.com',
+        username: 'your user name'
+      },
       // autofocus: false,
-      auth: { redirect: false },
+      auth: {
+          redirect: false,
+          params: {
+            scope: 'openid app_metadata'
+          }
+      },
       avatar: null,
       additionalSignUpFields: [{
         name: 'account',
@@ -517,6 +526,7 @@ voicebasePortal.Decorators = (function (Decorators) {
 
     var signIn = function () {
       lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS, function (err, result) {
+
         if (err) {
           setCredentialsError(err);
         }
@@ -553,9 +563,11 @@ voicebasePortal.Decorators = (function (Decorators) {
       store.remove('auth0Token');
     };
 
-    var getApiKeys = function() {
+    var getApiKeys = function(auth0Token) {
       var deferred = $q.defer();
-      var auth0Token = store.get('auth0Token');
+      if (!auth0Token) {
+        auth0Token = store.get('auth0Token');
+      }
 
       jQuery.ajax({
         url: baseUrl + '/profile/keys',

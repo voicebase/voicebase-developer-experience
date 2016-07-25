@@ -28,7 +28,7 @@
         };
 
         var getApiKey = function (response) {
-          auth0Api.createAuth0ApiKey(response.token)
+          auth0Api.getApiKeys(response.token)
             .then(function (voicebaseToken) {
               voicebaseTokensApi.setNeedRemember(true);
               voicebaseTokensApi.setToken(voicebaseToken);

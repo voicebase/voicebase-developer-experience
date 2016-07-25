@@ -100,9 +100,11 @@
       store.remove('auth0Token');
     };
 
-    var getApiKeys = function() {
+    var getApiKeys = function(auth0Token) {
       var deferred = $q.defer();
-      var auth0Token = store.get('auth0Token');
+      if (!auth0Token) {
+        auth0Token = store.get('auth0Token');
+      }
 
       jQuery.ajax({
         url: baseUrl + '/profile/keys',
