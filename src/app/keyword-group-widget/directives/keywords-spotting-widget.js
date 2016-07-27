@@ -33,7 +33,7 @@
         me.uploadFiles = [];
 
         me.vocabulary = {};
-        
+
         if($scope.token) {
           voicebaseTokensApi.setToken($scope.token);
         }
@@ -58,6 +58,14 @@
         }, function (_uploadedState) {
           me.uploadedState = _uploadedState;
         }, true);
+
+        $scope.$watch(function () {
+          return voicebasePlayerService.getRemovedMediaId();
+        }, function (mediaId) {
+          if (mediaId) {
+            me.startOver();
+          }
+        });
 
         var getKeywordGroups = function() {
           if(tokenData) {
@@ -102,8 +110,10 @@
         };
 
         me.removeAllFiles = function (event) {
-          event.preventDefault();
-          event.stopPropagation();
+          if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
           me.uploadFiles = [];
           me.files = [];
           me.isEnableFileSelect = true;

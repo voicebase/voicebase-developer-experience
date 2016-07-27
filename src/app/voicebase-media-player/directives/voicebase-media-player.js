@@ -50,7 +50,13 @@
               downloadMedia: false,
               downloadTranscript: false,
               orderTranscript: false,
-              share: false
+              share: false,
+              favorite: false
+            },
+            webHooks: {
+              remove: function () {
+                voicebasePlayerService.removeMedia(scope.token, scope.mediaId);
+              }
             }
           });
         };

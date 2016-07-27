@@ -37,6 +37,20 @@
           getMedia();
         });
 
+        $scope.$watch(function () {
+          return voicebasePlayerService.getRemovedMediaId();
+        }, function (mediaId) {
+          if (mediaId) {
+            removeMedia(mediaId);
+          }
+        });
+
+        var removeMedia = function (mediaId) {
+          me.media = me.media.filter(function (media) {
+            return media.mediaId !== mediaId;
+          });
+        };
+
         var getMedia = function () {
           if(!me.isLogin) {
             return false;

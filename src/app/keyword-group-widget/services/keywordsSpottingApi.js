@@ -161,10 +161,37 @@
       return deferred.promise;
     };
 
+    var deleteMedia = function (token, mediaId) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        type: 'DELETE',
+        url: url + '/media/' + mediaId,
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function (data, textStatus, request) {
+          if (request.status === 204) {
+            deferred.resolve();
+          }
+          else {
+            deferred.reject('Can\'t remove!');
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Can\'t remove!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
     return {
       getUploadedState: getUploadedState,
       getMedia: getMedia,
       postMedia: postMedia,
+      deleteMedia: deleteMedia,
       checkMediaFinish: checkMediaFinish,
       getMediaUrl: getMediaUrl
     };

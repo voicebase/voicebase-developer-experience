@@ -1849,7 +1849,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         me.uploadFiles = [];
 
         me.vocabulary = {};
-        
+
         if($scope.token) {
           voicebaseTokensApi.setToken($scope.token);
         }
@@ -1874,6 +1874,14 @@ voicebasePortal.Decorators = (function (Decorators) {
         }, function (_uploadedState) {
           me.uploadedState = _uploadedState;
         }, true);
+
+        $scope.$watch(function () {
+          return voicebasePlayerService.getRemovedMediaId();
+        }, function (mediaId) {
+          if (mediaId) {
+            me.startOver();
+          }
+        });
 
         var getKeywordGroups = function() {
           if(tokenData) {
@@ -1918,8 +1926,10 @@ voicebasePortal.Decorators = (function (Decorators) {
         };
 
         me.removeAllFiles = function (event) {
-          event.preventDefault();
-          event.stopPropagation();
+          if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
           me.uploadFiles = [];
           me.files = [];
           me.isEnableFileSelect = true;
@@ -2426,10 +2436,37 @@ voicebasePortal.Decorators = (function (Decorators) {
       return deferred.promise;
     };
 
+    var deleteMedia = function (token, mediaId) {
+      var deferred = $q.defer();
+
+      jQuery.ajax({
+        type: 'DELETE',
+        url: url + '/media/' + mediaId,
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        success: function (data, textStatus, request) {
+          if (request.status === 204) {
+            deferred.resolve();
+          }
+          else {
+            deferred.reject('Can\'t remove!');
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Can\'t remove!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
     return {
       getUploadedState: getUploadedState,
       getMedia: getMedia,
       postMedia: postMedia,
+      deleteMedia: deleteMedia,
       checkMediaFinish: checkMediaFinish,
       getMediaUrl: getMediaUrl
     };
@@ -2628,6 +2665,20 @@ voicebasePortal.Decorators = (function (Decorators) {
           me.isLogin = (tokenData) ? true : false;
           getMedia();
         });
+
+        $scope.$watch(function () {
+          return voicebasePlayerService.getRemovedMediaId();
+        }, function (mediaId) {
+          if (mediaId) {
+            removeMedia(mediaId);
+          }
+        });
+
+        var removeMedia = function (mediaId) {
+          me.media = me.media.filter(function (media) {
+            return media.mediaId !== mediaId;
+          });
+        };
 
         var getMedia = function () {
           if(!me.isLogin) {
@@ -2843,7 +2894,13 @@ voicebasePortal.Decorators = (function (Decorators) {
               downloadMedia: false,
               downloadTranscript: false,
               orderTranscript: false,
-              share: false
+              share: false,
+              favorite: false
+            },
+            webHooks: {
+              remove: function () {
+                voicebasePlayerService.removeMedia(scope.token, scope.mediaId);
+              }
             }
           });
         };
@@ -2891,12 +2948,17 @@ voicebasePortal.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var voicebasePlayerService = function ($q) {
+  var voicebasePlayerService = function (keywordsSpottingApi) {
 
     var mediaReady = false;
+    var removedMediaId = null;
 
     var getMediaReady = function () {
       return mediaReady;
+    };
+
+    var getRemovedMediaId = function () {
+      return removedMediaId;
     };
 
     var setMediaReady = function (_mediaReady) {
@@ -2907,9 +2969,19 @@ voicebasePortal.Decorators = (function (Decorators) {
       jQuery('#vbs-console-player-wrap').voicebase('destroy');
     };
 
+    var removeMedia = function (token, mediaId) {
+      keywordsSpottingApi.deleteMedia(token, mediaId)
+        .then(function () {
+          destroyVoicebase();
+          removedMediaId = mediaId;
+        });
+    };
+
     return {
+      getRemovedMediaId: getRemovedMediaId,
       getMediaReady: getMediaReady,
       setMediaReady: setMediaReady,
+      removeMedia: removeMedia,
       destroyVoicebase: destroyVoicebase
     };
   };
