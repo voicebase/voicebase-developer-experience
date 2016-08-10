@@ -472,10 +472,6 @@ voicebasePortal.Decorators = (function (Decorators) {
       theme: {
         logo: 'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png'
       },
-      prefill: {
-        email: 'someone@yourcompany.com',
-        username: 'your user name'
-      },
       // autofocus: false,
       auth: {
           redirect: false,
@@ -490,9 +486,8 @@ voicebasePortal.Decorators = (function (Decorators) {
       }],
       languageDictionary: {
         title: 'DEVELOPER PORTAL',
-        signUp: {
-          terms: 'I accept the <a href="https://www.voicebase.com/terms-of-use/" target="_new">Terms of Service</a>.'
-        }
+        emailInputPlaceholder: "someone@yourcompany.com",
+        signUpTerms: 'I accept the <a href="https://www.voicebase.com/terms-of-use/" target="_new">Terms of Service</a>.'
       },
       mustAcceptTerms: true,
       closable: false
@@ -525,23 +520,19 @@ voicebasePortal.Decorators = (function (Decorators) {
     };
 
     var signIn = function () {
-      lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS, function (err, result) {
-
-        if (err) {
-          setCredentialsError(err);
-        }
-        else if (result) {
-          const token = result.idToken;
-          lock.getProfile(token, function (error, profile) {
-            if (error) {
-              setCredentialsError(error);
-            }
-            hideLock();
-            saveCredentials(profile, token);
-            $rootScope.$broadcast('auth0SignIn', {profile: profile, token: token});
-          });
-        }
+      lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS);
+      lock.on("authenticated", function(result) {
+        const token = result.idToken;
+        lock.getProfile(token, function (error, profile) {
+          if (error) {
+            setCredentialsError(error);
+          }
+          hideLock();
+          saveCredentials(profile, token);
+          $rootScope.$broadcast('auth0SignIn', {profile: profile, token: token});
+        });
       });
+
       lock.show();
     };
 
