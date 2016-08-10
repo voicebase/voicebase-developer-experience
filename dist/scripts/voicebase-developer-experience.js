@@ -522,7 +522,7 @@ voicebasePortal.Decorators = (function (Decorators) {
     var signIn = function () {
       lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS);
       lock.on("authenticated", function(result) {
-        const token = result.idToken;
+        var token = result.idToken;
         lock.getProfile(token, function (error, profile) {
           if (error) {
             setCredentialsError(error);
