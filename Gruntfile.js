@@ -47,7 +47,8 @@ module.exports = function (grunt) {
         'bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js',
         'bower_components/ng-file-upload/ng-file-upload.min.js',
         'bower_components/angular-ui-select/dist/select.min.js',
-        'bower_components/angular-clipboard/angular-clipboard.js'
+        'bower_components/angular-clipboard/angular-clipboard.js',
+        'src/config/config.js'
       ],
       jsApiConsole: [
         'bower_components/api-console-voicebase/dist/scripts/api-console.js'
@@ -347,6 +348,23 @@ module.exports = function (grunt) {
       ]
     },
 
+    ngconstant: {
+      options: {
+        name: 'env-config',
+        dest: 'src/config/config.js',
+        constants: 'src/config/vars.json'
+      },
+      build: {
+      },
+      // Environments
+      dev: {
+        constants: 'src/config/vars.json'
+      },
+      production: {
+        constants: 'src/config/vars-prod.json'
+      }
+    },
+
     sass: {
       build: {
         options: {
@@ -464,7 +482,8 @@ module.exports = function (grunt) {
 
     jshint: {
       options: {
-        jshintrc: true
+        jshintrc: true,
+        force: true
       },
 
       files: [
@@ -496,9 +515,15 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('default', [
+    'ngconstant:dev',
     'build',
     'connect:livereload',
     'watch'
+  ]);
+
+  grunt.registerTask('prod', [
+    'ngconstant:production',
+    'build'
   ]);
 
   // build app with default mulesoft settings
@@ -521,7 +546,6 @@ module.exports = function (grunt) {
     'copy:customBootstrap',
     'sass:customBootstrap'
   ]);
-
 
   grunt.registerTask('build:scripts', [
     'ngtemplates',

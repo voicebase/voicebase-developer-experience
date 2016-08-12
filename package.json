@@ -30,8 +30,10 @@
     "grunt-contrib-watch": "~0.6.1",
     "grunt-css-prefix": "~0.2.3",
     "grunt-karma": "~0.10.1",
+    "grunt-ng-constant": "^2.0.1",
     "grunt-protractor-runner": "~1.1.4",
     "jasmine-spec-reporter": "~1.1.0",
+    "karma": "0.13.22",
     "load-grunt-tasks": "~2.0.0",
     "serve-static": "~1.8.0"
   }

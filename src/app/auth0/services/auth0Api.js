@@ -1,15 +1,12 @@
 (function () {
   'use strict';
 
-  var Auth0Api = function($rootScope, $http, $q, voicebaseUrl, store) {
+  var Auth0Api = function($rootScope, $http, $q, voicebaseUrl, store, AUTH0_ENV) {
     var baseUrl = voicebaseUrl.getBaseUrl();
-    var DOMAIN = 'voicebase.auth0.com';
-    var CLIENT_ID = '1eQFoL41viLp5qK90AMme5tc5TjEpUeE';
     var AUTH0_OPTIONS = {
       theme: {
         logo: 'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png'
       },
-      // autofocus: false,
       auth: {
           redirect: false,
           params: {
@@ -23,7 +20,7 @@
       }],
       languageDictionary: {
         title: 'DEVELOPER PORTAL',
-        emailInputPlaceholder: "someone@yourcompany.com",
+        emailInputPlaceholder: 'someone@yourcompany.com',
         signUpTerms: 'I accept the <a href="https://www.voicebase.com/terms-of-use/" target="_new">Terms of Service</a>.'
       },
       mustAcceptTerms: true,
@@ -57,8 +54,8 @@
     };
 
     var signIn = function () {
-      lock = new Auth0Lock(CLIENT_ID, DOMAIN, AUTH0_OPTIONS);
-      lock.on("authenticated", function(result) {
+      lock = new Auth0Lock(AUTH0_ENV.CLIENT_ID, AUTH0_ENV.DOMAIN, AUTH0_OPTIONS);
+      lock.on('authenticated', function(result) {
         var token = result.idToken;
         lock.getProfile(token, function (error, profile) {
           if (error) {
