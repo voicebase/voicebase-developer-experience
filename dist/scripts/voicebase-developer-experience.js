@@ -472,10 +472,11 @@ voicebasePortal.Decorators = (function (Decorators) {
         logo: 'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png'
       },
       auth: {
-          redirect: false,
-          params: {
-            scope: 'openid app_metadata'
-          }
+        redirect: false,
+        sso: false,
+        params: {
+          scope: 'openid app_metadata'
+        }
       },
       avatar: null,
       additionalSignUpFields: [{
