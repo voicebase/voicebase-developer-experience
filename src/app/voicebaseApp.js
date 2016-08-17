@@ -19,7 +19,6 @@
   ]);
 
   angular.module('voicebaseAuth0Module', [
-    'env-config',
     'angular-storage',
     'angular-jwt',
     'angular-clipboard'

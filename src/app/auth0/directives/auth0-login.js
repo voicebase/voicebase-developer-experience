@@ -37,7 +37,7 @@
         };
 
         var loginError = function (error) {
-          console.log(error);
+          console.error(error);
         };
 
         var loadPortal = function() {

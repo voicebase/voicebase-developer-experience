@@ -1,8 +1,12 @@
 (function () {
   'use strict';
 
-  var Auth0Api = function($rootScope, $http, $q, voicebaseUrl, store, AUTH0_ENV) {
+  var Auth0Api = function($rootScope, $http, $q, voicebaseUrl, store) {
     var baseUrl = voicebaseUrl.getBaseUrl();
+
+    var AUTH0_CLIENT_ID = null;
+    var AUTH0_DOMAIN = null;
+
     var AUTH0_OPTIONS = {
       theme: {
         logo: 'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png'
@@ -55,7 +59,11 @@
     };
 
     var signIn = function () {
-      lock = new Auth0Lock(AUTH0_ENV.CLIENT_ID, AUTH0_ENV.DOMAIN, AUTH0_OPTIONS);
+      if (!AUTH0_CLIENT_ID || !AUTH0_DOMAIN) {
+        setCredentialsError('Wrong Auth0 Config!');
+        return false;
+      }
+      lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN, AUTH0_OPTIONS);
       lock.on('authenticated', function(result) {
         var token = result.idToken;
         lock.getProfile(token, function (error, profile) {
@@ -113,13 +121,19 @@
       return deferred.promise;
     };
 
+    var setEnv = function (domain, clientId) {
+      AUTH0_DOMAIN = domain;
+      AUTH0_CLIENT_ID = clientId;
+    };
+
     return {
       createAuth0ApiKey: createAuth0ApiKey,
       getApiKeys: getApiKeys,
       signIn: signIn,
       hideLock: hideLock,
       saveCredentials: saveCredentials,
-      signOut: signOut
+      signOut: signOut,
+      setEnv: setEnv
     };
   };
 

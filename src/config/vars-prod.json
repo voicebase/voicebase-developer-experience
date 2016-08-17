@@ -1,6 +1,0 @@
-{
-  "AUTH0_ENV": {
-    "DOMAIN": "voicebase.PROD.auth0.com",
-    "CLIENT_ID": "test"
-  }
-}
