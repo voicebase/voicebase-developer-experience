@@ -60,7 +60,19 @@
         var queryEnvironment = $location.search().environment;
         if(queryEnvironment) {
           _setUrl(queryEnvironment);
-        }
+        } else {
+	  if ($location.host() === 'localhost') {
+            url = 'https://apis.dev.voicebase.com/v2-beta';
+	  } else if ($location.host() === 'apis.dev.voicebase.com') {
+            url = 'https://apis.dev.voicebase.com/v2-beta';
+	  } else if ($location.host() === 'apis.qa.voicebase.com') {
+            url = 'https://apis.qa.voicebase.com/v2-beta';
+	  } else if ($location.host() === 'apis.preprod.voicebase.com') {
+            url = 'https://apis.preprod.voicebase.com/v2-beta';
+	  } else if ($location.host() === 'apis.voicebase.com') {
+            url = 'https://apis.voicebase.com/v2-beta';
+          }
+	}
         return url;
       };
 
