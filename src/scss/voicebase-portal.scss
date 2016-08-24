@@ -671,6 +671,11 @@
 }
 
 .alternate-login-link {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 20px auto 0;
   color: #337ab7;
 
   &:hover {

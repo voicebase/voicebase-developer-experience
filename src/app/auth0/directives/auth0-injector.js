@@ -48,10 +48,10 @@
           var link = '<a href="#login" class="alternate-login-link">Alternate API Key Log In</a>';
 
           jQuery(aut0Container)
-            .find('.auth0-lock-badge-bottom')
-            .prepend(link);
+            .find('.auth0-lock-widget-container')
+            .after(link);
 
-          jQuery('.auth0-lock-badge-bottom .alternate-login-link').off('click').on('click', function () {
+          jQuery('.alternate-login-link').off('click').on('click', function () {
             auth0Api.hideLock();
           });
         };
