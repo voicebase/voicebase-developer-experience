@@ -771,6 +771,11 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 }
 
 .alternate-login-link {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 20px auto 0;
   color: #337ab7;
 }
 .alternate-login-link:hover {

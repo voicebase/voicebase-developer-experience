@@ -240,10 +240,10 @@ voicebasePortal.Decorators = (function (Decorators) {
           var link = '<a href="#login" class="alternate-login-link">Alternate API Key Log In</a>';
 
           jQuery(aut0Container)
-            .find('.auth0-lock-badge-bottom')
-            .prepend(link);
+            .find('.auth0-lock-widget-container')
+            .after(link);
 
-          jQuery('.auth0-lock-badge-bottom .alternate-login-link').off('click').on('click', function () {
+          jQuery('.alternate-login-link').off('click').on('click', function () {
             auth0Api.hideLock();
           });
         };
@@ -350,7 +350,8 @@ voicebasePortal.Decorators = (function (Decorators) {
 
         var loginSuccess = function (response) {
           if (response.profile.email_verified) {
-            getApiKey(response);
+            // getApiKey(response);
+            createToken(response.token);
           }
           else {
             $timeout(function () {
@@ -361,11 +362,24 @@ voicebasePortal.Decorators = (function (Decorators) {
 
         var getApiKey = function (response) {
           auth0Api.getApiKeys(response.token)
-            .then(function (voicebaseToken) {
-              voicebaseTokensApi.setNeedRemember(true);
-              voicebaseTokensApi.setToken(voicebaseToken);
-              loadPortal();
+            .then(function (voicebaseTokens) {
+              if (voicebaseTokens.length > 0) {
+                setToken(voicebaseTokens[0]);
+              }
+              else {
+                createToken(response.token);
+              }
             }, loginError);
+        };
+
+        var createToken = function (auth0Token) {
+          auth0Api.createAuth0ApiKey(auth0Token).then(setToken, loginError);
+        };
+
+        var setToken = function (token) {
+          voicebaseTokensApi.setNeedRemember(true);
+          voicebaseTokensApi.setToken(token);
+          loadPortal();
         };
 
         var loginError = function (error) {
