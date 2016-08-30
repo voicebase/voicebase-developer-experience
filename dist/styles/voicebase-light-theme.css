@@ -506,9 +506,6 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   padding: 7px;
   float: left;
 }
-.keywords-spotting .drop-box-text__link:hover {
-  text-decoration: underline !important;
-}
 .keywords-spotting .drop-box-text__file-header {
   text-align: right;
   font-weight: bold;
@@ -609,23 +606,21 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   content: '';
 }
 .key-manager .user-info__token-row {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 .key-manager .user-info__token-row_highlight {
   background-color: #FCF8E3;
 }
+.key-manager .user-info__token-name,
+.key-manager .user-info__token-actions {
+  display: table-cell;
+  vertical-align: middle;
+}
 .key-manager .user-info__token-name {
   width: 95%;
   overflow-x: auto;
-  overflow-y: hidden;
-  margin-bottom: 0;
 }
 .key-manager .user-info__token-actions {
   width: 5%;
@@ -650,6 +645,120 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   padding: 0;
 }
 
+.auth0-key-manager .text-warning,
+.auth0-key-generator .text-warning {
+  color: #a94442;
+}
+.auth0-key-manager .generate-container,
+.auth0-key-generator .generate-container {
+  display: flex;
+}
+.auth0-key-manager h4,
+.auth0-key-generator h4 {
+  margin: 10px 0 !important;
+}
+.auth0-key-manager .generate-button,
+.auth0-key-generator .generate-button {
+  margin-left: 5px;
+}
+.auth0-key-manager .keys-list-container,
+.auth0-key-generator .keys-list-container {
+  max-height: 300px;
+  overflow: auto;
+  cursor: inherit;
+}
+.auth0-key-manager .tooltip-icon,
+.auth0-key-generator .tooltip-icon {
+  cursor: pointer;
+  margin-left: 5px;
+}
+.auth0-key-manager .raml-console-spinner,
+.auth0-key-generator .raml-console-spinner {
+  margin: 35px auto;
+  height: 35px;
+}
+.auth0-key-manager .table-sort-header,
+.auth0-key-generator .table-sort-header {
+  cursor: pointer;
+}
+
+.auth0-key-manager .raml-console-spinner {
+  margin: 55px auto;
+}
+.auth0-key-manager .raml-console-spinner:after {
+  content: 'Loading API keys..';
+}
+.auth0-key-manager_heading {
+  display: table;
+  width: 100%;
+}
+.auth0-key-manager .section-title {
+  margin: 0 0 20px;
+  float: left;
+  line-height: 30px;
+}
+.auth0-key-manager .table th, .auth0-key-manager .table td {
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
+.auth0-key-manager .table th {
+  background: #f9f9f9;
+  border-bottom-width: 1px !important;
+  color: #999;
+  font-size: 11px;
+  line-height: 20px !important;
+}
+.auth0-key-manager .table th i {
+  font-size: 14px;
+  margin-left: 4px;
+}
+.auth0-key-manager code {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+}
+.auth0-key-manager .auth0-add-key-form .well {
+  padding: 15px;
+  background: #e9e9e9;
+  border-color: #ddd;
+}
+.auth0-key-manager .auth0-add-key-form .form-group {
+  max-width: 300px;
+}
+.auth0-key-manager .auth0-add-key-form .form-group:last-child {
+  margin: 0;
+}
+.auth0-key-manager .auth0-add-key-form hr {
+  margin: 15px -15px;
+  border: 0;
+  border-top: 1px solid #ddd;
+}
+.auth0-key-manager .auth0-add-key-form .btn-group {
+  margin-bottom: 15px;
+}
+.auth0-key-manager .auth0-add-key-form .btn i {
+  margin-right: 4px;
+}
+
+.auth0-key-generator .raml-console-spinner {
+  margin: 50px auto;
+}
+.auth0-key-generator .raml-console-spinner:after {
+  content: 'Generating API key..';
+}
+
+.auth0-lock-container .auth0-lock-submit {
+  background-color: #95e05a !important;
+}
+.auth0-lock-container .auth0-lock-sign-up-terms-agreement a {
+  text-decoration: underline !important;
+}
+.auth0-lock-container .auth0-lock-sign-up-terms-agreement a:hover {
+  color: #31519A !important;
+}
+
 .media-browser {
   padding: 15px;
 }
@@ -661,8 +770,24 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   content: 'Loading media..';
 }
 
-.vocabulary .panel-body {
-  padding: 15px !important;
+.alternate-login-link {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 20px auto 0;
+  color: #337ab7;
+}
+.alternate-login-link:hover {
+  text-decoration: underline !important;
+}
+
+.auth0-lock-badge {
+  display: none !important;
+}
+
+.auth0-lock-overlay {
+  background: none !important;
 }
 
 .raml-console-login-page-container {
@@ -721,6 +846,11 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   background: #fff;
   color: #242f3e;
   transition: all 250ms ease-out;
+}
+
+.raml-console-login-page-container .raml-console-login-header .raml-console-login-header__logo img {
+  height: 34px;
+  margin-top: 5px;
 }
 
 .raml-console-login-page-container .raml-console-login-header .raml-console-skip-console-btn .raml-console-spinner {
@@ -809,6 +939,30 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 
 .raml-console-login-page-container .raml-console-create-account-link:hover {
   text-decoration: none !important;
+}
+
+.raml-console-login-page-container .raml-console-confirm-email-container h1,
+.raml-console-login-page-container .raml-console-confirm-email-container h3,
+.raml-console-login-page-container .raml-console-confirm-email-container .raml-console-description,
+.raml-console-login-page-container .raml-console-approve-email-container h1,
+.raml-console-login-page-container .raml-console-approve-email-container h3,
+.raml-console-login-page-container .raml-console-approve-email-container .raml-console-description {
+  color: #fff;
+}
+
+.raml-console-login-page-container .raml-console-confirm-email-container h3,
+.raml-console-login-page-container .raml-console-approve-email-container h3 {
+  margin-top: 25px;
+}
+
+.raml-console-login-page-container .raml-console-confirm-email-container .raml-console-description--big,
+.raml-console-login-page-container .raml-console-approve-email-container .raml-console-description--big {
+  font-size: 24px;
+  margin-bottom: 100px;
+}
+
+.raml-console-login-page-container .raml-console-approve-email-container {
+  width: 800px;
 }
 
 .raml-console-margin-content {

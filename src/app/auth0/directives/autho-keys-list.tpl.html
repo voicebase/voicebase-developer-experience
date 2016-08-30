@@ -1,0 +1,81 @@
+<div class="raml-console-panel auth0-key-manager">
+
+  <div ng-if="keyListCtrl.isLogin">
+    <div class="alert alert-danger" role="alert" ng-if="keyListCtrl.errorMessage">
+      <button type="button" class="close" ng-click="keyListCtrl.errorMessage = ''"><span aria-hidden="true">&times;</span></button>
+      {{ keyListCtrl.errorMessage }}
+    </div>
+
+    <div class="section-heading auth0-key-manager_heading">
+      <h3 class="section-title">Key Management</h3>
+      <div class="pull-right">
+        <button class="btn btn-sm btn-success btn-add-key collapsed" data-toggle="collapse" data-target="#addKey" aria-expanded="false">
+          <i class="fa fa-plus"></i>
+          Add New Key
+        </button>
+      </div>
+    </div>
+
+    <div class="collapse" id="addKey" aria-expanded="false" >
+      <div class="well">
+        <div class="auth0-add-key-form" ng-if="!keyListCtrl.showGeneratedKey">
+          <form>
+            <!--<div class="form-group">-->
+              <!--<input class="form-control" type="text" placeholder="Label your key">-->
+            <!--</div>-->
+            <div class="form-group" id="addKeyFormType">
+              <input type="text" class="form-control" readonly value="Bearer token"/>
+            </div>
+            <div class="form-group" id="addKeyFormRights">
+              <input type="text" class="form-control" readonly value="All Access"/>
+            </div>
+            <hr>
+            <div class="form-group">
+              <button class="btn btn-success" type="button" id="addKeyFormConfirm" ng-click="keyListCtrl.onGenerateApiKey()">Create Key</button>
+              <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#addKey">Cancel</button>
+            </div>
+          </form>
+        </div>
+        <div ng-if="keyListCtrl.showGeneratedKey">
+          <auth0-key-manager></auth0-key-manager>
+          <button type="button" class="btn btn-primary" ng-click="keyListCtrl.done()" data-toggle="collapse" data-target="#addKey">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default keys-list-container">
+      <css-spinner ng-if="keyListCtrl.keysPending"></css-spinner>
+
+      <div ng-if="!keyListCtrl.keysPending">
+        <table class="table table-key-management">
+          <thead>
+          <tr>
+            <th>
+              <span>Key Reference</span>
+              <i class="fa fa-question-circle tooltip-icon"
+                 data-toggle="tooltip" data-placement="right" title="Voicebase only remembers the last 6 digits to help you with API key management.">
+              </i>
+            </th>
+            <th ng-click="keyListCtrl.changeSortReverse()" class="table-sort-header">
+              Date Generated
+              <i ng-show="keyListCtrl.sortReverse" class="fa fa-caret-down"></i>
+              <i ng-show="!keyListCtrl.sortReverse" class="fa fa-caret-up"></i>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="key in keyListCtrl.keys | orderBy:keyListCtrl.sortType:keyListCtrl.sortReverse track by $index">
+            <td>
+              <code>...{{key.lastSix}}</code>
+            </td>
+            <td>
+              {{keyListCtrl.formatDate(key)}}
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -7,10 +7,10 @@
       return {
         restrict: 'E',
         scope: {
-          environment: '@'
+          url: '@'
         },
-        link: function (scope) {
-          voicebaseUrl.setBaseUrl(scope.environment);
+        compile: function (element, attrs) {
+          voicebaseUrl.setBaseUrl(attrs.url);
         }
       };
     }

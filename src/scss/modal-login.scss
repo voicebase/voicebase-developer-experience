@@ -55,6 +55,11 @@
       }
     }
 
+    .login-header__logo img {
+      height: 34px;
+      margin-top: 5px;
+    }
+
     .skip-console-btn {
 
       .spinner {
@@ -157,6 +162,27 @@
     }
   }
 
+  .confirm-email-container,
+  .approve-email-container {
+    h1,
+    h3,
+    .description {
+      color: #fff
+    }
+
+    h3 {
+      margin-top: 25px;
+    }
+
+    .description--big {
+      font-size: 24px;
+      margin-bottom: 100px;
+    }
+  }
+
+  .approve-email-container {
+    width: 800px;
+  }
 }
 
 .margin-content {

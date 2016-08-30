@@ -18,6 +18,12 @@
     'formValidateModule'
   ]);
 
+  angular.module('voicebaseAuth0Module', [
+    'angular-storage',
+    'angular-jwt',
+    'angular-clipboard'
+  ]);
+
   angular.module('voicebaseTokensModule', []);
 
   angular.module('voicebasePlayerModule', []);
@@ -32,6 +38,7 @@
   var voicebaseConsoleModules = [
     'voicebaseVendorsModule',
     'voicebaseTokensModule',
+    'voicebaseAuth0Module',
     'voicebasePlayerModule',
     'vbsKeywordGroupWidget',
     'dagModule'
@@ -41,7 +48,10 @@
     voicebaseConsoleModules.push('ramlConsoleApp');
   }
 
-  angular.module('ramlVoicebaseConsoleApp', voicebaseConsoleModules).config(function ($provide, $routeProvider) {
+  angular.module('ramlVoicebaseConsoleApp', voicebaseConsoleModules).config(
+    function ($provide, $routeProvider, $locationProvider) {
+    //$locationProvider.html5Mode(true);
+
     if(typeof RAML !== 'undefined') {
       //voicebasePortal.Decorators.ramlConsole($provide);
       voicebasePortal.Decorators.ramlSidebar($provide);
@@ -52,8 +62,16 @@
       voicebasePortal.Decorators.AuthStrategies();
     }
 
+    if (voicebaseConsoleModules.indexOf('voicebaseAuth0Module') !== -1 && typeof Auth0Lock !== 'undefined') {
+      voicebasePortal.Decorators.voicebaseSignAuth0($provide);
+    }
+
     $routeProvider
       .when('/', {
+        templateUrl: 'pages/auth0LoginPage.html',
+        reloadOnSearch: false
+      })
+      .when('/login', {
         templateUrl: 'pages/loginPage.html',
         reloadOnSearch: false
       })
@@ -81,6 +99,10 @@
         templateUrl: 'pages/keyManagerPage.html',
         reloadOnSearch: false
       })
+      .when('/generate-api-key', {
+        templateUrl: 'pages/generateKeyPage.html',
+        reloadOnSearch: false
+      })
       .when('/media-browser', {
         templateUrl: 'pages/mediaBrowserPage.html',
         reloadOnSearch: false
@@ -93,9 +115,23 @@
         templateUrl: 'pages/addToWaitListPage.html',
         reloadOnSearch: false
       })
+      .when('/confirm', {
+        templateUrl: 'pages/confirmEmailPage.html',
+        reloadOnSearch: false
+      })
+      .when('/approve', {
+        templateUrl: 'pages/approvalPage.html',
+        reloadOnSearch: false
+      })
       .otherwise({redirectTo: '/'});
 
-  });
-
-
+  })
+    .run(function ($rootScope, $location, ajaxError) {
+      $rootScope.$on('$locationChangeStart', function (event, next, current) {
+        if (next + '#/' === current) {
+          event.preventDefault();
+        }
+      });
+      ajaxError.handleError();
+    });
 })();

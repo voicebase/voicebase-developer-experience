@@ -7,16 +7,66 @@
 
       var url = 'https://apis.voicebase.com/v2-beta';
 
-      var setBaseUrl = function (environment) {
-        var queryEnvironment = $location.search().environment;
-          if(queryEnvironment) {
-            _setUrl(queryEnvironment);
+      var setBaseUrl = function (_url) {
+        // setting url from parameter
+        if (_url) {
+          url = _url;
+          return false;
         }
-        else {
-          _setUrl(environment);
+
+        // setting url from location query
+        var queryEnvironment = getQueryEnvironment();
+        if(queryEnvironment) {
+          _setUrl(queryEnvironment);
+          return false;
         }
+
+        // setting url from host
+        var productEnvironment = getUrlEnvironment();
+        if (productEnvironment) {
+          _setUrl(productEnvironment);
+          return false;
+        }        
       };
 
+      var getQueryEnvironment = function () {
+        var queryEnvironment = null;
+
+        if ($location.absUrl().includes('environment=dev')) {
+          queryEnvironment = 'dev';
+        } 
+        else if ($location.absUrl().includes('environment=qa')) {
+          queryEnvironment = 'qa';
+        } 
+        else if ($location.absUrl().includes('environment=preprod')) {
+          queryEnvironment = 'preprod';
+        } 
+        else if ($location.absUrl().includes('environment=prod')) {
+          queryEnvironment = 'prod';
+        }
+        return queryEnvironment;
+      };
+
+      var getUrlEnvironment = function () {
+        var productEnvironment = '';
+        if ($location.host() === 'localhost') {
+          productEnvironment = 'dev';
+        } 
+        else if ($location.host() === 'apis.dev.voicebase.com') {
+          productEnvironment = 'dev';
+        } 
+        else if ($location.host() === 'apis.qa.voicebase.com') {
+          productEnvironment = 'qa';
+        } 
+        else if ($location.host() === 'apis.preprod.voicebase.com') {
+          productEnvironment = 'preprod';
+        } 
+        else if ($location.host() === 'apis.prod.voicebase.com') {
+          productEnvironment = 'prod';
+        }
+        return productEnvironment;
+      };
+      
       var _setUrl = function (environment) {
         if (environment === 'dev') {
           url = 'https://apis.dev.voicebase.com/v2-beta';
@@ -33,10 +83,6 @@
       };
 
       var getBaseUrl = function () {
-        var queryEnvironment = $location.search().environment;
-        if(queryEnvironment) {
-          _setUrl(queryEnvironment);
-        }
         return url;
       };
 
