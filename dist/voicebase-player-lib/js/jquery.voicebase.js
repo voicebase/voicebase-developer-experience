@@ -820,8 +820,7 @@ voiceBase = (function(VB, $) {
 
                 VB.data.searchWorker.postMessage({
                     transcript: VB.api.response.transcript.transcript,
-                    terms: terms,
-                    isApi2_0: VB.common.isApi2_0()
+                    terms: terms
                 });
             }
             else {
@@ -1206,34 +1205,9 @@ voiceBase = (function(VB, $) {
                 requestStatus: "SUCCESS",
                 keywords: keywords.words || [],
                 categories: keywords.categories || {},
-                groups: VB.api2_0.parseGroups(keywords.groups) || []
+                groups: keywords.groups || []
             };
             VB.keywords.view.createView(keywordsOptions);
-        },
-
-        parseGroups: function (groupsData) {
-            return Object.keys(groupsData).map(function (groupName) {
-                var group = groupsData[groupName];
-
-                var keywords = Object.keys(group).map(function (keywordName) {
-                    var keyword = group[keywordName];
-                    var times = keyword.map(function (keywordItem) {
-                        return keywordItem.s;
-                    });
-                    return {
-                        name: keywordName,
-                        t: {
-                            'unknown': times
-                        }
-                    };
-                });
-
-                return {
-                    name: groupName,
-                    type: 'group',
-                    keywords: keywords
-                };
-            });
         },
 
         setTranscript: function (transcriptData) {
