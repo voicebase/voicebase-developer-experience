@@ -3087,7 +3087,10 @@ voicebasePortal.Decorators = (function (Decorators) {
 
       jQuery.ajax({
         type: 'GET',
-        url: url + '/media/' + mediaId + '/streams?access_token=' + token,
+        url: url + '/media/' + mediaId + '/streams',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
         success: function (data, textStatus, request) {
           var mediaUrl = data.streams.original;
           deferred.resolve(mediaUrl);
