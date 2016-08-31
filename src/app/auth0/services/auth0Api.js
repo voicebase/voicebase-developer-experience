@@ -40,9 +40,15 @@
         auth0Token = store.get('auth0Token');
       }
 
+      var data = { "key" : {
+                   } }
+
       jQuery.ajax({
         url: baseUrl + '/profile/keys',
         type: 'POST',
+	data: JSON.stringify(data),
+	contentType: 'application/json',
+        dataType: 'json',
         headers: {
           'Authorization': 'Bearer ' + auth0Token
         },
@@ -57,6 +63,39 @@
 
       return deferred.promise;
     };
+
+    var createEphemeralAuth0ApiKey = function (auth0Token) {
+      var deferred = $q.defer();
+      if (!auth0Token) {
+        auth0Token = store.get('auth0Token');
+      }
+
+      var data = { "key" : {
+                     "ephemeral" : true,
+                     "ttlMillis" : 720000
+                   } }
+
+      jQuery.ajax({
+        url: baseUrl + '/profile/keys',
+        type: 'POST',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        dataType: 'json',
+        headers: {
+          'Authorization': 'Bearer ' + auth0Token
+        },
+        success: function(response) {
+          deferred.resolve(response.key.bearerToken);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log(errorThrown + ': Error ' + jqXHR.status);
+          deferred.reject('Something goes wrong!');
+        }
+      });
+
+      return deferred.promise;
+    };
+
 
     var signIn = function () {
       if (!AUTH0_CLIENT_ID || !AUTH0_DOMAIN) {
@@ -128,6 +167,7 @@
 
     return {
       createAuth0ApiKey: createAuth0ApiKey,
+      createEphemeralAuth0ApiKey: createEphemeralAuth0ApiKey,
       getApiKeys: getApiKeys,
       signIn: signIn,
       hideLock: hideLock,
