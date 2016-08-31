@@ -373,7 +373,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         };
 
         var createToken = function (auth0Token) {
-          auth0Api.createAuth0ApiKey(auth0Token).then(setToken, loginError);
+          auth0Api.createAuth0ApiKey(auth0Token, true).then(setToken, loginError);
         };
 
         var setToken = function (token) {
@@ -532,10 +532,20 @@ voicebasePortal.Decorators = (function (Decorators) {
 
     var lock;
 
-    var createAuth0ApiKey = function (auth0Token) {
+    var createAuth0ApiKey = function (auth0Token, ephemeral) {
       var deferred = $q.defer();
       if (!auth0Token) {
         auth0Token = store.get('auth0Token');
+      }
+
+      var data = {key: {}};
+      if (ephemeral) {
+        data = {
+          key: {
+            ttlMillis: 7200000,
+            ephemeral: true
+          }
+        }
       }
 
       jQuery.ajax({
@@ -544,6 +554,8 @@ voicebasePortal.Decorators = (function (Decorators) {
         headers: {
           'Authorization': 'Bearer ' + auth0Token
         },
+        contentType: "application/json",
+        data: JSON.stringify(data),
         success: function(response) {
           deferred.resolve(response.key.bearerToken);
         },

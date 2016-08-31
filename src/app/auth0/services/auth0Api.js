@@ -34,10 +34,20 @@
 
     var lock;
 
-    var createAuth0ApiKey = function (auth0Token) {
+    var createAuth0ApiKey = function (auth0Token, ephemeral) {
       var deferred = $q.defer();
       if (!auth0Token) {
         auth0Token = store.get('auth0Token');
+      }
+
+      var data = {key: {}};
+      if (ephemeral) {
+        data = {
+          key: {
+            ttlMillis: 7200000,
+            ephemeral: true
+          }
+        }
       }
 
       jQuery.ajax({
@@ -46,6 +56,8 @@
         headers: {
           'Authorization': 'Bearer ' + auth0Token
         },
+        contentType: "application/json",
+        data: JSON.stringify(data),
         success: function(response) {
           deferred.resolve(response.key.bearerToken);
         },

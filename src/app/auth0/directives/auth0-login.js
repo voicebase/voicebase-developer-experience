@@ -41,7 +41,7 @@
         };
 
         var createToken = function (auth0Token) {
-          auth0Api.createAuth0ApiKey(auth0Token).then(setToken, loginError);
+          auth0Api.createAuth0ApiKey(auth0Token, true).then(setToken, loginError);
         };
 
         var setToken = function (token) {
