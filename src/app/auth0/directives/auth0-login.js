@@ -55,7 +55,7 @@
         };
 
         var loadPortal = function() {
-          $location.path('/portal');
+          $location.path('/developer/');
         };
 
         auth0Api.signIn();
