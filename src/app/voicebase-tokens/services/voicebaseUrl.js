@@ -6,6 +6,7 @@
     function ($location) {
 
       var url = 'https://apis.voicebase.com/v2-beta';
+      var ramlUrl = 'https://apis.voicebase.com/console/';
 
       var setBaseUrl = function (_url) {
         // setting url from parameter
@@ -85,10 +86,20 @@
       var getBaseUrl = function () {
         return url;
       };
+      
+      var setRamlUrl = function (_url) {
+        ramlUrl = _url;    
+      };
+      
+      var getRamlUrl = function () {
+        return ramlUrl;  
+      };
 
       return {
         setBaseUrl: setBaseUrl,
-        getBaseUrl: getBaseUrl
+        getBaseUrl: getBaseUrl,
+        setRamlUrl: setRamlUrl,
+        getRamlUrl: getRamlUrl
       };
 
     }

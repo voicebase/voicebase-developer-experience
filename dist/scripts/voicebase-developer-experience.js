@@ -742,7 +742,17 @@ voicebasePortal.Decorators = (function (Decorators) {
   'use strict';
 
   angular.module('ramlVoicebaseConsoleApp')
-    .controller('documentationPageCtrl', ['$scope', '$timeout', 'ramlParserWrapper', function($scope, $timeout, ramlParserWrapper) {
+    .controller('consolePageCtrl', ['$scope', '$sce', 'voicebaseUrl', function($scope, $sce, voicebaseUrl) {
+      $scope.ramlUrl = $sce.trustAsResourceUrl(voicebaseUrl.getRamlUrl());
+    }]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ramlVoicebaseConsoleApp')
+    .controller('documentationPageCtrl', ['$scope', '$timeout', 'ramlParserWrapper', '$sce', 'voicebaseUrl', function($scope, $timeout, ramlParserWrapper, $sce, voicebaseUrl) {
+      $scope.ramlUrl = $sce.trustAsResourceUrl(voicebaseUrl.getRamlUrl());
 
       var firstReady = true;
       ramlParserWrapper.onParseSuccess(function(raml) {
@@ -4116,6 +4126,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         },
         compile: function (element, attrs) {
           voicebaseUrl.setBaseUrl(attrs.url);
+          voicebaseUrl.setRamlUrl(attrs.ramlUrl);
         }
       };
     }
@@ -4480,6 +4491,7 @@ voicebasePortal.Decorators = (function (Decorators) {
     function ($location) {
 
       var url = 'https://apis.voicebase.com/v2-beta';
+      var ramlUrl = 'https://apis.voicebase.com/console/';
 
       var setBaseUrl = function (_url) {
         // setting url from parameter
@@ -4559,10 +4571,20 @@ voicebasePortal.Decorators = (function (Decorators) {
       var getBaseUrl = function () {
         return url;
       };
+      
+      var setRamlUrl = function (_url) {
+        ramlUrl = _url;    
+      };
+      
+      var getRamlUrl = function () {
+        return ramlUrl;  
+      };
 
       return {
         setBaseUrl: setBaseUrl,
-        getBaseUrl: getBaseUrl
+        getBaseUrl: getBaseUrl,
+        setRamlUrl: setRamlUrl,
+        getRamlUrl: getRamlUrl
       };
 
     }

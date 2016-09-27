@@ -1,9 +1,9 @@
-<div>
+<div ng-controller="consolePageCtrl">
   <div ng-include="'console/templates/portal-navbar.tpl.html'"></div>
   <div class="container">
     <div class="row">
       <div class="console-section">
-        <raml-console src="https://apis.voicebase.com/console/"></raml-console>
+        <raml-console src="{{ramlUrl}}"></raml-console>
       </div>
     </div>
   </div>
