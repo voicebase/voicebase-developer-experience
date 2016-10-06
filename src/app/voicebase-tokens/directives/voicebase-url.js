@@ -11,6 +11,7 @@
         },
         compile: function (element, attrs) {
           voicebaseUrl.setBaseUrl(attrs.url);
+          voicebaseUrl.setRamlUrl(attrs.ramlUrl);
         }
       };
     }

@@ -2,7 +2,8 @@
   'use strict';
 
   angular.module('ramlVoicebaseConsoleApp')
-    .controller('documentationPageCtrl', ['$scope', '$timeout', 'ramlParserWrapper', function($scope, $timeout, ramlParserWrapper) {
+    .controller('documentationPageCtrl', ['$scope', '$timeout', 'ramlParserWrapper', '$sce', 'voicebaseUrl', function($scope, $timeout, ramlParserWrapper, $sce, voicebaseUrl) {
+      $scope.ramlUrl = $sce.trustAsResourceUrl(voicebaseUrl.getRamlUrl());
 
       var firstReady = true;
       ramlParserWrapper.onParseSuccess(function(raml) {
