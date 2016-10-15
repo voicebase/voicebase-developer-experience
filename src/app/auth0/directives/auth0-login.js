@@ -6,7 +6,7 @@
       restrict: 'E',
       templateUrl: 'auth0/directives/auth0-login.tpl.html',
       replace: false,
-      controller: function($scope, $location, $timeout, store, auth0Api, voicebaseTokensApi) {
+      controller: function($scope, $http, $location, $timeout, store, auth0Api, voicebaseTokensApi) {
         $scope.$on('auth0SignIn', function(e, credentials) {
           if (credentials.token && credentials.profile) {
             loginSuccess(credentials);
@@ -22,6 +22,16 @@
             createToken(response.token);
           }
           else {
+            var url = 'https://forms.hubspot.com/uploads/form/v2/1701619/94e0187f-8000-44a2-922a-f11f815def1f?account_status=pending&email=';
+            var urlHubSpot = url.concat(encodeURIComponent(response.profile.email),'&company=', encodeURIComponent(response.profile.user_metadata.account));
+            
+             // Post user's account information to HubSpot
+            $http({
+              method: 'POST',
+              url: urlHubSpot,
+              header: 'Content-Type: application/x-www-form-urlencoded'
+            });
+
             $timeout(function () {
               $location.path('/confirm');
             }, 100);
