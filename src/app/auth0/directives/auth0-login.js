@@ -22,21 +22,44 @@
             createToken(response.token);
           }
           else {
-            var url = 'https://forms.hubspot.com/uploads/form/v2/1701619/94e0187f-8000-44a2-922a-f11f815def1f?account_status=pending&email=';
-            var urlHubSpot = url.concat(encodeURIComponent(response.profile.email),'&company=', encodeURIComponent(response.profile.user_metadata.account));
-            
-             // Post user's account information to HubSpot
-            $http({
-              method: 'POST',
-              url: urlHubSpot,
-              header: 'Content-Type: application/x-www-form-urlencoded'
-            });
+            updateHubSpot(response);
 
             $timeout(function () {
               $location.path('/confirm');
             }, 100);
           }
         };
+
+        var updateHubSpot = function (response) {
+          var url = 'https://forms.hubspot.com/uploads/form/v2/1701619/';
+          var hubSpotFormId = '94e0187f-8000-44a2-922a-f11f815def1f';
+          var location = window.location.toString();
+          var companyPrefix = getCompanyPrefix(location);
+          var urlHubSpot = url.concat(hubSpotFormId,
+            '?account_status=', 'pending', 
+            '&email=', encodeURIComponent(response.profile.email),
+            '&company=', encodeURIComponent(companyPrefix+response.profile.user_metadata.account) 
+          );
+
+          // Post user's account information to HubSpot
+          $http({
+            method: 'POST',
+            url: urlHubSpot,
+            header: 'Content-Type: application/x-www-form-urlencoded'
+          });
+        }
+
+        var getCompanyPrefix = function (location) {
+          var envs = ['localhost', 'dev', 'qa', 'preprod'];
+          var length = envs.length;
+          for (var i=0;i<length;i++) {
+            var index = location.search(envs[i]);
+            if (index>=0) {
+              return envs[i]+'_';
+            }
+          }
+          return '';
+        }
 
         var getApiKey = function (response) {
           auth0Api.getApiKeys(response.token)
