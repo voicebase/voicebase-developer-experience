@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var Auth0Api = function($rootScope, $http, $q, voicebaseUrl, store) {
+  var Auth0Api = function($rootScope, $http, $q, voicebaseUrl, store, voicebaseTokensApi) {
     var baseUrl = voicebaseUrl.getBaseUrl();
 
     var AUTH0_CLIENT_ID = null;
@@ -47,7 +47,7 @@
             ttlMillis: 7200000,
             ephemeral: true
           }
-        }
+        };
       }
 
       jQuery.ajax({
@@ -56,7 +56,7 @@
         headers: {
           'Authorization': 'Bearer ' + auth0Token
         },
-        contentType: "application/json",
+        contentType: 'application/json',
         data: JSON.stringify(data),
         success: function(response) {
           deferred.resolve(response.key.bearerToken);
@@ -138,8 +138,28 @@
       AUTH0_CLIENT_ID = clientId;
     };
 
+    var runUpdatingTokenInterval = function () {
+      var ONE_HOUR = 60 * 60 * 1000;
+      var intervalId = setInterval(function () {
+        createAuth0ApiKey(null, true)
+          .then(function (token) {
+            voicebaseTokensApi.setNeedRemember(true);
+            voicebaseTokensApi.setToken(token);
+          })
+          .catch(function (error) {
+            clearInterval(intervalId);
+            console.log(error);
+          });
+      }, ONE_HOUR);
+    };
+
+    if (store.get('auth0Token')) {
+      runUpdatingTokenInterval();
+    }
+
     return {
       createAuth0ApiKey: createAuth0ApiKey,
+      runUpdatingTokenInterval: runUpdatingTokenInterval,
       getApiKeys: getApiKeys,
       signIn: signIn,
       hideLock: hideLock,

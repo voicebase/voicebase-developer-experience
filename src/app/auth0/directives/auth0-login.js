@@ -36,9 +36,9 @@
           var location = window.location.toString();
           var companyPrefix = getCompanyPrefix(location);
           var urlHubSpot = url.concat(hubSpotFormId,
-            '?account_status=', 'pending', 
+            '?account_status=', 'pending',
             '&email=', encodeURIComponent(response.profile.email),
-            '&company=', encodeURIComponent(companyPrefix+response.profile.user_metadata.account) 
+            '&company=', encodeURIComponent(companyPrefix+response.profile.user_metadata.account)
           );
 
           // Post user's account information to HubSpot
@@ -47,7 +47,7 @@
             url: urlHubSpot,
             header: 'Content-Type: application/x-www-form-urlencoded'
           });
-        }
+        };
 
         var getCompanyPrefix = function (location) {
           var envs = ['localhost', 'dev', 'qa', 'preprod'];
@@ -59,7 +59,7 @@
             }
           }
           return '';
-        }
+        };
 
         var getApiKey = function (response) {
           auth0Api.getApiKeys(response.token)
@@ -80,6 +80,7 @@
         var setToken = function (token) {
           voicebaseTokensApi.setNeedRemember(true);
           voicebaseTokensApi.setToken(token);
+          auth0Api.runUpdatingTokenInterval();
           loadPortal();
         };
 
