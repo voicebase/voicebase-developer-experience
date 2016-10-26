@@ -42,7 +42,7 @@
             promises.push(_promise);
           });
           $q.all(promises).then(function () {
-            var terms = [].concat(vocabulary.terms);+
+            var terms = [].concat(vocabulary.terms);
             Object.keys(files).forEach(function (key) {
               var parsedFile = files[key];
               terms = terms.concat(parsedFile);
