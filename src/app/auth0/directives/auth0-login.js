@@ -6,7 +6,7 @@
       restrict: 'E',
       templateUrl: 'auth0/directives/auth0-login.tpl.html',
       replace: false,
-      controller: function($scope, $location, $timeout, store, auth0Api, voicebaseTokensApi) {
+      controller: function($scope, $http, $location, $timeout, store, auth0Api, voicebaseTokensApi) {
         $scope.$on('auth0SignIn', function(e, credentials) {
           if (credentials.token && credentials.profile) {
             loginSuccess(credentials);
@@ -22,11 +22,44 @@
             createToken(response.token);
           }
           else {
+            updateHubSpot(response);
+
             $timeout(function () {
               $location.path('/confirm');
             }, 100);
           }
         };
+
+        var updateHubSpot = function (response) {
+          var url = 'https://forms.hubspot.com/uploads/form/v2/1701619/';
+          var hubSpotFormId = '94e0187f-8000-44a2-922a-f11f815def1f';
+          var location = window.location.toString();
+          var companyPrefix = getCompanyPrefix(location);
+          var urlHubSpot = url.concat(hubSpotFormId,
+            '?account_status=', 'pending', 
+            '&email=', encodeURIComponent(response.profile.email),
+            '&company=', encodeURIComponent(companyPrefix+response.profile.user_metadata.account) 
+          );
+
+          // Post user's account information to HubSpot
+          $http({
+            method: 'POST',
+            url: urlHubSpot,
+            header: 'Content-Type: application/x-www-form-urlencoded'
+          });
+        }
+
+        var getCompanyPrefix = function (location) {
+          var envs = ['localhost', 'dev', 'qa', 'preprod'];
+          var length = envs.length;
+          for (var i=0;i<length;i++) {
+            var index = location.search(envs[i]);
+            if (index>=0) {
+              return envs[i]+'_';
+            }
+          }
+          return '';
+        }
 
         var getApiKey = function (response) {
           auth0Api.getApiKeys(response.token)

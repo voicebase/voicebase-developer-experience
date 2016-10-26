@@ -4616,7 +4616,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "                    data-toggle=\"collapse\" data-target=\"#tokenForm\"\n" +
     "                    ng-click=\"keyManagerCtrl.changeActive()\"\n" +
     "            >\n" +
-    "              <i class=\"fa fa-eye\"></i> Show Key\n" +
+    "              <i class=\"fa fa-eye\"></i> Show Token\n" +
     "            </button>\n" +
     "            <button type=\"button\"\n" +
     "                    class=\"btn btn-default copy-button\"\n" +
@@ -4634,10 +4634,10 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "          <textarea class=\"form-control\" rows=\"4\" ng-model=\"keyManagerCtrl.token\" readonly></textarea>\n" +
     "        </div>\n" +
     "\n" +
-    "        <div class=\"form-group\">Copy or download this key and use it for your application</div>\n" +
+    "        <div class=\"form-group\">Copy or download this Bearer token and use it for your application</div>\n" +
     "\n" +
     "        <div class=\"form-group text-warning\">\n" +
-    "          <strong>Warning!</strong> This key is only is only displayed this one time. It will not be displayed again once you navigate away from this page\n" +
+    "          <strong>Warning!</strong> This Bearer token is only is only displayed this one time. It will not be displayed again once you navigate away from this page\n" +
     "        </div>\n" +
     "      </form>\n" +
     "    </div>\n" +
@@ -4664,11 +4664,11 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "    </div>\n" +
     "\n" +
     "    <div class=\"section-heading auth0-key-manager_heading\">\n" +
-    "      <h3 class=\"section-title\">Key Management</h3>\n" +
+    "      <h3 class=\"section-title\">Bearer Token Management</h3>\n" +
     "      <div class=\"pull-right\">\n" +
     "        <button class=\"btn btn-sm btn-success btn-add-key collapsed\" data-toggle=\"collapse\" data-target=\"#addKey\" aria-expanded=\"false\">\n" +
     "          <i class=\"fa fa-plus\"></i>\n" +
-    "          Add New Key\n" +
+    "          New Token\n" +
     "        </button>\n" +
     "      </div>\n" +
     "    </div>\n" +
@@ -4680,15 +4680,17 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "            <!--<div class=\"form-group\">-->\n" +
     "              <!--<input class=\"form-control\" type=\"text\" placeholder=\"Label your key\">-->\n" +
     "            <!--</div>-->\n" +
+    "            <label for=\"addKeyFormType\">Type</label>\n" +
     "            <div class=\"form-group\" id=\"addKeyFormType\">\n" +
     "              <input type=\"text\" class=\"form-control\" readonly value=\"Bearer token\"/>\n" +
     "            </div>\n" +
+    "            <label for=\"addKeyFormRights\">Access Rights</label>\n" +
     "            <div class=\"form-group\" id=\"addKeyFormRights\">\n" +
     "              <input type=\"text\" class=\"form-control\" readonly value=\"All Access\"/>\n" +
     "            </div>\n" +
     "            <hr>\n" +
     "            <div class=\"form-group\">\n" +
-    "              <button class=\"btn btn-success\" type=\"button\" id=\"addKeyFormConfirm\" ng-click=\"keyListCtrl.onGenerateApiKey()\">Create Key</button>\n" +
+    "              <button class=\"btn btn-success\" type=\"button\" id=\"addKeyFormConfirm\" ng-click=\"keyListCtrl.onGenerateApiKey()\">Create Token</button>\n" +
     "              <button class=\"btn btn-default\" type=\"button\" data-toggle=\"collapse\" data-target=\"#addKey\">Cancel</button>\n" +
     "            </div>\n" +
     "          </form>\n" +
@@ -4708,7 +4710,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "          <thead>\n" +
     "          <tr>\n" +
     "            <th>\n" +
-    "              <span>Key Reference</span>\n" +
+    "              <span>Token Reference</span>\n" +
     "              <i class=\"fa fa-question-circle tooltip-icon\"\n" +
     "                 data-toggle=\"tooltip\" data-placement=\"right\" title=\"Voicebase only remembers the last 6 digits to help you with API key management.\">\n" +
     "              </i>\n" +
@@ -4946,8 +4948,8 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "    <div class=\"panel panel-default\" ng-if=\"showKeyManager\" ng-click=\"loadKeyManager()\">\n" +
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
-    "        <h4><a href=\"\">API Key Management</a></h4>\n" +
-    "        Generate keys used for API authorization to your account.\n" +
+    "        <h4><a href=\"\">Bearer Token Management</a></h4>\n" +
+    "        Generate Bearer tokens used for API authorization to your account.\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +

@@ -7,11 +7,11 @@
     </div>
 
     <div class="section-heading auth0-key-manager_heading">
-      <h3 class="section-title">Key Management</h3>
+      <h3 class="section-title">Bearer Token Management</h3>
       <div class="pull-right">
         <button class="btn btn-sm btn-success btn-add-key collapsed" data-toggle="collapse" data-target="#addKey" aria-expanded="false">
           <i class="fa fa-plus"></i>
-          Add New Key
+          New Token
         </button>
       </div>
     </div>
@@ -23,15 +23,17 @@
             <!--<div class="form-group">-->
               <!--<input class="form-control" type="text" placeholder="Label your key">-->
             <!--</div>-->
+            <label for="addKeyFormType">Type</label>
             <div class="form-group" id="addKeyFormType">
               <input type="text" class="form-control" readonly value="Bearer token"/>
             </div>
+            <label for="addKeyFormRights">Access Rights</label>
             <div class="form-group" id="addKeyFormRights">
               <input type="text" class="form-control" readonly value="All Access"/>
             </div>
             <hr>
             <div class="form-group">
-              <button class="btn btn-success" type="button" id="addKeyFormConfirm" ng-click="keyListCtrl.onGenerateApiKey()">Create Key</button>
+              <button class="btn btn-success" type="button" id="addKeyFormConfirm" ng-click="keyListCtrl.onGenerateApiKey()">Create Token</button>
               <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#addKey">Cancel</button>
             </div>
           </form>
@@ -51,7 +53,7 @@
           <thead>
           <tr>
             <th>
-              <span>Key Reference</span>
+              <span>Token Reference</span>
               <i class="fa fa-question-circle tooltip-icon"
                  data-toggle="tooltip" data-placement="right" title="Voicebase only remembers the last 6 digits to help you with API key management.">
               </i>
