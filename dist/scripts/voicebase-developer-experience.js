@@ -338,7 +338,7 @@ voicebasePortal.Decorators = (function (Decorators) {
       restrict: 'E',
       templateUrl: 'auth0/directives/auth0-login.tpl.html',
       replace: false,
-      controller: function($scope, $location, $timeout, store, auth0Api, voicebaseTokensApi) {
+      controller: function($scope, $http, $location, $timeout, store, auth0Api, voicebaseTokensApi) {
         $scope.$on('auth0SignIn', function(e, credentials) {
           if (credentials.token && credentials.profile) {
             loginSuccess(credentials);
@@ -354,10 +354,43 @@ voicebasePortal.Decorators = (function (Decorators) {
             createToken(response.token);
           }
           else {
+            updateHubSpot(response);
+
             $timeout(function () {
               $location.path('/confirm');
             }, 100);
           }
+        };
+
+        var updateHubSpot = function (response) {
+          var url = 'https://forms.hubspot.com/uploads/form/v2/1701619/';
+          var hubSpotFormId = '94e0187f-8000-44a2-922a-f11f815def1f';
+          var location = window.location.toString();
+          var companyPrefix = getCompanyPrefix(location);
+          var urlHubSpot = url.concat(hubSpotFormId,
+            '?account_status=', 'pending',
+            '&email=', encodeURIComponent(response.profile.email),
+            '&company=', encodeURIComponent(companyPrefix+response.profile.user_metadata.account)
+          );
+
+          // Post user's account information to HubSpot
+          $http({
+            method: 'POST',
+            url: urlHubSpot,
+            header: 'Content-Type: application/x-www-form-urlencoded'
+          });
+        };
+
+        var getCompanyPrefix = function (location) {
+          var envs = ['localhost', 'dev', 'qa', 'preprod'];
+          var length = envs.length;
+          for (var i=0;i<length;i++) {
+            var index = location.search(envs[i]);
+            if (index>=0) {
+              return envs[i]+'_';
+            }
+          }
+          return '';
         };
 
         var getApiKey = function (response) {
@@ -379,6 +412,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         var setToken = function (token) {
           voicebaseTokensApi.setNeedRemember(true);
           voicebaseTokensApi.setToken(token);
+          auth0Api.runUpdatingTokenInterval();
           loadPortal();
         };
 
@@ -499,7 +533,7 @@ voicebasePortal.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var Auth0Api = function($rootScope, $http, $q, voicebaseUrl, store) {
+  var Auth0Api = function($rootScope, $http, $q, voicebaseUrl, store, voicebaseTokensApi) {
     var baseUrl = voicebaseUrl.getBaseUrl();
 
     var AUTH0_CLIENT_ID = null;
@@ -545,7 +579,7 @@ voicebasePortal.Decorators = (function (Decorators) {
             ttlMillis: 7200000,
             ephemeral: true
           }
-        }
+        };
       }
 
       jQuery.ajax({
@@ -554,7 +588,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         headers: {
           'Authorization': 'Bearer ' + auth0Token
         },
-        contentType: "application/json",
+        contentType: 'application/json',
         data: JSON.stringify(data),
         success: function(response) {
           deferred.resolve(response.key.bearerToken);
@@ -636,8 +670,28 @@ voicebasePortal.Decorators = (function (Decorators) {
       AUTH0_CLIENT_ID = clientId;
     };
 
+    var runUpdatingTokenInterval = function () {
+      var ONE_HOUR = 60 * 60 * 1000;
+      var intervalId = setInterval(function () {
+        createAuth0ApiKey(null, true)
+          .then(function (token) {
+            voicebaseTokensApi.setNeedRemember(true);
+            voicebaseTokensApi.setToken(token);
+          })
+          .catch(function (error) {
+            clearInterval(intervalId);
+            console.log(error);
+          });
+      }, ONE_HOUR);
+    };
+
+    if (store.get('auth0Token')) {
+      runUpdatingTokenInterval();
+    }
+
     return {
       createAuth0ApiKey: createAuth0ApiKey,
+      runUpdatingTokenInterval: runUpdatingTokenInterval,
       getApiKeys: getApiKeys,
       signIn: signIn,
       hideLock: hideLock,
@@ -3239,7 +3293,7 @@ voicebasePortal.Decorators = (function (Decorators) {
             promises.push(_promise);
           });
           $q.all(promises).then(function () {
-            var terms = [].concat(vocabulary.terms);+
+            var terms = [].concat(vocabulary.terms);
             Object.keys(files).forEach(function (key) {
               var parsedFile = files[key];
               terms = terms.concat(parsedFile);
