@@ -970,6 +970,12 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   margin-bottom: 100px;
 }
 
+.raml-console-login-page-container .raml-console-confirm-email-container .raml-console-help-support,
+.raml-console-login-page-container .raml-console-approve-email-container .raml-console-help-support {
+  color: #fff;
+  margin-top: 75px;
+}
+
 .raml-console-login-page-container .raml-console-approve-email-container {
   width: 800px;
 }
