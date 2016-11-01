@@ -50,7 +50,7 @@
         };
 
         var getCompanyPrefix = function (location) {
-          var envs = ['localhost', '.dev.', '.qa.', '.preprod.'];
+          var envs = ['localhost', 'apis.dev.', 'apis.qa.', 'apis.preprod.'];
           var length = envs.length;
           for (var i=0; i<length; i++) {
             var index = location.indexOf(envs[i]);
