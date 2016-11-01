@@ -50,12 +50,12 @@
         };
 
         var getCompanyPrefix = function (location) {
-          var envs = ['.localhost.', '.dev.', '.qa.', '.preprod.'];
+          var envs = ['localhost', '.dev.', '.qa.', '.preprod.'];
           var length = envs.length;
-          for (var i=0;i<length;i++) {
-            var index = location.search(envs[i]);
+          for (var i=0; i<length; i++) {
+            var index = location.indexOf(envs[i]);
             if (index>=0) {
-              return envs[i].substr(1, envs[i].length-2)+'_';
+              return envs[i].replace('.', '')+'_';
             }
           }
           return '';
