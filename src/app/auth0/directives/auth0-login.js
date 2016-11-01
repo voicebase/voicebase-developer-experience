@@ -55,7 +55,7 @@
           for (var i=0; i<length; i++) {
             var index = location.indexOf(envs[i]);
             if (index>=0) {
-              return envs[i].replace('.', '')+'_';
+              return envs[i].replace(/\./g,'')+'_';
             }
           }
           return '';
