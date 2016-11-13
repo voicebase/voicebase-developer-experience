@@ -21,11 +21,18 @@
         Visit the VoiceBase support site (this link opens a new window).
       </div>
     </div>
-    <div class="panel panel-default" ng-if="showKeyManager" ng-click="loadKeyManager()">
+    <div class="panel panel-default" ng-if="showNativeKeyManager() " ng-click="loadKeyManager()">
       <div class="panel-body">
         <i class="widget-icon fa fa-2x fa-key"></i>
         <h4><a href="">Bearer Token Management</a></h4>
         Generate Bearer tokens used for API authorization to your account.
+      </div>
+    </div>
+    <div class="panel panel-default" ng-if="showLegacyHybridKeyManager()" ng-click="loadLegacyKeyManager()">
+      <div class="panel-body">
+        <i class="widget-icon fa fa-2x fa-key"></i>
+        <h4><a href="">API Key Management</a></h4>
+        Add, revoke, and manage keys used for API authorization to your account.
       </div>
     </div>
   </div>

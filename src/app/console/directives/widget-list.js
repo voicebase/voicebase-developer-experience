@@ -4,7 +4,8 @@
   angular.module('ramlVoicebaseConsoleApp').directive('widgetList', [
     '$window',
     '$location',
-    function ($window, $location) {
+    'voicebaseTokensApi',
+    function ($window, $location, voicebaseTokensApi) {
       return {
         restrict: 'E',
         templateUrl: 'console/directives/widget-list.tpl.html',
@@ -21,6 +22,20 @@
           showComingSoon: '@'
         },
         controller: function($scope) {
+          function isInLegacyHybridMode() {
+            var result = voicebaseTokensApi.isInLegacyHybridMode();
+            console.log('isInLegacyHybridMode', result);
+            return result;
+          }
+
+          $scope.showNativeKeyManager = function() {
+            return ! isInLegacyHybridMode() && $scope.showKeyManager;
+          }
+
+          $scope.showLegacyHybridKeyManager = function() {
+            return isInLegacyHybridMode() && $scope.showKeyManager;
+          }
+
           $scope.loadConsole = function() {
             $location.path('/console');
           };
@@ -31,6 +46,10 @@
 
           $scope.loadKeyManager = function() {
             $location.path('/key-manager');
+          };
+
+          $scope.loadLegacyKeyManager = function() {
+            $location.path('/legacy-key-manager');
           };
 
           $scope.loadMediaBrowser = function() {

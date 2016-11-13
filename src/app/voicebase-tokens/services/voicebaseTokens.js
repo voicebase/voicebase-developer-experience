@@ -16,6 +16,14 @@
         return currentToken;
     };
 
+    var isInLegacyHybridMode = function(){
+        console.log('currentToken', currentToken);
+        // currentToken does not contain a "." => isInLegacyHybridMode
+        return ( !! currentToken )
+          && ( !! currentToken.token )
+          && ( 0 > currentToken.token.indexOf('.') );
+    };
+
     var getTokens = function(credentials) {
       var deferred = $q.defer();
 
@@ -337,7 +345,8 @@
       getUsers: getUsers,
       getUserTokens: getUserTokens,
       addUserToken: addUserToken,
-      deleteUserToken: deleteUserToken
+      deleteUserToken: deleteUserToken,
+      isInLegacyHybridMode: isInLegacyHybridMode
     };
 
   };

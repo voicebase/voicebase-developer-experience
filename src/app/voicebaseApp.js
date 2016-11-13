@@ -99,6 +99,10 @@
         templateUrl: 'pages/keyManagerPage.html',
         reloadOnSearch: false
       })
+      .when('/legacy-key-manager', {
+        templateUrl: 'pages/legacyKeyManagerPage.html',
+        reloadOnSearch: false
+      })
       .when('/generate-api-key', {
         templateUrl: 'pages/generateKeyPage.html',
         reloadOnSearch: false

@@ -99,6 +99,10 @@
         templateUrl: 'pages/keyManagerPage.html',
         reloadOnSearch: false
       })
+      .when('/legacy-key-manager', {
+        templateUrl: 'pages/legacyKeyManagerPage.html',
+        reloadOnSearch: false
+      })
       .when('/generate-api-key', {
         templateUrl: 'pages/generateKeyPage.html',
         reloadOnSearch: false
@@ -382,12 +386,12 @@ voicebasePortal.Decorators = (function (Decorators) {
         };
 
         var getCompanyPrefix = function (location) {
-          var envs = ['localhost', 'dev', 'qa', 'preprod'];
+          var envs = ['localhost', '.dev.', '.qa.', '.preprod.'];
           var length = envs.length;
-          for (var i=0;i<length;i++) {
-            var index = location.search(envs[i]);
+          for (var i=0; i<length; i++) {
+            var index = location.indexOf(envs[i]);
             if (index>=0) {
-              return envs[i]+'_';
+              return envs[i].replace(/\./g,'')+'_';
             }
           }
           return '';
@@ -1276,7 +1280,8 @@ voicebasePortal.Decorators = (function (Decorators) {
   angular.module('ramlVoicebaseConsoleApp').directive('widgetList', [
     '$window',
     '$location',
-    function ($window, $location) {
+    'voicebaseTokensApi',
+    function ($window, $location, voicebaseTokensApi) {
       return {
         restrict: 'E',
         templateUrl: 'console/directives/widget-list.tpl.html',
@@ -1293,6 +1298,20 @@ voicebasePortal.Decorators = (function (Decorators) {
           showComingSoon: '@'
         },
         controller: function($scope) {
+          function isInLegacyHybridMode() {
+            var result = voicebaseTokensApi.isInLegacyHybridMode();
+            console.log('isInLegacyHybridMode', result);
+            return result;
+          }
+
+          $scope.showNativeKeyManager = function() {
+            return ! isInLegacyHybridMode() && $scope.showKeyManager;
+          }
+
+          $scope.showLegacyHybridKeyManager = function() {
+            return isInLegacyHybridMode() && $scope.showKeyManager;
+          }
+
           $scope.loadConsole = function() {
             $location.path('/console');
           };
@@ -1303,6 +1322,10 @@ voicebasePortal.Decorators = (function (Decorators) {
 
           $scope.loadKeyManager = function() {
             $location.path('/key-manager');
+          };
+
+          $scope.loadLegacyKeyManager = function() {
+            $location.path('/legacy-key-manager');
           };
 
           $scope.loadMediaBrowser = function() {
@@ -4206,6 +4229,14 @@ voicebasePortal.Decorators = (function (Decorators) {
         return currentToken;
     };
 
+    var isInLegacyHybridMode = function(){
+        console.log('currentToken', currentToken);
+        // currentToken does not contain a "." => isInLegacyHybridMode
+        return ( !! currentToken )
+          && ( !! currentToken.token )
+          && ( 0 > currentToken.token.indexOf('.') );
+    };
+
     var getTokens = function(credentials) {
       var deferred = $q.defer();
 
@@ -4527,7 +4558,8 @@ voicebasePortal.Decorators = (function (Decorators) {
       getUsers: getUsers,
       getUserTokens: getUserTokens,
       addUserToken: addUserToken,
-      deleteUserToken: deleteUserToken
+      deleteUserToken: deleteUserToken,
+      isInLegacyHybridMode: isInLegacyHybridMode
     };
 
   };
@@ -4999,11 +5031,18 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "        Visit the VoiceBase support site (this link opens a new window).\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"panel panel-default\" ng-if=\"showKeyManager\" ng-click=\"loadKeyManager()\">\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showNativeKeyManager() \" ng-click=\"loadKeyManager()\">\n" +
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
     "        <h4><a href=\"\">Bearer Token Management</a></h4>\n" +
     "        Generate Bearer tokens used for API authorization to your account.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showLegacyHybridKeyManager()\" ng-click=\"loadLegacyKeyManager()\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
+    "        <h4><a href=\"\">API Key Management</a></h4>\n" +
+    "        Add, revoke, and manage keys used for API authorization to your account.\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
