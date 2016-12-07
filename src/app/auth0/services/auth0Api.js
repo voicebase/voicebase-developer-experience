@@ -29,7 +29,8 @@
         signUpTerms: 'I accept the <a href="https://www.voicebase.com/terms-of-use/" target="_new">Terms of Service</a>.'
       },
       mustAcceptTerms: true,
-      closable: false
+      closable: false,
+      container: 'auth0lock-explicit-container' // TODO (john@): this feels like hack
     };
 
     var lock;
