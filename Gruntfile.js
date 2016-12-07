@@ -492,12 +492,44 @@ module.exports = function (grunt) {
           configFile: 'test/regression/local.protractor.conf.js'
         }
       }
+    },
+
+    replace: {
+      dev: {
+        options: {
+          patterns: [
+            {
+              match: /VOICEBASE_API_REPLACEME/g,
+              replacement: 'https://apis.dev.voicebase.com/v2-beta'
+            },
+            {
+              match: /VOICEBASE_RAML_REPLACEME/g,
+              replacement: 'https://apis.dev.voicebase.com/console'
+            },
+            {
+              match: /AUTH0_DOMAIN_REPLACEME/g,
+              replacement: 'voicebase-dev.auth0.com'
+            },
+            {
+              match: /AUTH0_CLIENTID_REPLACEME/g,
+              replacement: 'OCGWPv8TtRySqVezChYf6KJsof7ATG83'
+            }
+          ]
+        },
+        files: [
+          { 
+            src: [ 'dist/index.html' ],
+            dest: './'
+          }
+        ]
+      }
     }
 
   });
 
   grunt.registerTask('default', [
     'build',
+    'replace:dev',
     'connect:livereload',
     'watch'
   ]);
