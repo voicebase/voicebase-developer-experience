@@ -48,7 +48,7 @@
           var link = '<a href="#login" class="alternate-login-link">Alternate API Key Log In</a>';
 
           jQuery(aut0Container)
-            .find('.auth0-lock-widget-container')
+            .find('.auth0-lock-widget')
             .after(link);
 
           jQuery('.alternate-login-link').off('click').on('click', function () {

@@ -17,11 +17,14 @@
     };
 
     var isInLegacyHybridMode = function(){
-        console.log('currentToken', currentToken);
         // currentToken does not contain a "." => isInLegacyHybridMode
         return ( !! currentToken )
           && ( !! currentToken.token )
           && ( 0 > currentToken.token.indexOf('.') );
+    };
+
+    var isSignedIn = function(){
+      return !! currentToken;
     };
 
     var getTokens = function(credentials) {
@@ -346,7 +349,8 @@
       getUserTokens: getUserTokens,
       addUserToken: addUserToken,
       deleteUserToken: deleteUserToken,
-      isInLegacyHybridMode: isInLegacyHybridMode
+      isInLegacyHybridMode: isInLegacyHybridMode,
+      isSignedIn: isSignedIn
     };
 
   };

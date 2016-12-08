@@ -7,31 +7,47 @@
         Explore the VoiceBase REST API and call methods interactively.
       </div>
     </div>
-    <div class="panel panel-default" ng-if="showKeywordsGroups" ng-click="loadKeywordsGroupApp()">
+    <div 
+      class="panel panel-default" 
+      ng-if="showKeywordsGroups" 
+      ng-click="isSignedIn() &amp;&amp; loadKeywordsGroupApp()"
+      ng-class="{ 'grayed-out': isSignedOut()}">
       <div class="panel-body">
         <i class="widget-icon fa fa-2x fa-search"></i>
-        <h4><a href="">Phrase Spotting</a></h4>
+        <h4><a href="" ng-class="{'not-clickable': isSignedOut()}">Phrase Spotting</a></h4>
         Create and manage Phrase Spotting groups for use in the API.
       </div>
     </div>
-    <div class="panel panel-default" ng-if="showSupport" ng-click="redirectToSupport()">
+    <div 
+      class="panel panel-default"
+      ng-if="showSupport"
+      ng-click="redirectToSupport()"
+      ng-class="{ 'grayed-out': isSignedOut()}">
       <div class="panel-body">
         <i class="widget-icon fa fa-2x fa-external-link"></i>
         <h4><a href="">VoiceBase Support</a></h4>
         Visit the VoiceBase support site (this link opens a new window).
       </div>
     </div>
-    <div class="panel panel-default" ng-if="showNativeKeyManager() " ng-click="loadKeyManager()">
+    <div 
+      class="panel panel-default"
+      ng-if="showNativeKeyManager()"
+      ng-click="isSignedIn() &amp;&amp; loadKeyManager()"
+      ng-class="{ 'grayed-out': isSignedOut()}">
       <div class="panel-body">
         <i class="widget-icon fa fa-2x fa-key"></i>
-        <h4><a href="">Bearer Token Management</a></h4>
+        <h4><a href="" ng-class="{'not-clickable': isSignedOut()}">Bearer Token Management</a></h4>
         Generate Bearer tokens used for API authorization to your account.
       </div>
     </div>
-    <div class="panel panel-default" ng-if="showLegacyHybridKeyManager()" ng-click="loadLegacyKeyManager()">
+    <div 
+      class="panel panel-default"
+      ng-if="showLegacyHybridKeyManager()"
+      ng-click="isSignedIn() &amp;&amp; loadLegacyKeyManager()"
+      ng-class="{ 'grayed-out': isSignedOut()}">
       <div class="panel-body">
         <i class="widget-icon fa fa-2x fa-key"></i>
-        <h4><a href="">API Key Management</a></h4>
+        <h4><a href="" ng-class="{'not-clickable': isSignedOut()}">API Key Management</a></h4>
         Add, revoke, and manage keys used for API authorization to your account.
       </div>
     </div>
@@ -44,21 +60,33 @@
         Find detailed documentation and best practices for common use cases.
       </div>
     </div>
-    <div class="panel panel-default" ng-if="showKeywordsSpotting" ng-click="loadKeywordsSpottingApp()">
+    <div
+      class="panel panel-default"
+      ng-if="showKeywordsSpotting"
+      ng-click="isSignedIn() &amp;&amp; loadKeywordsSpottingApp()"
+      ng-class="{ 'grayed-out': isSignedOut()}">
       <div class="panel-body">
         <i class="widget-icon fa fa-2x fa-cloud-upload"></i>
-        <h4><a href="">Phrase Spotting Demo App</a></h4>
+        <h4><a href="" ng-class="{'not-clickable': isSignedOut()}">Phrase Spotting Demo App</a></h4>
         Try out Phrase Spotting by uploading your own content.
       </div>
     </div>
-    <div class="panel panel-default" ng-if="showMediaBrowser" ng-click="loadMediaBrowser()">
+    <div 
+      class="panel panel-default"
+      ng-if="showMediaBrowser"
+      ng-click="isSignedIn() &amp;&amp; loadMediaBrowser()"
+      ng-class="{ 'grayed-out': isSignedOut()}">
       <div class="panel-body">
         <i class="widget-icon fa fa-2x fa-search"></i>
-        <h4><a href="">Media Browser</a></h4>
+        <h4><a href="" ng-class="{'not-clickable': isSignedOut()}">Media Browser</a></h4>
         Browse previously uploaded media, transcripts, keywords, and predictions.
       </div>
     </div>
-    <div class="panel panel-default" ng-if="showDag" ng-click="loadDag()">
+    <div 
+      class="panel panel-default"
+      ng-if="showDag"
+      ng-click="isSignedIn() &amp;&amp; loadDag()"
+      ng-class="{ 'grayed-out': isSignedOut()}">
       <div class="panel-body">
         <i class="widget-icon fa fa-2x fa-code-fork"></i>
         <h4>DAG visualization</h4>

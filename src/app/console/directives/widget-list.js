@@ -23,9 +23,15 @@
         },
         controller: function($scope) {
           function isInLegacyHybridMode() {
-            var result = voicebaseTokensApi.isInLegacyHybridMode();
-            console.log('isInLegacyHybridMode', result);
-            return result;
+            return voicebaseTokensApi.isInLegacyHybridMode();
+          }
+
+          $scope.isSignedIn = function() {
+            return voicebaseTokensApi.isSignedIn();
+          }
+
+          $scope.isSignedOut = function() {
+            return ! $scope.isSignedIn();
           }
 
           $scope.showNativeKeyManager = function() {
@@ -65,7 +71,7 @@
           };
 
           $scope.loadDoc = function() {
-            $location.path('/documentation');
+            $window.location.href = 'http://voicebase.readthedocs.io/en/v2-beta/';
           };
 
           $scope.loadDag = function() {
