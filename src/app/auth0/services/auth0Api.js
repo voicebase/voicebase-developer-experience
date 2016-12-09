@@ -9,7 +9,8 @@
 
     var AUTH0_OPTIONS = {
       theme: {
-        logo: 'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png'
+        logo: 'img/voicebase-logo.png',
+        primaryColor: '#95e05a'
       },
       auth: {
         redirect: false,

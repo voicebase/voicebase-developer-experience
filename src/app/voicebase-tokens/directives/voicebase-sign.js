@@ -25,9 +25,7 @@
         });
 
         $scope.signIn = function() {
-          if(!$scope.isLoaded) {
-            $scope.showForm(); // method of voicebase-auth-form
-          }
+          $location.path('/');
         };
 
         $scope.signOut = function() {
