@@ -197,75 +197,6 @@ voicebasePortal.Decorators = (function (Decorators) {
 (function () {
   'use strict';
 
-  var Auth0Injector = function(auth0Api) {
-    return {
-      restrict: 'E',
-      link: function() {
-
-        var findAuth0Mutation = function (mutations) {
-          var aut0Container = null;
-          for (var i = 0; i < mutations.length; i++) {
-            var mutation = mutations[i];
-            if (mutation.type === 'childList') {
-              var addedNodes = mutation.addedNodes;
-              for (var j = 0; j < addedNodes.length; j++) {
-                var node = addedNodes[j];
-                if (node.classList && node.classList.contains('auth0-lock-container')) {
-                  aut0Container = node;
-                  break;
-                }
-              }
-            }
-            if (aut0Container) {
-              break;
-            }
-          }
-          return aut0Container;
-        };
-
-        var runAuth0Injector = function () {
-          var observer = new MutationObserver(function(mutations, observer) {
-            console.log(mutations);
-            var aut0Container = findAuth0Mutation(mutations);
-            if(aut0Container) {
-              injectLoginLink(aut0Container);
-              observer.disconnect();
-            }
-          });
-
-          observer.observe(document, {
-            subtree: true,
-            childList: true,
-            attributes: false
-          });
-        };
-
-        var injectLoginLink = function (aut0Container) {
-          var link = '<a href="#login" class="alternate-login-link">Alternate API Key Log In</a>';
-
-          jQuery(aut0Container)
-            .find('.auth0-lock-widget-container')
-            .after(link);
-
-          jQuery('.alternate-login-link').off('click').on('click', function () {
-            auth0Api.hideLock();
-          });
-        };
-
-        runAuth0Injector();
-      }
-
-    };
-  };
-
-  angular.module('voicebaseAuth0Module')
-    .directive('auth0Injector', Auth0Injector);
-
-})();
-
-(function () {
-  'use strict';
-
   var auth0KeyManager = function () {
     return {
       restrict: 'E',
@@ -545,7 +476,8 @@ voicebasePortal.Decorators = (function (Decorators) {
 
     var AUTH0_OPTIONS = {
       theme: {
-        logo: 'https://s3.amazonaws.com/www-tropo-com/wp-content/uploads/2015/06/voicebase-logo.png'
+        logo: 'img/voicebase-logo.png',
+        primaryColor: '#95e05a'
       },
       auth: {
         redirect: false,
@@ -565,7 +497,8 @@ voicebasePortal.Decorators = (function (Decorators) {
         signUpTerms: 'I accept the <a href="https://www.voicebase.com/terms-of-use/" target="_new">Terms of Service</a>.'
       },
       mustAcceptTerms: true,
-      closable: false
+      closable: false,
+      container: 'auth0lock-explicit-container' // TODO (john@): this feels like hack
     };
 
     var lock;
@@ -1299,9 +1232,15 @@ voicebasePortal.Decorators = (function (Decorators) {
         },
         controller: function($scope) {
           function isInLegacyHybridMode() {
-            var result = voicebaseTokensApi.isInLegacyHybridMode();
-            console.log('isInLegacyHybridMode', result);
-            return result;
+            return voicebaseTokensApi.isInLegacyHybridMode();
+          }
+
+          $scope.isSignedIn = function() {
+            return voicebaseTokensApi.isSignedIn();
+          }
+
+          $scope.isSignedOut = function() {
+            return ! $scope.isSignedIn();
           }
 
           $scope.showNativeKeyManager = function() {
@@ -1341,7 +1280,7 @@ voicebasePortal.Decorators = (function (Decorators) {
           };
 
           $scope.loadDoc = function() {
-            $location.path('/documentation');
+            $window.location.href = 'http://voicebase.readthedocs.io/en/v2-beta/';
           };
 
           $scope.loadDag = function() {
@@ -4103,9 +4042,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         });
 
         $scope.signIn = function() {
-          if(!$scope.isLoaded) {
-            $scope.showForm(); // method of voicebase-auth-form
-          }
+          $location.path('/');
         };
 
         $scope.signOut = function() {
@@ -4230,11 +4167,14 @@ voicebasePortal.Decorators = (function (Decorators) {
     };
 
     var isInLegacyHybridMode = function(){
-        console.log('currentToken', currentToken);
         // currentToken does not contain a "." => isInLegacyHybridMode
         return ( !! currentToken )
           && ( !! currentToken.token )
           && ( 0 > currentToken.token.indexOf('.') );
+    };
+
+    var isSignedIn = function(){
+      return !! currentToken;
     };
 
     var getTokens = function(credentials) {
@@ -4559,7 +4499,8 @@ voicebasePortal.Decorators = (function (Decorators) {
       getUserTokens: getUserTokens,
       addUserToken: addUserToken,
       deleteUserToken: deleteUserToken,
-      isInLegacyHybridMode: isInLegacyHybridMode
+      isInLegacyHybridMode: isInLegacyHybridMode,
+      isSignedIn: isSignedIn
     };
 
   };
@@ -5017,31 +4958,47 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "        Explore the VoiceBase REST API and call methods interactively.\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"panel panel-default\" ng-if=\"showKeywordsGroups\" ng-click=\"loadKeywordsGroupApp()\">\n" +
+    "    <div \n" +
+    "      class=\"panel panel-default\" \n" +
+    "      ng-if=\"showKeywordsGroups\" \n" +
+    "      ng-click=\"isSignedIn() &amp;&amp; loadKeywordsGroupApp()\"\n" +
+    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-search\"></i>\n" +
-    "        <h4><a href=\"\">Phrase Spotting</a></h4>\n" +
+    "        <h4><a href=\"\" ng-class=\"{'not-clickable': isSignedOut()}\">Phrase Spotting</a></h4>\n" +
     "        Create and manage Phrase Spotting groups for use in the API.\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"panel panel-default\" ng-if=\"showSupport\" ng-click=\"redirectToSupport()\">\n" +
+    "    <div \n" +
+    "      class=\"panel panel-default\"\n" +
+    "      ng-if=\"showSupport\"\n" +
+    "      ng-click=\"redirectToSupport()\"\n" +
+    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-external-link\"></i>\n" +
     "        <h4><a href=\"\">VoiceBase Support</a></h4>\n" +
     "        Visit the VoiceBase support site (this link opens a new window).\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"panel panel-default\" ng-if=\"showNativeKeyManager() \" ng-click=\"loadKeyManager()\">\n" +
+    "    <div \n" +
+    "      class=\"panel panel-default\"\n" +
+    "      ng-if=\"showNativeKeyManager()\"\n" +
+    "      ng-click=\"isSignedIn() &amp;&amp; loadKeyManager()\"\n" +
+    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
-    "        <h4><a href=\"\">Bearer Token Management</a></h4>\n" +
+    "        <h4><a href=\"\" ng-class=\"{'not-clickable': isSignedOut()}\">Bearer Token Management</a></h4>\n" +
     "        Generate Bearer tokens used for API authorization to your account.\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"panel panel-default\" ng-if=\"showLegacyHybridKeyManager()\" ng-click=\"loadLegacyKeyManager()\">\n" +
+    "    <div \n" +
+    "      class=\"panel panel-default\"\n" +
+    "      ng-if=\"showLegacyHybridKeyManager()\"\n" +
+    "      ng-click=\"isSignedIn() &amp;&amp; loadLegacyKeyManager()\"\n" +
+    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
-    "        <h4><a href=\"\">API Key Management</a></h4>\n" +
+    "        <h4><a href=\"\" ng-class=\"{'not-clickable': isSignedOut()}\">API Key Management</a></h4>\n" +
     "        Add, revoke, and manage keys used for API authorization to your account.\n" +
     "      </div>\n" +
     "    </div>\n" +
@@ -5054,21 +5011,33 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "        Find detailed documentation and best practices for common use cases.\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"panel panel-default\" ng-if=\"showKeywordsSpotting\" ng-click=\"loadKeywordsSpottingApp()\">\n" +
+    "    <div\n" +
+    "      class=\"panel panel-default\"\n" +
+    "      ng-if=\"showKeywordsSpotting\"\n" +
+    "      ng-click=\"isSignedIn() &amp;&amp; loadKeywordsSpottingApp()\"\n" +
+    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-cloud-upload\"></i>\n" +
-    "        <h4><a href=\"\">Phrase Spotting Demo App</a></h4>\n" +
+    "        <h4><a href=\"\" ng-class=\"{'not-clickable': isSignedOut()}\">Phrase Spotting Demo App</a></h4>\n" +
     "        Try out Phrase Spotting by uploading your own content.\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"panel panel-default\" ng-if=\"showMediaBrowser\" ng-click=\"loadMediaBrowser()\">\n" +
+    "    <div \n" +
+    "      class=\"panel panel-default\"\n" +
+    "      ng-if=\"showMediaBrowser\"\n" +
+    "      ng-click=\"isSignedIn() &amp;&amp; loadMediaBrowser()\"\n" +
+    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-search\"></i>\n" +
-    "        <h4><a href=\"\">Media Browser</a></h4>\n" +
+    "        <h4><a href=\"\" ng-class=\"{'not-clickable': isSignedOut()}\">Media Browser</a></h4>\n" +
     "        Browse previously uploaded media, transcripts, keywords, and predictions.\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"panel panel-default\" ng-if=\"showDag\" ng-click=\"loadDag()\">\n" +
+    "    <div \n" +
+    "      class=\"panel panel-default\"\n" +
+    "      ng-if=\"showDag\"\n" +
+    "      ng-click=\"isSignedIn() &amp;&amp; loadDag()\"\n" +
+    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-code-fork\"></i>\n" +
     "        <h4>DAG visualization</h4>\n" +
@@ -5649,24 +5618,29 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "    <div ng-if=\"!mediaBroserCtrl.mediaLoaded\">\n" +
     "      <div class=\"media-browser-list\" id=\"media-browser-list\">\n" +
     "\n" +
-    "        <div\n" +
-    "          dir-paginate=\"media in mediaBroserCtrl.media | itemsPerPage: mediaBroserCtrl.groupsPerPage\"\n" +
-    "          current-page=\"mediaBroserCtrl.currentPage\">\n" +
+    "        <div ng-if=\"!mediaBroserCtrl.media.length\" class=\"alert alert-warning\">\n" +
+    "          There are no media files uploaded, please go ahead an upload media file\n" +
+    "        </div>\n" +
     "\n" +
-    "          <div class=\"panel panel-default\">\n" +
-    "            <div class=\"panel-heading\" role=\"tab\">\n" +
-    "              <h4 class=\"panel-title\">\n" +
-    "                <a role=\"button\" data-toggle=\"collapse\" ng-attr-data-index=\"{{ $index }}\" href=\"javascript:void(0)\"\n" +
-    "                   ng-click=\"mediaBroserCtrl.loadMedia($event, media)\">\n" +
-    "                  {{ mediaBroserCtrl.getMediaTitle(media) }}\n" +
-    "                </a>\n" +
-    "              </h4>\n" +
-    "            </div>\n" +
-    "            <div class=\"panel-collapse collapse\" role=\"tabpanel\">\n" +
-    "              <div class=\"panel-body\"></div>\n" +
+    "        <div ng-if=\"mediaBroserCtrl.media.length\">\n" +
+    "          <div\n" +
+    "            dir-paginate=\"media in mediaBroserCtrl.media | itemsPerPage: mediaBroserCtrl.groupsPerPage\"\n" +
+    "            current-page=\"mediaBroserCtrl.currentPage\">\n" +
+    "\n" +
+    "            <div class=\"panel panel-default\">\n" +
+    "              <div class=\"panel-heading\" role=\"tab\">\n" +
+    "                <h4 class=\"panel-title\">\n" +
+    "                  <a role=\"button\" data-toggle=\"collapse\" ng-attr-data-index=\"{{ $index }}\" href=\"javascript:void(0)\"\n" +
+    "                     ng-click=\"mediaBroserCtrl.loadMedia($event, media)\">\n" +
+    "                    {{ mediaBroserCtrl.getMediaTitle(media) }}\n" +
+    "                  </a>\n" +
+    "                </h4>\n" +
+    "              </div>\n" +
+    "              <div class=\"panel-collapse collapse\" role=\"tabpanel\">\n" +
+    "                <div class=\"panel-body\"></div>\n" +
+    "              </div>\n" +
     "            </div>\n" +
     "          </div>\n" +
-    "\n" +
     "        </div>\n" +
     "\n" +
     "      </div>\n" +

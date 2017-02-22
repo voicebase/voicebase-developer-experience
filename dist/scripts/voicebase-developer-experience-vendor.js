@@ -21,7 +21,7 @@ function(){this.$get=function(){return{}}});n.directive("ngView",x);n.directive(
 //# sourceMappingURL=angular-route.min.js.map
 
 /*
- AngularJS v1.4.12
+ AngularJS v1.4.10
  (c) 2010-2015 Google, Inc. http://angularjs.org
  License: MIT
 */

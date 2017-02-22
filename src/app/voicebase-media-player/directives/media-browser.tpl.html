@@ -10,24 +10,29 @@
     <div ng-if="!mediaBroserCtrl.mediaLoaded">
       <div class="media-browser-list" id="media-browser-list">
 
-        <div
-          dir-paginate="media in mediaBroserCtrl.media | itemsPerPage: mediaBroserCtrl.groupsPerPage"
-          current-page="mediaBroserCtrl.currentPage">
+        <div ng-if="!mediaBroserCtrl.media.length" class="alert alert-warning">
+          There are no media files uploaded, please go ahead an upload media file
+        </div>
 
-          <div class="panel panel-default">
-            <div class="panel-heading" role="tab">
-              <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" ng-attr-data-index="{{ $index }}" href="javascript:void(0)"
-                   ng-click="mediaBroserCtrl.loadMedia($event, media)">
-                  {{ mediaBroserCtrl.getMediaTitle(media) }}
-                </a>
-              </h4>
-            </div>
-            <div class="panel-collapse collapse" role="tabpanel">
-              <div class="panel-body"></div>
+        <div ng-if="mediaBroserCtrl.media.length">
+          <div
+            dir-paginate="media in mediaBroserCtrl.media | itemsPerPage: mediaBroserCtrl.groupsPerPage"
+            current-page="mediaBroserCtrl.currentPage">
+
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab">
+                <h4 class="panel-title">
+                  <a role="button" data-toggle="collapse" ng-attr-data-index="{{ $index }}" href="javascript:void(0)"
+                     ng-click="mediaBroserCtrl.loadMedia($event, media)">
+                    {{ mediaBroserCtrl.getMediaTitle(media) }}
+                  </a>
+                </h4>
+              </div>
+              <div class="panel-collapse collapse" role="tabpanel">
+                <div class="panel-body"></div>
+              </div>
             </div>
           </div>
-
         </div>
 
       </div>

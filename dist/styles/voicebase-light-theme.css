@@ -799,6 +799,15 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   background: none !important;
 }
 
+.grayed-out {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+
+.not-clickable {
+  cursor: not-allowed !important;
+}
+
 .raml-console-login-page-container {
   background: #242f3e;
   color: #6e7e95;
