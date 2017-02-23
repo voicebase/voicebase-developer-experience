@@ -2,7 +2,7 @@ voicebasePortal.Decorators = (function (Decorators) {
   'use strict';
 
   Decorators.ramlSidebar = function ($provide) {
-    $provide.decorator('sidebarDirective', function ($delegate, $controller, $compile, voicebaseTokensApi) {
+    $provide.decorator('sidebarDirective', function ($delegate, $controller, $compile, voicebaseTokensApi, store) {
       var directive = $delegate[0];
 
       directive.compile = function () {
@@ -37,20 +37,28 @@ voicebasePortal.Decorators = (function (Decorators) {
         var addTokenHeader = function(currentToken) {
           if($scope.currentSchemeType === 'x-OAuth 2 Bearer') {
             if (currentToken) {
-              $scope.context.customParameters.headers.push({
-                name: 'Authorization',
-                value: 'Bearer ' + currentToken.token
-              });
-
-              if($scope.context.queryParameters.values && $scope.context.queryParameters.values.access_token) {
-                $scope.context.queryParameters.values.access_token = [];
-              }
+              pushTokenHeader(currentToken.token);
             }
             else {
               $scope.context.customParameters.headers = $scope.context.customParameters.headers.filter(function (header) {
                 return (header.name !== 'Authorization');
               });
             }
+          }
+          else if ($scope.currentSchemeType === 'x-jwt') {
+            var auth0Token = store.get('auth0Token') || '';
+            pushTokenHeader(auth0Token);
+          }
+        };
+
+        var pushTokenHeader = function (token) {
+          $scope.context.customParameters.headers.push({
+            name: 'Authorization',
+            value: 'Bearer ' + token
+          });
+
+          if($scope.context.queryParameters.values && $scope.context.queryParameters.values.access_token) {
+            $scope.context.queryParameters.values.access_token = [];
           }
         };
 
