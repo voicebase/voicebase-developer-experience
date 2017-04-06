@@ -67,7 +67,7 @@
           };
 
           $scope.redirectToSupport = function() {
-            $window.open('http://www.voicebase.com/developers/');
+            $window.open('http://support.voicebase.com/');
           };
 
           $scope.loadDoc = function() {
