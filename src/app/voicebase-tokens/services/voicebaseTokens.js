@@ -18,9 +18,9 @@
 
     var isInLegacyHybridMode = function(){
         // currentToken does not contain a "." => isInLegacyHybridMode
-        return ( !! currentToken )
-          && ( !! currentToken.token )
-          && ( 0 > currentToken.token.indexOf('.') );
+        return ( !! currentToken ) &&
+          ( !! currentToken.token ) &&
+          ( 0 > currentToken.token.indexOf('.') );
     };
 
     var isSignedIn = function(){

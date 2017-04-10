@@ -28,19 +28,19 @@
 
           $scope.isSignedIn = function() {
             return voicebaseTokensApi.isSignedIn();
-          }
+          };
 
           $scope.isSignedOut = function() {
             return ! $scope.isSignedIn();
-          }
+          };
 
           $scope.showNativeKeyManager = function() {
             return ! isInLegacyHybridMode() && $scope.showKeyManager;
-          }
+          };
 
           $scope.showLegacyHybridKeyManager = function() {
             return isInLegacyHybridMode() && $scope.showKeyManager;
-          }
+          };
 
           $scope.loadConsole = function() {
             $location.path('/console');
