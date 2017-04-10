@@ -5,7 +5,7 @@ DOWNLOAD_JS="node_modules/bower/lib/util/download.js"
 if [ -f "$DOWNLOAD_JS" ]; then
   # diff --unified=1 node_modules/bower/lib/util/download.js download.js
   echo "Attempting to patch: ${DOWNLOAD_JS}…"
-  patch --unified --forward --reject-file="/tmp/$USER"" "$DOWNLOAD_JS" <<EOF
+  patch --unified --forward --reject-file="/tmp/$USER" "$DOWNLOAD_JS" <<EOF
 --- node_modules/bower/lib/util/download.js	2016-11-07 01:57:24.000000000 -0800
 +++ download.js	2017-04-09 18:15:58.000000000 -0700
 @@ -73,3 +73,4 @@
