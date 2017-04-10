@@ -4,6 +4,7 @@
   "description": "Voicebase Api-Console for RAML",
   "main": "Gruntfile.js",
   "scripts": {
+    "patchbower": "config/patchbower",
     "test": "grunt regression"
   },
   "repository": {
