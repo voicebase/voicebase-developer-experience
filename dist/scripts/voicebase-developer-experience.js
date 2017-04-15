@@ -1245,19 +1245,19 @@ voicebasePortal.Decorators = (function (Decorators) {
 
           $scope.isSignedIn = function() {
             return voicebaseTokensApi.isSignedIn();
-          }
+          };
 
           $scope.isSignedOut = function() {
             return ! $scope.isSignedIn();
-          }
+          };
 
           $scope.showNativeKeyManager = function() {
             return ! isInLegacyHybridMode() && $scope.showKeyManager;
-          }
+          };
 
           $scope.showLegacyHybridKeyManager = function() {
             return isInLegacyHybridMode() && $scope.showKeyManager;
-          }
+          };
 
           $scope.loadConsole = function() {
             $location.path('/console');
@@ -1284,7 +1284,7 @@ voicebasePortal.Decorators = (function (Decorators) {
           };
 
           $scope.redirectToSupport = function() {
-            $window.open('http://www.voicebase.com/developers/');
+            $window.open('http://support.voicebase.com/');
           };
 
           $scope.loadDoc = function() {
@@ -4176,9 +4176,9 @@ voicebasePortal.Decorators = (function (Decorators) {
 
     var isInLegacyHybridMode = function(){
         // currentToken does not contain a "." => isInLegacyHybridMode
-        return ( !! currentToken )
-          && ( !! currentToken.token )
-          && ( 0 > currentToken.token.indexOf('.') );
+        return ( !! currentToken ) &&
+          ( !! currentToken.token ) &&
+          ( 0 > currentToken.token.indexOf('.') );
     };
 
     var isSignedIn = function(){
@@ -4980,8 +4980,7 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "    <div \n" +
     "      class=\"panel panel-default\"\n" +
     "      ng-if=\"showSupport\"\n" +
-    "      ng-click=\"redirectToSupport()\"\n" +
-    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
+    "      ng-click=\"redirectToSupport()\">\n" +
     "      <div class=\"panel-body\">\n" +
     "        <i class=\"widget-icon fa fa-2x fa-external-link\"></i>\n" +
     "        <h4><a href=\"\">VoiceBase Support</a></h4>\n" +
