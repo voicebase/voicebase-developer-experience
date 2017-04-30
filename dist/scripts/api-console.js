@@ -362,7 +362,6 @@
       replace: true,
       controller: function($scope, $location, $anchorScroll, $rootScope) {
         $scope.showPanel = false;
-        console.log('false in scope:', $scope.$id);
         function loadExamples () {
           $scope.context.uriParameters.reset($scope.resource.uriParametersForDocumentation);
           $scope.context.queryParameters.reset($scope.methodInfo.queryParameters);
@@ -1048,9 +1047,13 @@
 
           apply();
 
-          $scope.refreshCodemirror = true;
+          if (!$scope.refreshCodemirror) {
+            $scope.refreshCodemirror = 1;
+          } else {
+            $scope.refreshCodemirror++;
+          }
           $timeout(function () {
-            $scope.refreshCodemirror = false;
+            $scope.refreshCodemirror++;
           }, 100);
         }
 

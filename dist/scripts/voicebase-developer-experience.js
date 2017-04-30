@@ -567,6 +567,10 @@ voicebasePortal.Decorators = (function (Decorators) {
       lock.hide();
     };
 
+    var dropLock = function () {
+      $rootScope.savedLock = lock = null;
+    }
+
     var setCredentialsError = function (error) {
       $rootScope.$broadcast('auth0SignIn', {error: error});
     };
@@ -634,6 +638,7 @@ voicebasePortal.Decorators = (function (Decorators) {
       runUpdatingTokenInterval: runUpdatingTokenInterval,
       getApiKeys: getApiKeys,
       signIn: signIn,
+      dropLock: dropLock,
       hideLock: hideLock,
       saveCredentials: saveCredentials,
       signOut: signOut,
@@ -768,8 +773,12 @@ voicebasePortal.Decorators = (function (Decorators) {
   'use strict';
 
   angular.module('ramlVoicebaseConsoleApp')
-    .controller('loginPageCtrl', ['$scope', '$timeout', '$location', function($scope, $timeout, $location) {
+    .controller('loginPageCtrl', ['$scope', '$timeout', '$location', 'auth0Api', function($scope, $timeout, $location, auth0Api) {
+console.log('loginPageCtrl' + $location.path())
       $scope.isSkipping = false;
+      if (String($location.path()).startsWith('/login')) {
+        auth0Api.dropLock()
+      }
 
       $scope.skip = function(event) {
         event.preventDefault();
