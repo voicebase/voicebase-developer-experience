@@ -102,7 +102,7 @@
 
     var dropLock = function () {
       $rootScope.savedLock = lock = null;
-    }
+    };
 
     var setCredentialsError = function (error) {
       $rootScope.$broadcast('auth0SignIn', {error: error});
