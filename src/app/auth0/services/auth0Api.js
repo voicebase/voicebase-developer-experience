@@ -34,7 +34,7 @@
       container: 'auth0lock-explicit-container' // TODO (john@): this feels like hack
     };
 
-    var lock;
+    var lock = $rootScope.savedLock;
 
     var createAuth0ApiKey = function (auth0Token, ephemeral) {
       var deferred = $q.defer();
@@ -77,18 +77,21 @@
         setCredentialsError('Wrong Auth0 Config!');
         return false;
       }
-      lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN, AUTH0_OPTIONS);
-      lock.on('authenticated', function(result) {
-        var token = result.idToken;
-        lock.getProfile(token, function (error, profile) {
-          if (error) {
-            setCredentialsError(error);
-          }
-          hideLock();
-          saveCredentials(profile, token);
-          $rootScope.$broadcast('auth0SignIn', {profile: profile, token: token});
+      if (!lock) {
+        lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN, AUTH0_OPTIONS);
+        lock.on('authenticated', function(result) {
+          var token = result.idToken;
+          lock.getProfile(token, function (error, profile) {
+            if (error) {
+              setCredentialsError(error);
+            }
+            hideLock();
+            saveCredentials(profile, token);
+            $rootScope.$broadcast('auth0SignIn', {profile: profile, token: token});
+          });
         });
-      });
+        $rootScope.savedLock = lock;
+      }
 
       lock.show();
     };
