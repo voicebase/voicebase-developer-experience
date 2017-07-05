@@ -28,6 +28,7 @@
         };
 
         $scope.startAuth = function($event) {
+          $event.preventDefault()
           var isValid = formValidate.validateForm($scope.authForm);
           if(!isValid) {
             jQuery($event.currentTarget).closest('form').addClass('checkDirty').find('.ng-invalid').first().focus();
