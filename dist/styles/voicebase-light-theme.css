@@ -176,6 +176,66 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   padding: 15px;
   color: #D14956;
 }
+.dashboard-page .widget-list-section,
+.widget-page .widget-list-section,
+.keywords-spotting .widget-list-section,
+.media-browser .widget-list-section {
+  text-align: center;
+}
+.dashboard-page .widget-list-section span,
+.widget-page .widget-list-section span,
+.keywords-spotting .widget-list-section span,
+.media-browser .widget-list-section span {
+  background: #eee;
+  position: relative;
+  padding: 3px;
+}
+.dashboard-page .widget-list-section span span,
+.widget-page .widget-list-section span span,
+.keywords-spotting .widget-list-section span span,
+.media-browser .widget-list-section span span {
+  background-color: #737373;
+  letter-spacing: 1px;
+  color: transparent;
+  font-size: 120%;
+  font-weight: bold;
+  position: relative;
+  text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.5);
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+}
+.dashboard-page .widget-list-section hr,
+.widget-page .widget-list-section hr,
+.keywords-spotting .widget-list-section hr,
+.media-browser .widget-list-section hr {
+  height: 2px;
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  margin-top: -1px;
+  border: 0;
+  background-color: transparent;
+  background-image: linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+  background-image: -webkit-linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+  background-image: -moz-linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+  background-image: -ms-linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+  background-image: -o-linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+}
+.dashboard-page .widget-list-section hr::after,
+.widget-page .widget-list-section hr::after,
+.keywords-spotting .widget-list-section hr::after,
+.media-browser .widget-list-section hr::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background-color: transparent;
+  background-image: linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+  background-image: -webkit-linear-gradient(left, rgba(255, 255, 255, 0), #c3c3c3, rgba(255, 255, 255, 0));
+  background-image: -moz-linear-gradient(left, rgba(255, 255, 255, 0), #c3c3c3, rgba(255, 255, 255, 0));
+  background-image: -ms-linear-gradient(left, rgba(255, 255, 255, 0), #c3c3c3, rgba(255, 255, 255, 0));
+  background-image: -o-linear-gradient(left, rgba(255, 255, 255, 0), #c3c3c3, rgba(255, 255, 255, 0));
+}
 .dashboard-page .panel,
 .widget-page .panel,
 .keywords-spotting .panel,
@@ -183,6 +243,7 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   cursor: pointer;
   transition: all 0.3s ease;
   border: 1px solid #DDD;
+  overflow: hidden;
 }
 .dashboard-page .panel:hover,
 .widget-page .panel:hover,
@@ -216,6 +277,12 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   margin-top: 0;
   font-size: 16px;
 }
+.dashboard-page .panel h4 .panel-version,
+.widget-page .panel h4 .panel-version,
+.keywords-spotting .panel h4 .panel-version,
+.media-browser .panel h4 .panel-version {
+  color: #85d04a;
+}
 .dashboard-page .panel h4 a,
 .widget-page .panel h4 a,
 .keywords-spotting .panel h4 a,
@@ -228,6 +295,23 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
 .media-browser .panel .panel-body {
   padding-left: 55px;
   position: relative;
+}
+.dashboard-page .panel .panel-body .corner-ribbon,
+.widget-page .panel .panel-body .corner-ribbon,
+.keywords-spotting .panel .panel-body .corner-ribbon,
+.media-browser .panel .panel-body .corner-ribbon {
+  width: 200px;
+  background: #85d04a;
+  position: absolute;
+  top: 20px;
+  right: -65px;
+  text-align: center;
+  padding: 5px 0;
+  z-index: 1;
+  font-size: 80%;
+  color: #f0f0f0;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
 }
 .dashboard-page .panel .panel-body ul,
 .widget-page .panel .panel-body ul,
@@ -341,18 +425,30 @@ input.ng-dirty.ng-invalid-required + .raml-console-multi-errors .raml-console-vb
   .media-browser {
     padding-top: 110px;
   }
-  .dashboard-page .panel,
+  .dashboard-page .panel, .dashboard-page .widget-list-section, .dashboard-page .sidebar,
   .widget-page .panel,
+  .widget-page .widget-list-section,
+  .widget-page .sidebar,
   .keywords-spotting .panel,
-  .media-browser .panel {
+  .keywords-spotting .widget-list-section,
+  .keywords-spotting .sidebar,
+  .media-browser .panel,
+  .media-browser .widget-list-section,
+  .media-browser .sidebar {
     margin-bottom: 30px;
   }
 }
 @media (max-width: 767px) {
-  .dashboard-page .panel,
+  .dashboard-page .panel, .dashboard-page .widget-list-section, .dashboard-page .sidebar,
   .widget-page .panel,
+  .widget-page .widget-list-section,
+  .widget-page .sidebar,
   .keywords-spotting .panel,
-  .media-browser .panel {
+  .keywords-spotting .widget-list-section,
+  .keywords-spotting .sidebar,
+  .media-browser .panel,
+  .media-browser .widget-list-section,
+  .media-browser .sidebar {
     margin-bottom: 10px;
   }
 }

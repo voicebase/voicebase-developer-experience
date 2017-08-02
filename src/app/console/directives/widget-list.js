@@ -74,6 +74,10 @@
             $window.location.href = 'http://voicebase.readthedocs.io/en/v2-beta/';
           };
 
+          $scope.loadDocV3 = function() {
+            $window.location.href = 'http://voicebase.readthedocs.io/en/v3/';
+          };
+
           $scope.loadDag = function() {
             $location.path('/dag');
           };
@@ -83,4 +87,3 @@
   ]);
 
 })();
-

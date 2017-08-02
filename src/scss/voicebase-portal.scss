@@ -14,10 +14,62 @@
     color: #D14956;
   }
 
+  .widget-list-section {
+    text-align: center;
+
+    span {
+      background: #eee;
+      position: relative;
+      padding:3px;
+
+      span {
+        background-color: #737373;
+        letter-spacing: 1px;
+        color: transparent;
+        font-size: 120%;
+        font-weight: bold;
+        position: relative;
+        text-shadow: 0px 1px 1px rgba(255,255,255,0.5);
+        -webkit-background-clip: text;
+           -moz-background-clip: text;
+                background-clip: text
+      }
+    }
+
+    hr {
+      height: 2px;
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      margin-top: -1px;
+      border: 0;
+      background-color: transparent;
+      background-image: linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+      background-image: -webkit-linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+      background-image: -moz-linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+      background-image: -ms-linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+      background-image: -o-linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+    }
+
+    hr::after {
+      content: '';
+      display: block;
+      height: 1px;
+      background-color: transparent;
+      background-image: linear-gradient(left, rgba(255, 255, 255, 0), #fff, rgba(255, 255, 255, 0));
+      background-image: -webkit-linear-gradient(left, rgba(255, 255, 255, 0), #c3c3c3, rgba(255, 255, 255, 0));
+      background-image: -moz-linear-gradient(left, rgba(255, 255, 255, 0), #c3c3c3, rgba(255, 255, 255, 0));
+      background-image: -ms-linear-gradient(left, rgba(255, 255, 255, 0), #c3c3c3, rgba(255, 255, 255, 0));
+      background-image: -o-linear-gradient(left, rgba(255, 255, 255, 0), #c3c3c3, rgba(255, 255, 255, 0));
+    }
+
+  }
+
   .panel {
     cursor: pointer;
     transition: all 0.3s ease;
     border: 1px solid #DDD;
+    overflow: hidden;
 
     &:hover {
       border: 1px solid #DDD;
@@ -40,6 +92,10 @@
       margin-top: 0;
       font-size: 16px;
 
+      .panel-version {
+        color: #85d04a;
+      }
+
       a {
         text-decoration: none;
       }
@@ -48,6 +104,21 @@
     .panel-body {
       padding-left: 55px;
       position: relative;
+
+      .corner-ribbon {
+        width: 200px;
+        background: #85d04a;
+        position: absolute;
+        top: 20px;
+        right: -65px;
+        text-align: center;
+        padding: 5px 0;
+        z-index: 1;
+        font-size: 80%;
+        color: #f0f0f0;
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+      }
 
       ul {
         margin-bottom: 0;
@@ -114,7 +185,7 @@
   .media-browser {
     padding-top: 110px;
 
-    .panel {
+    .panel, .widget-list-section, .sidebar {
       margin-bottom: 30px;
     }
 
@@ -127,7 +198,7 @@
   .keywords-spotting,
   .media-browser {
 
-    .panel {
+    .panel, .widget-list-section, .sidebar {
       margin-bottom: 10px;
     }
   }

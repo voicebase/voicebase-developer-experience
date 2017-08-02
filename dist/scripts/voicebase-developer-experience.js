@@ -1112,6 +1112,7 @@ voicebasePortal.Decorators = (function (Decorators) {
         };
 
         $scope.startAuth = function($event) {
+          $event.preventDefault()
           var isValid = formValidate.validateForm($scope.authForm);
           if(!isValid) {
             jQuery($event.currentTarget).closest('form').addClass('checkDirty').find('.ng-invalid').first().focus();
@@ -1303,6 +1304,10 @@ voicebasePortal.Decorators = (function (Decorators) {
             $window.location.href = 'http://voicebase.readthedocs.io/en/v2-beta/';
           };
 
+          $scope.loadDocV3 = function() {
+            $window.location.href = 'http://voicebase.readthedocs.io/en/v3/';
+          };
+
           $scope.loadDag = function() {
             $location.path('/dag');
           };
@@ -1312,7 +1317,6 @@ voicebasePortal.Decorators = (function (Decorators) {
   ]);
 
 })();
-
 
 (function () {
   'use strict';
@@ -4969,18 +4973,30 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
 
 
   $templateCache.put('console/directives/widget-list.tpl.html',
-    "<div>\n" +
-    "  <div class=\"col-md-4\">\n" +
-    "    <div class=\"panel panel-default\" ng-if=\"showConsole\" ng-click=\"loadConsole()\">\n" +
+    "<div class=\"row\">\n" +
+    "  <div class=\"col-md-6\">\n" +
+    "    <div class=\"panel grayed-out panel-default\" ng-if=\"showConsole\">\n" +
     "      <div class=\"panel-body\">\n" +
+    "        <div class=\"corner-ribbon\">Coming Soon</div>\n" +
     "        <i class=\"widget-icon fa fa-2x fa-dashboard\"></i>\n" +
-    "        <h4><a href=\"\">API Console</a></h4>\n" +
+    "        <h4><a href=\"\">API Console <span class=\"panel-version\">v3</span></a></h4>\n" +
     "        Explore the VoiceBase REST API and call methods interactively.\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div \n" +
-    "      class=\"panel panel-default\" \n" +
-    "      ng-if=\"showKeywordsGroups\" \n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-6\">\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showDoc\" ng-click=\"loadDocV3()\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-file-text-o\"></i>\n" +
+    "        <h4><a href=\"\">API Documentation <span class=\"panel-version\">v3</span></a></h4>\n" +
+    "        Find detailed documentation and best practices for common use cases.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-6\">\n" +
+    "    <div\n" +
+    "      class=\"panel panel-default\"\n" +
+    "      ng-if=\"showKeywordsGroups\"\n" +
     "      ng-click=\"isSignedIn() &amp;&amp; loadKeywordsGroupApp()\"\n" +
     "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
     "      <div class=\"panel-body\">\n" +
@@ -4989,47 +5005,8 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "        Create and manage Phrase Spotting groups for use in the API.\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div \n" +
-    "      class=\"panel panel-default\"\n" +
-    "      ng-if=\"showSupport\"\n" +
-    "      ng-click=\"redirectToSupport()\">\n" +
-    "      <div class=\"panel-body\">\n" +
-    "        <i class=\"widget-icon fa fa-2x fa-external-link\"></i>\n" +
-    "        <h4><a href=\"\">VoiceBase Support</a></h4>\n" +
-    "        Visit the VoiceBase support site (this link opens a new window).\n" +
-    "      </div>\n" +
-    "    </div>\n" +
-    "    <div \n" +
-    "      class=\"panel panel-default\"\n" +
-    "      ng-if=\"showNativeKeyManager()\"\n" +
-    "      ng-click=\"isSignedIn() &amp;&amp; loadKeyManager()\"\n" +
-    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
-    "      <div class=\"panel-body\">\n" +
-    "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
-    "        <h4><a href=\"\" ng-class=\"{'not-clickable': isSignedOut()}\">Bearer Token Management</a></h4>\n" +
-    "        Generate Bearer tokens used for API authorization to your account.\n" +
-    "      </div>\n" +
-    "    </div>\n" +
-    "    <div \n" +
-    "      class=\"panel panel-default\"\n" +
-    "      ng-if=\"showLegacyHybridKeyManager()\"\n" +
-    "      ng-click=\"isSignedIn() &amp;&amp; loadLegacyKeyManager()\"\n" +
-    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
-    "      <div class=\"panel-body\">\n" +
-    "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
-    "        <h4><a href=\"\" ng-class=\"{'not-clickable': isSignedOut()}\">API Key Management</a></h4>\n" +
-    "        Add, revoke, and manage keys used for API authorization to your account.\n" +
-    "      </div>\n" +
-    "    </div>\n" +
     "  </div>\n" +
-    "  <div class=\"col-md-4\">\n" +
-    "    <div class=\"panel panel-default\" ng-if=\"showDoc\" ng-click=\"loadDoc()\">\n" +
-    "      <div class=\"panel-body\">\n" +
-    "        <i class=\"widget-icon fa fa-2x fa-file-text-o\"></i>\n" +
-    "        <h4><a href=\"\">API Documentation</a></h4>\n" +
-    "        Find detailed documentation and best practices for common use cases.\n" +
-    "      </div>\n" +
-    "    </div>\n" +
+    "  <div class=\"col-md-6\">\n" +
     "    <div\n" +
     "      class=\"panel panel-default\"\n" +
     "      ng-if=\"showKeywordsSpotting\"\n" +
@@ -5041,7 +5018,21 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "        Try out Phrase Spotting by uploading your own content.\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div \n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-6\">\n" +
+    "    <div\n" +
+    "      class=\"panel panel-default\"\n" +
+    "      ng-if=\"showSupport\"\n" +
+    "      ng-click=\"redirectToSupport()\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-external-link\"></i>\n" +
+    "        <h4><a href=\"\">VoiceBase Support</a></h4>\n" +
+    "        Visit the VoiceBase support site (this link opens a new window).\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-6\">\n" +
+    "    <div\n" +
     "      class=\"panel panel-default\"\n" +
     "      ng-if=\"showMediaBrowser\"\n" +
     "      ng-click=\"isSignedIn() &amp;&amp; loadMediaBrowser()\"\n" +
@@ -5052,7 +5043,35 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "        Browse previously uploaded media, transcripts, keywords, and predictions.\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div \n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-6\">\n" +
+    "    <div\n" +
+    "      class=\"panel panel-default\"\n" +
+    "      ng-if=\"showNativeKeyManager()\"\n" +
+    "      ng-click=\"isSignedIn() &amp;&amp; loadKeyManager()\"\n" +
+    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
+    "        <h4><a href=\"\" ng-class=\"{'not-clickable': isSignedOut()}\">Bearer Token Management</a></h4>\n" +
+    "        Generate Bearer tokens used for API authorization to your account.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-6\">\n" +
+    "    <div\n" +
+    "      class=\"panel panel-default\"\n" +
+    "      ng-if=\"showLegacyHybridKeyManager()\"\n" +
+    "      ng-click=\"isSignedIn() &amp;&amp; loadLegacyKeyManager()\"\n" +
+    "      ng-class=\"{ 'grayed-out': isSignedOut()}\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-key\"></i>\n" +
+    "        <h4><a href=\"\" ng-class=\"{'not-clickable': isSignedOut()}\">API Key Management</a></h4>\n" +
+    "        Add, revoke, and manage keys used for API authorization to your account.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-6\">\n" +
+    "    <div\n" +
     "      class=\"panel panel-default\"\n" +
     "      ng-if=\"showDag\"\n" +
     "      ng-click=\"isSignedIn() &amp;&amp; loadDag()\"\n" +
@@ -5063,11 +5082,30 @@ angular.module('ramlVoicebaseConsoleApp').run(['$templateCache', function($templ
     "        Widget for displaying the status of a running job as a DAG.\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"panel panel-default\" ng-if=\"showComingSoon\">\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "<div class=\"row\">\n" +
+    "  <div class=\"col-md-12 widget-list-section\">\n" +
+    "    <div class=\"widget-list-section-content\">\n" +
+    "      <hr/>\n" +
+    "      <span><span>Previous Versions</span></span>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-6\">\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showConsole\" ng-click=\"loadConsole()\">\n" +
     "      <div class=\"panel-body\">\n" +
-    "        <i class=\"widget-icon fa fa-2x fa-th\"></i>\n" +
-    "        <h4>Coming Soon</h4>\n" +
-    "        Additional Developer Portal functionality and examples coming soon.\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-dashboard\"></i>\n" +
+    "        <h4><a href=\"\">API Console <span class=\"panel-version\">v2-beta</span></a></h4>\n" +
+    "        Explore the VoiceBase REST API and call methods interactively.\n" +
+    "      </div>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-6\">\n" +
+    "    <div class=\"panel panel-default\" ng-if=\"showDoc\" ng-click=\"loadDoc()\">\n" +
+    "      <div class=\"panel-body\">\n" +
+    "        <i class=\"widget-icon fa fa-2x fa-file-text-o\"></i>\n" +
+    "        <h4><a href=\"\">API Documentation <span class=\"panel-version\">v2-beta</span></a></h4>\n" +
+    "        Find detailed documentation and best practices for common use cases.\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
