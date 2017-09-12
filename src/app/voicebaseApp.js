@@ -111,10 +111,6 @@
         templateUrl: 'pages/mediaBrowserPage.html',
         reloadOnSearch: false
       })
-      .when('/dag', {
-        templateUrl: 'pages/dagPage.html',
-        reloadOnSearch: false
-      })
       .when('/wait', {
         templateUrl: 'pages/addToWaitListPage.html',
         reloadOnSearch: false
