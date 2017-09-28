@@ -41,10 +41,6 @@
             return isInLegacyHybridMode() && $scope.showKeyManager;
           };
 
-          $scope.loadConsole = function() {
-            $location.path('/console');
-          };
-
           $scope.loadKeywordsGroupApp = function() {
             $location.path('/keywords-groups');
           };
@@ -69,12 +65,22 @@
             $window.open('http://support.voicebase.com/');
           };
 
+          $scope.loadConsole = function() {
+            $location.path('/console');
+          };
+
+          $scope.loadConsoleV3 = function() {
+            $window.open('http://v3-console.voicebase.com');
+          };
+
           $scope.loadDoc = function() {
-            $window.location.href = 'http://voicebase.readthedocs.io/en/v2-beta/';
+            $window.open('http://voicebase.readthedocs.io/en/v2-beta/');
+            //$window.location.href = 'http://voicebase.readthedocs.io/en/v2-beta/';
           };
 
           $scope.loadDocV3 = function() {
-            $window.location.href = 'http://voicebase.readthedocs.io/en/v3/';
+            $window.open('http://voicebase.readthedocs.io/en/v3/');
+            //$window.location.href = 'http://voicebase.readthedocs.io/en/v3/';
           };
         }
       };
