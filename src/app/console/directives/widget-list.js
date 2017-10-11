@@ -16,6 +16,7 @@
           showKeywordsGroups: '@',
           showKeywordsSpotting: '@',
           showSupport: '@',
+          showSystemStatus: '@',
           showMediaBrowser: '@',
           showKeyManager: '@',
           showComingSoon: '@'
@@ -63,6 +64,10 @@
 
           $scope.redirectToSupport = function() {
             $window.open('http://support.voicebase.com/');
+          };
+
+          $scope.redirectToSystemStatus = function() {
+            $window.open('http://status.voicebase.com/');
           };
 
           $scope.loadConsole = function() {

@@ -46,18 +46,6 @@
   <div class="col-md-6">
     <div
       class="panel panel-default"
-      ng-if="showSupport"
-      ng-click="redirectToSupport()">
-      <div class="panel-body">
-        <i class="widget-icon fa fa-2x fa-external-link"></i>
-        <h4><a href="">VoiceBase Support</a></h4>
-        Visit the VoiceBase support site (this link opens a new window).
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div
-      class="panel panel-default"
       ng-if="showMediaBrowser"
       ng-click="isSignedIn() &amp;&amp; loadMediaBrowser()"
       ng-class="{ 'grayed-out': isSignedOut()}">
@@ -78,6 +66,30 @@
         <i class="widget-icon fa fa-2x fa-key"></i>
         <h4><a href="" ng-class="{'not-clickable': isSignedOut()}">Bearer Token Management</a></h4>
         Generate Bearer tokens used for API authorization to your account.
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div
+      class="panel panel-default"
+      ng-if="showSupport"
+      ng-click="redirectToSupport()">
+      <div class="panel-body">
+        <i class="widget-icon fa fa-2x fa-external-link"></i>
+        <h4><a href="">VoiceBase Support</a></h4>
+        Visit the VoiceBase support site (this link opens a new window).
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div
+      class="panel panel-default"
+      ng-if="showSystemStatus"
+      ng-click="redirectToSystemStatus()">
+      <div class="panel-body">
+        <i class="widget-icon fa fa-2x fa-external-link"></i>
+        <h4><a href="">System Status</a></h4>
+        We continuously monitor VoiceBase and all its related services. If there are any service interruptions, a note will be posted here.
       </div>
     </div>
   </div>
