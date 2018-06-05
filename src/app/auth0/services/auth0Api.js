@@ -20,6 +20,7 @@
         }
       },
       avatar: null,
+      allowSignUp: false,
       additionalSignUpFields: [{
         name: 'account',
         placeholder: 'your account name'
