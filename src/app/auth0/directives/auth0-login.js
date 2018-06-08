@@ -17,17 +17,7 @@
         });
 
         var loginSuccess = function (response) {
-          if (response.profile.email_verified) {
-            // getApiKey(response);
-            createToken(response.token);
-          }
-          else {
-            updateHubSpot(response);
-
-            $timeout(function () {
-              $location.path('/confirm');
-            }, 100);
-          }
+          createToken(response.token);
         };
 
         var updateHubSpot = function (response) {
